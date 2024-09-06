@@ -2,6 +2,7 @@ package GBFH.GBFH_BE.jwt;
 
 import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.code.ResponseCode;
+import GBFH.GBFH_BE.dto.applicant.ApplicantDTO;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.Applicant;
@@ -50,14 +51,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             response.setHeader("accessToken", "Bearer " + accessToken);
             response.setHeader("refreshToken", "Bearer " + refreshToken);
 
-            Applicant user = applicantRepository.findByLoginId(username).orElse(null);
+            ApplicantDTO.Res responseApplicant = ApplicantDTO.Res.mapToRes(applicant);
 
-            ResponseDTO responseDTO = new ResponseDTO<>(ResponseCode.SUCCESS_LOGIN, null);
+            ResponseDTO responseDTO = new ResponseDTO<>(ResponseCode.SUCCESS_LOGIN, responseApplicant);
 
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonResponse = null;
+
             try {
                 jsonResponse = objectMapper.writeValueAsString(responseDTO);
             } catch (JsonProcessingException e) {
