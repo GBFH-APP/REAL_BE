@@ -19,6 +19,6 @@ public class BoardController {
 
     @GetMapping
     public List<Long> getBoard() {
-        return boardRepository.findAll().stream().map(i -> i.getIdx()).collect(Collectors.toList());
+        return boardRepository.findAll().stream().map(i -> i.getIDX()).collect(Collectors.toList());
     }
 }

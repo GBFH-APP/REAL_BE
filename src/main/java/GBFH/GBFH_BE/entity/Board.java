@@ -8,12 +8,9 @@ import lombok.Getter;
 
 @Entity
 @Table(name = "t_board")
+@Getter
 public class Board {
     @Column(name = "IDX", columnDefinition = "BIGINT")
     @Id
     private Long IDX;
-
-    public Long getIdx() {
-        return IDX;
-    }
 }
