@@ -11,6 +11,8 @@ public enum ResponseCode {
      * User
      */
     SUCCESS_RETRIEVE_USER(HttpStatus.OK, "유저 목록 조회를 성공했습니다. (추후 삭제 필요)"),
+    SUCCESS_LOGIN(HttpStatus.OK, "로그인을 성공했습니다."),
+
 
     ;
 

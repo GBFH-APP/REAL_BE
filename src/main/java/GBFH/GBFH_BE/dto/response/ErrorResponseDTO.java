@@ -7,8 +7,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class ErrorResponseDTO {
-
-    private final LocalDateTime timestamp = LocalDateTime.now();
     private int status;
     private String error;
     private String code;

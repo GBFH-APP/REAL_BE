@@ -1,0 +1,113 @@
+package GBFH.GBFH_BE.jwt;
+
+import GBFH.GBFH_BE.code.ErrorCode;
+import GBFH.GBFH_BE.code.ResponseCode;
+import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
+import GBFH.GBFH_BE.dto.response.ResponseDTO;
+import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.repository.ApplicantRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.IOException;
+import java.util.Base64;
+
+
+@RequiredArgsConstructor
+public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+
+    // 원래 얘가 로그인 처리 진행해줬음
+    private final AuthenticationManager authenticationManager;
+    private final JWTUtil jwtUtil;
+    private final ApplicantRepository applicantRepository;
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+
+        String username = obtainUsername(request);
+        String password = obtainPassword(request);
+
+        Applicant applicant = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new AuthenticationServiceException("사용자를 찾을 수 없습니다."));
+
+        // 비밀번호를 Base64로 인코딩하여 비교
+        if(isPasswordValid(password, applicant.getLoginPwd())) {
+            // 비밀번호가 일치할 경우 JWT 토큰 생성
+            String accessToken = jwtUtil.createJwt("accessToken", username, 86400000L);
+            String refreshToken = jwtUtil.createJwt("refreshToken", username,  86400000L);
+
+            // 응답에 토큰을 추가하여 반환
+            response.setHeader("accessToken", "Bearer " + accessToken);
+            response.setHeader("refreshToken", "Bearer " + refreshToken);
+
+            Applicant user = applicantRepository.findByLoginId(username).orElse(null);
+
+            ResponseDTO responseDTO = new ResponseDTO<>(ResponseCode.SUCCESS_LOGIN, null);
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = null;
+            try {
+                jsonResponse = objectMapper.writeValueAsString(responseDTO);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                response.getWriter().write(jsonResponse);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return null;
+    }
+
+    // 원래 이 부분이 로그인 성공 시 처리인데, 위에 비밀번호 비교 후 성공하면 토큰을 생성하고 헤더에 넣음 -> 로그인 성공 시 로직을 대체해서 일단 비우고 주석처리해둠
+//    @Override
+//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
+//    }
+
+
+    // 로그인 실패 시 처리
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+
+        response.setStatus(401);
+
+        ErrorResponseDTO responseDTO = new ErrorResponseDTO(ErrorCode.USER_NOT_FOUND);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(responseDTO);
+        response.getWriter().write(jsonResponse);
+    }
+
+    public static boolean isPasswordValid(String rawPassword, String encPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String decodedPassword;
+
+        if (!StringUtils.isEmpty(rawPassword)) {
+            if (!StringUtils.isEmpty(encPassword)) {
+                // Base64 디코딩 처리
+                byte[] decodedBytes = Base64.getDecoder().decode(encPassword);
+                    decodedPassword = new String(decodedBytes);
+                    return passwordEncoder.matches(rawPassword, decodedPassword);
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+}
