@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardService {
         private final BoardRepository boardRepository;
+        private final BoardFileService boardFileService;
 
         public NoticeResponseDTO getNotice(Long id) {
                 Board notice = boardRepository.findByIDX(id)
@@ -21,10 +22,14 @@ public class BoardService {
 
                 notice.readNotice(); // 조회수 올림
                 //파일 추가 필요
-                return NoticeResponseDTO.toDTO(notice);
+                if (boardFileService.isExistFile(id)) {
+                        return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(id));
+                }
+                else {
+                        return NoticeResponseDTO.toDTO(notice, null);
+                }
         }
 
 //        public List<NoticeResponseDTO> getAllNotice() {
-//
 //        }
 }
