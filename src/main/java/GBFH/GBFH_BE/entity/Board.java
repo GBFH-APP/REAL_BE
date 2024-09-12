@@ -33,7 +33,8 @@ public class Board {
     private LocalDateTime CREATE_DT; //작성일 - 시간은 안 보여주더라
 
 
-    public void readNotice() {
+    public Board readBoard() {
         this.READ = this.getREAD() + 1;
+        return this;
     }
 }

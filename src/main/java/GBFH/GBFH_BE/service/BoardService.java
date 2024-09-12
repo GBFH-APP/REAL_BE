@@ -20,7 +20,7 @@ public class BoardService {
                 Board notice = boardRepository.findByIDX(id)
                         .orElseThrow(() -> new RuntimeException("찾는 글이 없습니다."));
 
-                notice.readNotice(); // 조회수 올림
+                boardRepository.save(notice.readBoard()); // 조회수 올림
                 //파일 추가 필요
                 if (boardFileService.isExistFile(id)) {
                         return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(id));
