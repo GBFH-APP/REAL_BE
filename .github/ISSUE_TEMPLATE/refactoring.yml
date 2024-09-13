@@ -1,11 +1,11 @@
 name: "리팩토링"
 description: 리팩토링 작업 사항을 작성해주세요.
-title: "[ Refactor ] "
+title: "[REFACTOR] "
 body:
   - type: markdown
     attributes:
       value: |
-        작성 예시 : "[ Refactor ] 로그인 기능 리팩토링"
+        작성 예시 : "[REFACTOR] 로그인 기능 리팩토링"
   - type: textarea
     id: refactor-description
     attributes:
