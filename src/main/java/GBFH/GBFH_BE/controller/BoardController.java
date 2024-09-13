@@ -2,7 +2,6 @@ package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.code.ResponseCode;
-import GBFH.GBFH_BE.code.SuccessCode;
 import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
@@ -11,7 +10,6 @@ import GBFH.GBFH_BE.repository.BoardRepository;
 import GBFH.GBFH_BE.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

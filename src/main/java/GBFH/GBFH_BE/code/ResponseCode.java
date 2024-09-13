@@ -13,7 +13,7 @@ public enum ResponseCode {
     SUCCESS_RETRIEVE_USER(HttpStatus.OK, "유저 목록 조회를 성공했습니다. (추후 삭제 필요)"),
     SUCCESS_LOGIN(HttpStatus.OK, "로그인을 성공했습니다."),
 
-    /*
+    /**
      * notice
      */
     SUCCESS_NOTICE_REGISTER(HttpStatus.CREATED, "공지사항을 작성했습니다."),
@@ -22,6 +22,11 @@ public enum ResponseCode {
     SUCCESS_NOTICE_DELETE(HttpStatus.OK, "공지사항이 성공적으로 삭제되었습니다."),
     SUCCESS_NOTICE_DELETE_IMAGE(HttpStatus.OK, "이미지가 성공적으로 삭제되었습니다."),
     SUCCESS_NOTICE_UPDATE(HttpStatus.OK, "공지사항이 성공적으로 수정되었습니다."),
+
+    /**
+     * board config
+     */
+    SUCCESS_RETRIEVE_BOARD_CONFIG(HttpStatus.OK, "게시글 리스트를 성공적으로 조회했습니다")
     ;
 
     private final HttpStatus status;
