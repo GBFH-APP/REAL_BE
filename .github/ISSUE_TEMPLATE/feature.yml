@@ -20,6 +20,10 @@ body:
       label: 📝 To-do
       description: 작업에 필요한 목록을 작성해주세요.
       placeholder: 목록을 작성해주세요.
+      value: |
+        - [ ] 작업 항목 1
+        - [ ] 작업 항목 2
+        - [ ] 작업 항목 3
     validations:
       required: true
   - type: textarea
