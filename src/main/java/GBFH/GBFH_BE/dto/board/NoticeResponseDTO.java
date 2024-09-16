@@ -24,7 +24,7 @@ public class NoticeResponseDTO {
                 .id(board.getIdx())
                 .title(board.getTitle())
                 .content(board.getContents())
-                .createAt(board.getCreateDt().toLocalDate())
+                .createAt(board.getCreateDT().toLocalDate())
                 .read(board.getRead())
                 .writer(board.getMaskWriter())
                 .fileList(fileList)

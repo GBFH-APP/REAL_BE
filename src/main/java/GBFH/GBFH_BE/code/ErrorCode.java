@@ -39,8 +39,15 @@ public enum ErrorCode {
     DUPLICATE_DATE(HttpStatus.NOT_ACCEPTABLE, "중복된 날짜로 생성할 수 없습니다."),
     MULTIPART_ERROR(HttpStatus.NOT_ACCEPTABLE, "multipart/form-data가 존재하지 않습니다."),
     NOT_FOUND_IMAGE(HttpStatus.NOT_ACCEPTABLE, "해당 이미지가 존재하지 않습니다."),
-    NOT_FOUND_CATEGORY(HttpStatus.NOT_ACCEPTABLE, "해당 카테고리가 존재하지 않습니다.");
+    NOT_FOUND_CATEGORY(HttpStatus.NOT_ACCEPTABLE, "해당 카테고리가 존재하지 않습니다."),
 
+    /**
+     * 502
+     */
+
+    UNABLE_TO_RESOLVE_HOST(HttpStatus.BAD_GATEWAY, "호스트를 찾을 수 없습니다."),
+
+    ;
 
     private final HttpStatus status;
     private final String message;
