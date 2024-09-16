@@ -40,6 +40,7 @@ public enum ErrorCode {
     MULTIPART_ERROR(HttpStatus.NOT_ACCEPTABLE, "multipart/form-data가 존재하지 않습니다."),
     NOT_FOUND_IMAGE(HttpStatus.NOT_ACCEPTABLE, "해당 이미지가 존재하지 않습니다."),
     NOT_FOUND_CATEGORY(HttpStatus.NOT_ACCEPTABLE, "해당 카테고리가 존재하지 않습니다."),
+    WRONG_PAGINATION(HttpStatus.NOT_ACCEPTABLE, "페이지네이션에 문제가 있습니다."),
 
     /**
      * 502
