@@ -21,6 +21,9 @@ public class ApplicationController {
     @GetMapping()
     public ResponseEntity<ResponseDTO<?>> getUserList() {
         List<ApplicantDTO.Res> response = applicantService.getApplicants();
-        return ResponseEntity.ok(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_USER, response));
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_USER.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_USER, response));
     }
 }

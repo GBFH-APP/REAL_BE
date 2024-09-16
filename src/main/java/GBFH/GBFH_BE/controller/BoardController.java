@@ -2,7 +2,6 @@ package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.code.ResponseCode;
-import GBFH.GBFH_BE.code.SuccessCode;
 import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
@@ -14,7 +13,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
