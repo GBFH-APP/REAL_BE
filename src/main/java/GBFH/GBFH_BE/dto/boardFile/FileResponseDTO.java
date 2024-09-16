@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 public class FileResponseDTO {
-    private Long boardId; // 어떤 글에 해당하는 첨부파일인지
+    //private Long boardId; // 어떤 글에 해당하는 첨부파일인지
     private List<FileDTO> fileDTOList;
 
     @Getter
