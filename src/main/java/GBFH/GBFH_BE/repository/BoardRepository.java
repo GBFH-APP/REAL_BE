@@ -17,6 +17,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Optional<Board> findByIdx(Long idx);
     List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(BoardId boardId, Integer noti, String now, String today);
+
+    List<Board> findAlByBoardIdOrderByIdxDesc(BoardId boardId);
+
     // idx 필드의 최대값을 조회
     @Query("SELECT COALESCE(MAX(e.idx), 0) FROM Board e")
     Long findMaxIdx();

@@ -15,8 +15,9 @@ import java.time.LocalDateTime;
 public class CreateLostDTO {
     private String title;
     private String contents;
+    private String status;
 
-    public static Board mapToBoard(CreateLostDTO createLostDTO, Long IDX, Long grp, String username, String userNo) throws UnknownHostException {
+    public static Board mapToBoard(CreateLostDTO createLostDTO, Long IDX, Long grp, String username, String userNo, String clientIp) throws UnknownHostException {
         return Board.builder()
                 .idx(IDX)
                 .grp(grp)
@@ -40,14 +41,14 @@ public class CreateLostDTO {
                 .trashYN('N') // 삭제하지 않음
                 .editorYN('Y')
                 .createLevel("dorm")
-                .status("")
+                .status(createLostDTO.getStatus())
                 .houseNM("")
                 .roomNo("")
                 .linkUrl("")
                 .di("")
                 .ci("")
                 .createId(userNo)
-                .createIP(getIP())
+                .createIP(clientIp)
                 .createDT(LocalDateTime.now())
                 .build();
     }
