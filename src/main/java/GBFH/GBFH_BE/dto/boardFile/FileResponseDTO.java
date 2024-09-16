@@ -24,8 +24,8 @@ public class FileResponseDTO {
 
     public static FileDTO toDTO(BoardFile boardFile){
         return FileDTO.builder()
-                .id(boardFile.getIDX())
-                .uri(boardFile.getFILE_ID())
+                .id(boardFile.getIdx())
+                .uri(boardFile.getFileId())
                 .build();
     }
 

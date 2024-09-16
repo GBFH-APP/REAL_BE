@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.repository;
 
 import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.entity.BoardId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,9 +16,7 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Optional<Board> findByIdx(Long idx);
-
-    List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(String boardId, Integer noti, String now, String today);
-
+    List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(BoardId boardId, Integer noti, String now, String today);
     // idx 필드의 최대값을 조회
     @Query("SELECT COALESCE(MAX(e.idx), 0) FROM Board e")
     Long findMaxIdx();

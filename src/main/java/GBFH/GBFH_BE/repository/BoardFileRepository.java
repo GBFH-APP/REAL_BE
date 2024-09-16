@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface BoardFileRepository extends JpaRepository<BoardFile, BoardFilePk> {
-    Boolean existsAllByIDX(Long IDX);
-    List<BoardFile> findAllByIDX(Long IDX);
+    Boolean existsAllByIdx(Long idx);
+    List<BoardFile> findAllByIdx(Long Idx);
 }
