@@ -16,7 +16,7 @@ public class BoardConfigDTO {
 
     public static BoardConfigDTO mapEntityToDTO(BoardConfig boardConfig) {
         return BoardConfigDTO.builder()
-                .boardId(boardConfig.getBoardId())
+                .boardId(boardConfig.getBoardId().name())
                 .boardName(boardConfig.getBoardName())
                 .build();
     }

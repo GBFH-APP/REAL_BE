@@ -52,7 +52,8 @@ public class Board {
 
     // 게시판 관리번호
     @Column(name="BOARD_ID")
-    private String boardId;
+    @Enumerated(EnumType.STRING)
+    private BoardId boardId;
 
 
     @Column(name="TITLE")

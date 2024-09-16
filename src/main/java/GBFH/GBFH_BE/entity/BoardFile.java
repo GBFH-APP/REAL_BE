@@ -10,13 +10,13 @@ import lombok.Getter;
 public class BoardFile {
     @Column(name = "IDX", columnDefinition = "BIGINT")
     @Id
-    private Long IDX;
+    private Long idx;
 
     @Column(name = "SEQ", columnDefinition = "BIGINT")
     @Id
-    private Long SEQ;
+    private Long seq;
 
     @Column(name="FILE_ID")
-    private String FILE_ID; //이건 max 에서 +1 하라고 하심
+    private String fileId; //이건 max 에서 +1 하라고 하심
 
 }

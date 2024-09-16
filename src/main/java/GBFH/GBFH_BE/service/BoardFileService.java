@@ -14,11 +14,11 @@ import java.util.List;
 public class BoardFileService {
         private final BoardFileRepository boardFileRepository;
 
-        public boolean isExistFile(Long IDX) {
-            return boardFileRepository.existsAllByIDX(IDX);
+        public boolean isExistFile(Long idx) {
+            return boardFileRepository.existsAllByIdx(idx);
         }
 
-        public FileResponseDTO getAllFileDTO(Long IDX) {
-            return FileResponseDTO.toDTOList(boardFileRepository.findAllByIDX(IDX));
+        public FileResponseDTO getAllFileDTO(Long idx) {
+            return FileResponseDTO.toDTOList(boardFileRepository.findAllByIdx(idx));
         }
 }

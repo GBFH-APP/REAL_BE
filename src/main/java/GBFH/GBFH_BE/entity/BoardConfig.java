@@ -1,9 +1,6 @@
 package GBFH.GBFH_BE.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,8 +12,9 @@ import lombok.NoArgsConstructor;
 public class BoardConfig {
     // 게시판 pk
     @Column(name = "BOARD_ID")
+    @Enumerated(EnumType.STRING)
     @Id
-    private String boardId;
+    private BoardId boardId;
 
     // 게시판 명칭
     @Column(name = "BOARD_NAME")

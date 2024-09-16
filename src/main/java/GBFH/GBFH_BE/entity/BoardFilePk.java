@@ -9,19 +9,19 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardFilePk implements Serializable {
-    private Long IDX; //글 아이디
-    private Long SEQ; //순서
+    private Long idx; //글 아이디
+    private Long seq; //순서
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BoardFilePk that = (BoardFilePk) o;
-        return Objects.equals(IDX, that.IDX) && Objects.equals(SEQ, that.SEQ);
+        return Objects.equals(idx, that.idx) && Objects.equals(seq, that.seq);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(IDX, SEQ);
+        return Objects.hash(idx, seq);
     }
 }

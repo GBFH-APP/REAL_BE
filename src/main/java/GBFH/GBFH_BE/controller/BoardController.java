@@ -6,6 +6,8 @@ import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.exception.BoardIdNotFountException;
+import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.BoardRepository;
 import GBFH.GBFH_BE.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,7 @@ public class BoardController {
             return ResponseEntity
                     .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())
                     .body(new ResponseDTO<>(ResponseCode.SUCCESS_NOTICE_RETRIEVE, noticeResponseDTO));
-        } catch (RuntimeException e) {
+        } catch (PostNotFoundException e) {
             return ResponseEntity
                     .status(ErrorCode.NOT_FOUNT_POST.getStatus().value())
                     .body(new ErrorResponseDTO(ErrorCode.NOT_FOUNT_POST));
@@ -61,10 +63,14 @@ public class BoardController {
             return ResponseEntity
                     .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())
                     .body(new ResponseDTO<>(ResponseCode.SUCCESS_NOTICE_RETRIEVE, noticeResponseDTOList));
-        } catch (RuntimeException e) {
+        } catch (PostNotFoundException e) {
             return ResponseEntity
                     .status(ErrorCode.NOT_FOUNT_POST.getStatus().value())
                     .body(new ErrorResponseDTO(ErrorCode.NOT_FOUNT_POST));
+        } catch (BoardIdNotFountException e) {
+            return ResponseEntity
+                    .status(ErrorCode.NOT_FOUND_CATEGORY.getStatus().value())
+                    .body(new ErrorResponseDTO(ErrorCode.NOT_FOUND_CATEGORY));
         }
     }
 }
