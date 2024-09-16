@@ -29,4 +29,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.BAD_REQUEST.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.BAD_REQUEST, builder.toString()));
     }
+
+    @ExceptionHandler(InvalidHostException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleInvalidHostException(final InvalidHostException e) {
+        return ResponseEntity
+                .status(ErrorCode.UNABLE_TO_RESOLVE_HOST.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.UNABLE_TO_RESOLVE_HOST));
+    }
 }

@@ -26,7 +26,13 @@ public enum ResponseCode {
     /**
      * board config
      */
-    SUCCESS_RETRIEVE_BOARD_CONFIG(HttpStatus.OK, "게시글 리스트를 성공적으로 조회했습니다")
+    SUCCESS_RETRIEVE_BOARD_CONFIG(HttpStatus.OK, "게시글 리스트를 성공적으로 조회했습니다"),
+
+    /**
+     * lost
+     */
+    SUCCESS_CREATE_LOST(HttpStatus.CREATED, "분실물 글을 성공적으로 저장했습니다.")
+
     ;
 
     private final HttpStatus status;

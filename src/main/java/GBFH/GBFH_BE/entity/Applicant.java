@@ -25,4 +25,8 @@ public class Applicant {
 
     @Column(name = "LOGIN_PWD")
     private String loginPwd;
+
+    @Column(name = "NAME_KOR")
+    private String nameKor;
+
 }
