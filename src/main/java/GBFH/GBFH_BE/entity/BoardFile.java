@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @IdClass(BoardFilePk.class) // 복합키 클래스
 public class BoardFile {
-    @Column(name = "IDX", columnDefinition = "BIGINT")
+    @Column(name = "IDX")
     @Id
     private Long idx;
 

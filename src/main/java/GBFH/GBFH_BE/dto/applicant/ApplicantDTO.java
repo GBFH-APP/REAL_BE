@@ -13,7 +13,7 @@ public class ApplicantDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Res {
-        private Long userNo;
+        private String userNo;
         private String loginId;
 
         public static Res mapToRes(Applicant applicant) {

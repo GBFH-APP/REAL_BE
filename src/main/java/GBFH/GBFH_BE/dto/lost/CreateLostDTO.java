@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.dto.lost;
 
 import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.entity.BoardId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,18 +16,18 @@ public class CreateLostDTO {
     private String title;
     private String contents;
 
-    public static Board mapToBoard(CreateLostDTO createLostDTO, Long IDX, Long grp, String username, Long userNo) throws UnknownHostException {
+    public static Board mapToBoard(CreateLostDTO createLostDTO, Long IDX, Long grp, String username, String userNo) throws UnknownHostException {
         return Board.builder()
                 .idx(IDX)
                 .grp(grp)
                 .seq(1L) // 대부분 1로 저장됨
                 .lvl(1L)
                 .upIdx(0L)
-                .noti(0L)
+                .noti(0)
                 // noti start, noti end null 값
-                .best(0L)
+                .best((byte) 0)
                 .sortNo(0L)
-                .boardId("lost")
+                .boardId(BoardId.valueOf("lost"))
                 .category("")
                 .title(createLostDTO.getTitle())
                 .contents(createLostDTO.getContents())
@@ -76,7 +77,7 @@ public class CreateLostDTO {
         private String title;
         private String contents;
         private String boardId;
-        private Long createId;
+        private String createId;
         private String createIP;
         private LocalDateTime createDT;
 
@@ -85,7 +86,7 @@ public class CreateLostDTO {
                     .id(board.getIdx())
                     .title(board.getTitle())
                     .contents(board.getContents())
-                    .boardId(board.getBoardId())
+                    .boardId(board.getBoardId().name())
                     .createId(board.getCreateId())
                     .createIP(board.getCreateIP())
                     .createDT(board.getCreateDT())

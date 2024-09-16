@@ -1,11 +1,15 @@
 package GBFH.GBFH_BE.entity;
 
 import jakarta.persistence.*;
+import jdk.jfr.Unsigned;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Type;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -37,8 +41,8 @@ public class Board {
     private Long upIdx;
 
     // 공지 여부 -> 디폴트 0 -> 추후 사용할 거라면 넣고 아니면 빼자
-    @Column(name = "NOTI", columnDefinition = "INT")
-    private Long noti;
+    @Column(name = "NOTI", columnDefinition = "INT(10) UN")
+    private Integer noti;
 
     // 공지 시작 날짜
     @Column(name = "NOTI_START")
@@ -50,7 +54,7 @@ public class Board {
 
     // 대표(0: 입ㄹ잔, 1: 대표)
     @Column(name = "BEST")
-    private Long best;
+    private byte best;
 
     // 정렬 번호
     @Column(name = "SORT_NO")
@@ -70,7 +74,7 @@ public class Board {
 
     // 내용
     @Lob
-    @Column(name = "CONTENTS", columnDefinition = "TEXT")
+    @Column(name = "CONTENTS", columnDefinition = "MEDIUMTEXT")
     private String contents;
 
     // 작성자명
@@ -128,8 +132,8 @@ public class Board {
     private String roomNo;
 
     // 파일 관리 번호
-    @Column(name = "FILE_ID")
-    private Long fileId;
+    @Column(name = "FILE_ID", length = 20)
+    private String fileId;
 
     // 링크
     @Column(name = "LINK_URL")
@@ -148,8 +152,8 @@ public class Board {
     private String createLevel;
 
     // 등록자
-    @Column(name = "CREATE_ID")
-    private Long createId;
+    @Column(name = "CREATE_ID", length = 60)
+    private String createId;
 
     // 등록일자
     @Column(name="CREATE_DT")
@@ -160,8 +164,8 @@ public class Board {
     private String createIP;
 
     // 수정자
-    @Column(name = "UPDATE_ID")
-    private Long updateID;
+    @Column(name = "UPDATE_ID", length = 60)
+    private String updateID;
 
     // 등록일자
     @Column(name="UPDATE_DT")
