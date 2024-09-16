@@ -12,7 +12,7 @@ public class Board {
     // 관리 번호
     @Column(name = "IDX", columnDefinition = "BIGINT")
     @Id
-    private Long IDX;
+    private Long idx;
 
     // 원본 글 구릅 관리 번호
     @Column(name = "GPP")
@@ -31,7 +31,7 @@ public class Board {
     private Long upIdx;
 
     // 공지 여부 -> 디폴트 0 -> 추후 사용할 거라면 넣고 아니면 빼자
-    @Column(name = "NOTI")
+    @Column(name = "NOTI", columnDefinition = "INT")
     private Long noti;
 
     // 공지 시작 날짜
@@ -54,8 +54,8 @@ public class Board {
     @Column(name="BOARD_ID")
     private String boardId;
 
-    // 제목
-    @Column(name="TITLES")
+
+    @Column(name="TITLE")
     private String title;
 
     // 내용
@@ -131,7 +131,7 @@ public class Board {
 
     // 등록일자
     @Column(name="CREATE_DT")
-    private LocalDateTime createDT; //작성일 - 시간은 안 보여주더라
+    private LocalDateTime createDt; //작성일 - 시간은 안 보여주더라
 
     // 등록자 아이피
     @Column(name = "CREATE_IP")
@@ -149,8 +149,8 @@ public class Board {
     @Column(name = "UPDATE_IP")
     private String updateIP;
 
-    public void readNotice() {
+    public Board readBoard() {
         this.read = this.getRead() + 1;
+        return this;
     }
-
 }

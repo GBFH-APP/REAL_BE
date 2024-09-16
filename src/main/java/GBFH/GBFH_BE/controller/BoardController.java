@@ -9,6 +9,9 @@ import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.repository.BoardRepository;
 import GBFH.GBFH_BE.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +31,7 @@ public class BoardController {
 
     @GetMapping
     public List<Long> getBoard() {
-        return boardRepository.findAll().stream().map(Board::getIDX).collect(Collectors.toList());
+        return boardRepository.findAll().stream().map(Board::getIdx).collect(Collectors.toList());
     }
 
 //    @GetMapping("/all")
@@ -44,6 +47,20 @@ public class BoardController {
             return ResponseEntity
                     .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())
                     .body(new ResponseDTO<>(ResponseCode.SUCCESS_NOTICE_RETRIEVE, noticeResponseDTO));
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .status(ErrorCode.NOT_FOUNT_POST.getStatus().value())
+                    .body(new ErrorResponseDTO(ErrorCode.NOT_FOUNT_POST));
+        }
+    }
+    
+    @GetMapping("/all/{category}/speak")
+    public ResponseEntity<Object> getNotice(@PathVariable String category) {
+        try {
+            List<NoticeResponseDTO> noticeResponseDTOList = boardService.getAllNoticeSpeak(category);
+            return ResponseEntity
+                    .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())
+                    .body(new ResponseDTO<>(ResponseCode.SUCCESS_NOTICE_RETRIEVE, noticeResponseDTOList));
         } catch (RuntimeException e) {
             return ResponseEntity
                     .status(ErrorCode.NOT_FOUNT_POST.getStatus().value())

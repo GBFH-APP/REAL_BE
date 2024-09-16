@@ -21,10 +21,10 @@ public class NoticeResponseDTO {
 
     public static NoticeResponseDTO toDTO (Board board, FileResponseDTO fileList) {
         return NoticeResponseDTO.builder()
-                .id(board.getIDX())
+                .id(board.getIdx())
                 .title(board.getTitle())
                 .content(board.getContents())
-                .createAt(board.getCreateDT().toLocalDate())
+                .createAt(board.getCreateDt().toLocalDate())
                 .read(board.getRead())
                 .writer(board.getMaskWriter())
                 .fileList(fileList)
