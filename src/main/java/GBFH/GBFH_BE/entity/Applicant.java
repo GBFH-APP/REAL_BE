@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "t_applicant")
 public class Applicant {
-    @Column(name = "USER_NO", columnDefinition = "BIGINT")
+    @Column(name = "USER_NO", length = 20)
     @Id
-    private Long userNo;
+    private String userNo;
 
     @Column(name = "LOGIN_ID")
     private String loginId;
