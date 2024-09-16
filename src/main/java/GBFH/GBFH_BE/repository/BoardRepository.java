@@ -13,6 +13,6 @@ import java.util.Optional;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByIdx(Long idx);
-    List<Board> findAllByBoardIdAndNotiAndNotiEndAfter(String boardId, Integer noti, String now);
+    List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(String boardId, Integer noti, String now, String today);
 
 }

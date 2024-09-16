@@ -72,7 +72,7 @@ public class Board {
     private String maskWriter; // 공지사항에서는 masking을 안 하긴 하는데...
 
     // 조회수 - default 0
-    @Column(name = "READ", columnDefinition = "BIGINT")
+    @Column(name = "`READ`", columnDefinition = "BIGINT")
     private Long read; //조회수
 
     // 사용:팝업 char(1) 형태로 저장
