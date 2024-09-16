@@ -6,6 +6,7 @@ import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.entity.BoardId;
 import GBFH.GBFH_BE.exception.BoardIdNotFountException;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,9 +57,6 @@ public class BoardController {
     @GetMapping("/all/{category}/speak")
     public ResponseEntity<Object> getAllNoticeSpeak(@PathVariable String category) {
         try {
-//            if (Objects.equals(category, BoardId.recruitments.name())) {
-//                //채용 관련 찾아주기 함수로 변경
-//            }
             List<NoticeResponseDTO> noticeResponseDTOList = boardService.getAllNoticeSpeak(category);
             return ResponseEntity
                     .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())
@@ -82,9 +81,6 @@ public class BoardController {
                                                @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size) {
         try {
-//            if (Objects.equals(category, BoardId.recruitments.name())) {
-//                //채용 관련 찾아주기 함수로 변경
-//            }
             Page<NoticeResponseDTO> noticeResponseDTOList = boardService.getAllNotice(category, page, size);
             return ResponseEntity
                     .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())

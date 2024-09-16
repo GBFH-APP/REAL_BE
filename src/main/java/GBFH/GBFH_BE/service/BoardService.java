@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,14 @@ public class BoardService {
                 // category 있는지 없는지 확인 후, 예외처리
                 BoardId boardId = boardIdService.getCategory(category);
 
-                List<Board> noticeList = boardRepository.findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(boardId, 1, LocalDate.now().toString(), LocalDate.now().toString());
+                List<Board> noticeList;
+                if (boardId.name().equals("recruitments")) {
+                        noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc("채용", BoardId.notice, 1, LocalDate.now().toString(), LocalDate.now().toString());
+                }
+                else {
+                        noticeList = boardRepository.findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(boardId, 1, LocalDate.now().toString(), LocalDate.now().toString());
+                }
+
                 if (noticeList.isEmpty()) {
                         throw new EmptyPostException("글이 비었습니다.");
                 }
@@ -66,7 +74,14 @@ public class BoardService {
                 // category 있는지 없는지 확인 후, 예외처리
                 BoardId boardId = boardIdService.getCategory(category);
 
-                List<Board> noticeList = boardRepository.findAllByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+                List<Board> noticeList;
+                if (boardId.name().equals("recruitments")) {
+                        noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
+                }
+                else {
+                        noticeList = boardRepository.findAllByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+                }
+
                 if (noticeList.isEmpty()) {
                         throw new EmptyPostException("글이 비었습니다.");
                 }
