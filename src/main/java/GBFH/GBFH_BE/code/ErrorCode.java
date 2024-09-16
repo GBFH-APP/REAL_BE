@@ -11,7 +11,7 @@ public enum ErrorCode {
      * 400 BAD_REQUEST: 잘못된 요청
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-    INVALID_PIN_NUMBER(HttpStatus.BAD_REQUEST, "잘못된 핀 번호입니다."),
+    NOT_LOST_POST(HttpStatus.BAD_REQUEST, "분실물 글이 아닙니다."),
 
 
     /**

@@ -1,0 +1,101 @@
+package GBFH.GBFH_BE.service;
+
+import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
+import GBFH.GBFH_BE.dto.lost.GetLostDTO;
+import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.repository.ApplicantRepository;
+import GBFH.GBFH_BE.repository.BoardRepository;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
+@Transactional
+class LostServiceTest {
+    @Autowired
+    LostService lostService;
+
+    @Autowired
+    BoardRepository boardRepository;
+
+    @Autowired
+    ApplicantRepository applicantRepository;
+
+    @Test
+    void 존재하지_않는_username_분실물_생성() {
+        // given
+        CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
+
+        // when & then
+        assertThrows(UsernameNotFoundException.class, () -> lostService.createLost(createLostDTO1, "non_user", "127.0.0.1"));
+    }
+
+    @Test
+    void 존재하는_username_분실물_생성() {
+        // given
+        createUser();
+        CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
+
+        // when
+        Optional<Board> board = boardRepository.findByIdx(res.getId());
+
+        // theb
+        assertTrue(board.isPresent());
+    }
+
+    @Test
+    void 자신이_작성한_분실물_조회() {
+        // given
+        createUser();
+        CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
+
+        // when
+        GetLostDTO.DETAIL detail = lostService.getDetailLost(res.getId(), "eunseo");
+
+        // then
+        assertTrue(detail.getPermission());
+    }
+
+    @Test
+    void 자신이_작성하지_않은_분실물_조회() {
+        // given
+        createUser();
+        CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
+
+        // when
+        GetLostDTO.DETAIL detail = lostService.getDetailLost(res.getId(), "gyumin");
+
+        // then
+        assertFalse(detail.getPermission());
+    }
+
+    private void createUser() {
+        Applicant applicant1 = Applicant.builder()
+                .userNo("1")
+                .loginId("eunseo")
+                .loginPwd("sample")
+                .build();
+
+        applicantRepository.save(applicant1);
+
+        Applicant applicant2 = Applicant.builder()
+                .userNo("2")
+                .loginId("gyumin")
+                .loginPwd("sample")
+                .build();
+
+        applicantRepository.save(applicant2);
+
+    }
+
+}

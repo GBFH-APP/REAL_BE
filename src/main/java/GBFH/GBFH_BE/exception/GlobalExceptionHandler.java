@@ -36,4 +36,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.UNABLE_TO_RESOLVE_HOST.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.UNABLE_TO_RESOLVE_HOST));
     }
+
+    @ExceptionHandler(NotLostException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleNotLostException(final NotLostException e) {
+        return ResponseEntity
+                .status(ErrorCode.NOT_LOST_POST.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.NOT_LOST_POST));
+    }
 }

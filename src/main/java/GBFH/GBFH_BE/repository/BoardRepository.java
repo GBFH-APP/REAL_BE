@@ -16,7 +16,16 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Optional<Board> findByIdx(Long idx);
+    List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(BoardId boardId, Integer noti, String now, String today);
+
+    /**
+     * lost
+     */
+    List<Board> findAlByBoardIdOrderByIdxDesc(BoardId boardId);
+
+
     List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(BoardId boardId, Integer noti, String now, String today);
+
     // idx 필드의 최대값을 조회
     @Query("SELECT COALESCE(MAX(e.idx), 0) FROM Board e")
     Long findMaxIdx();
