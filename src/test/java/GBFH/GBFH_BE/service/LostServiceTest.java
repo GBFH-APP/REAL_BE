@@ -4,14 +4,17 @@ import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 import GBFH.GBFH_BE.entity.Applicant;
 import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.entity.BoardId;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.BoardRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,6 +81,24 @@ class LostServiceTest {
         // then
         assertFalse(detail.getPermission());
     }
+
+    @Test
+    void 습득으로_필터링하여_분실물_조회() {
+        // given
+        createUser();
+        CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "습득");
+        CreateLostDTO createLostDTO2 = new CreateLostDTO("title", "content", "분실");
+
+        lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
+        lostService.createLost(createLostDTO2, "eunseo", "127.0.0.1");
+
+        // when
+        List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, "습득");
+
+        // then
+        assertEquals(3, losts.size(), "리스트의 크기는 3이어야 합니다.");
+    }
+
 
     private void createUser() {
         Applicant applicant1 = Applicant.builder()

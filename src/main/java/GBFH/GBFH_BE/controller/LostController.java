@@ -5,6 +5,7 @@ import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LostService;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +50,16 @@ public class LostController {
                 .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
     }
+
+    @GetMapping
+    public ResponseEntity<ResponseDTO> getLostsByStatus(@PathParam("status") String status) {
+        List<GetLostDTO.LIST> res = lostService.getLostsByStatus(status);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
+    }
+
 
     private static String getClientIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
