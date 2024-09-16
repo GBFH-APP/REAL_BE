@@ -9,11 +9,12 @@ import GBFH.GBFH_BE.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ public class BoardService {
         private final BoardRepository boardRepository;
         private final BoardFileService boardFileService;
         private final BoardIdService boardIdService;
+        private final PaginateService paginateService;
 
         public NoticeResponseDTO getNotice(Long id) {
                 Board notice = boardRepository.findByIdx(id)
@@ -57,6 +59,29 @@ public class BoardService {
                                 return NoticeResponseDTO.toDTO(notice, null);
                         }
                 }).collect(Collectors.toList());
+
+        }
+
+        public Page<NoticeResponseDTO> getAllNotice(String category, int page, int size) {
+                // category 있는지 없는지 확인 후, 예외처리
+                BoardId boardId = boardIdService.getCategory(category);
+
+                List<Board> noticeList = boardRepository.findAllByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+                if (noticeList.isEmpty()) {
+                        throw new EmptyPostException("글이 비었습니다.");
+                }
+
+                List<NoticeResponseDTO> noticeResponseDTO =  noticeList.stream().map(notice ->{
+                        // 첨부파일 받아오기
+                        if (boardFileService.isExistFile(notice.getIdx())) {
+                                return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(notice.getIdx()));
+                        }
+                        else {
+                                return NoticeResponseDTO.toDTO(notice, null);
+                        }
+                }).toList();
+
+                return paginateService.paginateList(noticeResponseDTO, page, size);
 
         }
 }
