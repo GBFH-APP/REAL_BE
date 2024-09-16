@@ -63,4 +63,10 @@ public class LostService {
 
         return GetLostDTO.DETAIL.mapToDTO(lost, permission);
     }
+
+    public List<GetLostDTO.LIST> getLostsByStatus(String status) {
+        List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, status);
+
+        return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
+    }
 }
