@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class CreateLostDTO {
     private String title;
     private String contents;
@@ -78,6 +79,7 @@ public class CreateLostDTO {
         private String title;
         private String contents;
         private String boardId;
+        private String status;
         private String createId;
         private String createIP;
         private LocalDateTime createDT;
@@ -88,6 +90,7 @@ public class CreateLostDTO {
                     .title(board.getTitle())
                     .contents(board.getContents())
                     .boardId(board.getBoardId().name())
+                    .status(board.getStatus())
                     .createId(board.getCreateId())
                     .createIP(board.getCreateIP())
                     .createDT(board.getCreateDT())

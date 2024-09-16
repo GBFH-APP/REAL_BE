@@ -5,7 +5,6 @@ import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LostService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +33,17 @@ public class LostController {
     @GetMapping("/all")
     public ResponseEntity<ResponseDTO> getAllLosts() {
         List<GetLostDTO.LIST> res = lostService.getAllLosts();
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<ResponseDTO> getDetailLosts(@PathVariable("id") Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        GetLostDTO.DETAIL res = lostService.getDetailLost(id, username);
 
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())

@@ -2,13 +2,10 @@ package GBFH.GBFH_BE.repository;
 
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +15,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByIdx(Long idx);
     List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(BoardId boardId, Integer noti, String now, String today);
 
+    /**
+     * lost
+     */
     List<Board> findAlByBoardIdOrderByIdxDesc(BoardId boardId);
 
     // idx 필드의 최대값을 조회

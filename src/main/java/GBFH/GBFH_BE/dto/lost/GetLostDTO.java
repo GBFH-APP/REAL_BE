@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class GetLostDTO {
     // 리스트 조회
@@ -41,6 +40,25 @@ public class GetLostDTO {
     @NoArgsConstructor
     public static class DETAIL {
         private Long id;
+        private String title;
+        private String contents;
+        private String status;
+        private String writer;
+        private LocalDateTime createDT;
+        private Boolean permission;
+        // 이미지 추가해야 함
+
+        public static DETAIL mapToDTO(Board board, Boolean permission) {
+            return DETAIL.builder()
+                    .id(board.getIdx())
+                    .title(board.getTitle())
+                    .contents(board.getContents())
+                    .status(board.getStatus())
+                    .writer(board.getMaskWriter())
+                    .createDT(board.getCreateDT())
+                    .permission(permission)
+                    .build();
+        }
 
     }
 }

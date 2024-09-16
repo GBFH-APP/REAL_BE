@@ -33,6 +33,7 @@ public enum ResponseCode {
      */
     SUCCESS_CREATE_LOST(HttpStatus.CREATED, "분실물 글을 성공적으로 저장했습니다."),
     SUCCESS_RETRIEVE_LOST_LIST(HttpStatus.OK, "분실물 리스트를 성공적으로 조회했습니다."),
+    SUCCESS_RETRIEVE_LOST_DETAIL(HttpStatus.OK, "분실물 상세 정보를 성공적으로 조회했습니다."),
 
     ;
 
