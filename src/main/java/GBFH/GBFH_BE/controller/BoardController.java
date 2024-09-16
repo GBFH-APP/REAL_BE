@@ -55,7 +55,7 @@ public class BoardController {
     }
     
     @GetMapping("/all/{category}/speak")
-    public ResponseEntity<Object> getNotice(@PathVariable String category) {
+    public ResponseEntity<Object> getAllNotice(@PathVariable String category) {
         try {
             List<NoticeResponseDTO> noticeResponseDTOList = boardService.getAllNoticeSpeak(category);
             return ResponseEntity

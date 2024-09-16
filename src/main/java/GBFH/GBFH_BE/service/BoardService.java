@@ -37,7 +37,7 @@ public class BoardService {
 
         public List<NoticeResponseDTO> getAllNoticeSpeak(String category) {
                 // category 있는지 없는지 확인 후, 예외처리
-                List<Board> noticeList = boardRepository.findAllByBoardIdAndNotiAndNotiEndAfter(category, 1, LocalDate.now().toString());
+                List<Board> noticeList = boardRepository.findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(category, 1, LocalDate.now().toString(), LocalDate.now().toString());
                 // noti 1이고 오늘 날짜가 noti_start랑 noti_end에 끼어있으면 먼저 내보냄
                 return noticeList.stream().map(notice ->{
                     return NoticeResponseDTO.toDTO(notice, null);
