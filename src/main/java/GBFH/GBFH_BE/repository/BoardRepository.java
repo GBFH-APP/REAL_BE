@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -26,6 +27,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId boardId, Character trashYN);
     List<Board> findAllByBoardIdAndStatusOrderByIdxDesc(BoardId boardId, String status);
     List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(BoardId boardId, Integer noti, String now, String today);
+
+    @Query("SELECT e FROM Board e WHERE e.boardId = :boardId AND (e.title LIKE %:keyword% OR e.contents LIKE %:keyword%) ORDER BY e.createDT DESC")
+    List<Board> findByBoardIdAndTitleOrContentsContainingAndOrderByCreateDTDesc(@Param("boardId") BoardId boardId, @Param("keyword") String keyword);
 
     // idx 필드의 최대값을 조회
     @Query("SELECT COALESCE(MAX(e.idx), 0) FROM Board e")
