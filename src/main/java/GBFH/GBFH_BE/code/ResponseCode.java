@@ -35,6 +35,7 @@ public enum ResponseCode {
     SUCCESS_RETRIEVE_LOST_LIST(HttpStatus.OK, "분실물 리스트를 성공적으로 조회했습니다."),
     SUCCESS_RETRIEVE_LOST_DETAIL(HttpStatus.OK, "분실물 상세 정보를 성공적으로 조회했습니다."),
     SUCCESS_CREATE_LOST_COMMENT(HttpStatus.CREATED, "분실물 댓글을 성공적으로 저장했습니다."),
+    SUCCESS_CREATE_LOST_COMMENT_REPLY(HttpStatus.CREATED, "분실물 대댓글을 성공적으로 저장했습니다."),
 
     ;
 

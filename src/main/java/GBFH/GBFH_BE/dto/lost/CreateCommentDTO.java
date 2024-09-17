@@ -35,6 +35,22 @@ public class CreateCommentDTO {
                 .build();
     }
 
+    public static Comment mapToCommentReply(CreateCommentDTO createCommentDTO, Long boardIdx, Long grp, String username, String userNo, String clientIp) {
+        return Comment.builder()
+                .grp(grp)
+                .seq(1L) // 이거 순서대로 가게 해?
+                .lvl(2L) // 2단계로 감
+                .upIdx(boardIdx)
+                .contents(createCommentDTO.getContents())
+                .maskWriter(createCommentDTO.makeWriterMask(username))
+                .delYN("N")
+                .createLevel("dorm")
+                .createId(userNo)
+                .createIP(clientIp)
+                .createDT(LocalDateTime.now())
+                .build();
+    }
+
     @Getter
     @Builder
     @AllArgsConstructor
@@ -42,20 +58,18 @@ public class CreateCommentDTO {
     public static class Res {
         private Long id;
         private Long grp;
+        private Long lvl;
         private String contents;
         private Long boardId;
-        private String createId;
-        private String createIP;
         private LocalDateTime createDT;
 
         public static CreateCommentDTO.Res mapToDTO(Comment comment) {
             return Res.builder()
                     .id(comment.getIdx())
                     .grp(comment.getGrp())
+                    .lvl(comment.getLvl())
                     .contents(comment.getContents())
                     .boardId(comment.getUpIdx())
-                    .createId(comment.getCreateId())
-                    .createIP(comment.getCreateIP())
                     .createDT(comment.getCreateDT())
                     .build();
         }

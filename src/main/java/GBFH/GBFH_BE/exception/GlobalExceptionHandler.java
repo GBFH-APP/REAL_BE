@@ -57,4 +57,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.WRONG_PAGINATION.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.WRONG_PAGINATION));
     }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleCommentNotFoundException(final CommentNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.COMMENT_NOT_FOUND.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.COMMENT_NOT_FOUND));
+    }
 }

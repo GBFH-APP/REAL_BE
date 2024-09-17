@@ -6,6 +6,7 @@ import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetCommentDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 import GBFH.GBFH_BE.entity.*;
+import GBFH.GBFH_BE.exception.CommentNotFoundException;
 import GBFH.GBFH_BE.exception.InvalidHostException;
 import GBFH.GBFH_BE.exception.NotLostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
@@ -14,6 +15,7 @@ import GBFH.GBFH_BE.repository.BoardFileRepository;
 import GBFH.GBFH_BE.repository.BoardRepository;
 import GBFH.GBFH_BE.repository.CommentRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -153,6 +155,21 @@ public class LostService {
 
         Comment comment = CreateCommentDTO.mapToComment(createCommentDTO, id, grp, user.getNameKor(), user.getUserNo(), clientId);
         Comment savedComment = commentRepository.save(comment);
+
+        return CreateCommentDTO.Res.mapToDTO(savedComment);
+    }
+
+    public CreateCommentDTO.Res createReply(Long boardId, Long commentId, String username, @Valid CreateCommentDTO createCommentDTO, String clientIp) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Comment comment = commentRepository.findByIdx(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
+
+        Long grp = comment.getGrp();
+
+        Comment createdComment = CreateCommentDTO.mapToCommentReply(createCommentDTO, boardId, grp, user.getNameKor(), user.getUserNo(), clientIp);
+        Comment savedComment = commentRepository.save(createdComment);
 
         return CreateCommentDTO.Res.mapToDTO(savedComment);
     }

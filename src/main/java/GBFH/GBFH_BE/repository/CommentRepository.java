@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     // grp 필드의 최대값을 조회. 값이 없을 경우 1로 반환
@@ -12,5 +13,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Long findMaxGrp();
 
     List<Comment> findByUpIdxAndDelYN(Long upIdx, String DelYN);
-
+    Optional<Comment> findByIdx(Long Idx);
 }

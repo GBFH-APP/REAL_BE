@@ -89,7 +89,21 @@ public class LostController {
     }
 
     // 대댓글 작성
+    @PostMapping("/{boardId}/reply/{commentId}") // 댓글의 id를 넣음
+    public ResponseEntity<ResponseDTO> createComment(
+            @Valid @RequestBody CreateCommentDTO createCommentDTO,
+            @PathVariable("boardId") Long boardId,
+            @PathVariable("commentId") Long commentId,
+            HttpServletRequest request ) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String clientIp = getClientIP(request);
 
+        CreateCommentDTO.Res res = lostService.createReply(boardId, commentId, username, createCommentDTO, clientIp);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_CREATE_LOST_COMMENT_REPLY.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LOST_COMMENT_REPLY, res));
+    }
 
 
     private static String getClientIP(HttpServletRequest request) {
