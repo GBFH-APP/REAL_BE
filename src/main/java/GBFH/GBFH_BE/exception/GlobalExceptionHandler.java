@@ -10,6 +10,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestControllerAdvice // 컨트롤러 전역에서 발생하는 예외를 처리
 @Slf4j
 public class GlobalExceptionHandler {
@@ -17,17 +20,16 @@ public class GlobalExceptionHandler {
      * 입력값 검증
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        BindingResult bindingResult = e.getBindingResult();
-        StringBuilder builder = new StringBuilder();
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            builder.append(fieldError.getDefaultMessage());
-        }
-
-        log.error("handleMethodArgumentNotValidException : {}", builder.toString());
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
         return ResponseEntity
                 .status(ErrorCode.BAD_REQUEST.getStatus().value())
-                .body(new ErrorResponseDTO(ErrorCode.BAD_REQUEST, builder.toString()));
+                .body(new ErrorResponseDTO(ErrorCode.BAD_REQUEST, errors));
     }
 
     @ExceptionHandler(InvalidHostException.class)
