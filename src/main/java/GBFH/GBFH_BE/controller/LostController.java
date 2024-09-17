@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ResponseCode;
+import GBFH.GBFH_BE.dto.lost.CreateCommentDTO;
 import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
@@ -24,6 +25,7 @@ import java.util.List;
 public class LostController {
     private final LostService lostService;
 
+    // 분실물 생성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> createLost(
             @Valid @RequestPart("createLostDTO") CreateLostDTO createLostDTO,
@@ -38,6 +40,7 @@ public class LostController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LOST, res));
     }
 
+    // 분실물 전체 조회
     @GetMapping("/all")
     public ResponseEntity<ResponseDTO> getAllLosts() {
         List<GetLostDTO.LIST> res = lostService.getAllLosts();
@@ -47,6 +50,7 @@ public class LostController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
     }
 
+    // 분실물 상세 조회
     @GetMapping("/detail/{id}")
     public ResponseEntity<ResponseDTO> getDetailLosts(@PathVariable("id") Long id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -58,6 +62,7 @@ public class LostController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
     }
 
+    // 분실물 상태 별로 필터링
     @GetMapping
     public ResponseEntity<ResponseDTO> getLostsByStatus(@PathParam("status") String status) {
         List<GetLostDTO.LIST> res = lostService.getLostsByStatus(status);
@@ -65,6 +70,22 @@ public class LostController {
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
+    }
+
+    // 분실물 댓글 작성
+    @PostMapping("/{id}")
+    public ResponseEntity<ResponseDTO> createComment(
+            @Valid @RequestBody CreateCommentDTO createCommentDTO,
+            @PathVariable("id") Long id,
+            HttpServletRequest request ) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String clientIp = getClientIP(request);
+
+        CreateCommentDTO.Res res = lostService.createComment(id, username, createCommentDTO, clientIp);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_CREATE_LOST_COMMENT.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LOST_COMMENT, res));
     }
 
 

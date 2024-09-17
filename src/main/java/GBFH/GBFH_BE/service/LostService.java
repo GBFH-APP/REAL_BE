@@ -1,18 +1,17 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
+import GBFH.GBFH_BE.dto.lost.CreateCommentDTO;
 import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
-import GBFH.GBFH_BE.entity.Applicant;
-import GBFH.GBFH_BE.entity.Board;
-import GBFH.GBFH_BE.entity.BoardFile;
-import GBFH.GBFH_BE.entity.BoardId;
+import GBFH.GBFH_BE.entity.*;
 import GBFH.GBFH_BE.exception.InvalidHostException;
 import GBFH.GBFH_BE.exception.NotLostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.BoardFileRepository;
 import GBFH.GBFH_BE.repository.BoardRepository;
+import GBFH.GBFH_BE.repository.CommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +32,7 @@ public class LostService {
     private final BoardRepository boardRepository;
     private final ApplicantRepository applicantRepository;
     private final BoardFileRepository boardFileRepository;
+    private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -132,5 +132,18 @@ public class LostService {
         List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, status);
 
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CreateCommentDTO.Res createComment(Long id, String username, CreateCommentDTO createCommentDTO, String clientId) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Long grp = commentRepository.findMaxGrp() + 1;
+
+        Comment comment = CreateCommentDTO.mapToComment(createCommentDTO, id, grp, user.getNameKor(), user.getUserNo(), clientId);
+        Comment savedComment = commentRepository.save(comment);
+
+        return CreateCommentDTO.Res.mapToDTO(savedComment);
     }
 }
