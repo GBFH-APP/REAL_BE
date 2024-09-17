@@ -3,6 +3,7 @@ package GBFH.GBFH_BE.service;
 import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
 import GBFH.GBFH_BE.dto.lost.CreateCommentDTO;
 import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
+import GBFH.GBFH_BE.dto.lost.GetCommentDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 import GBFH.GBFH_BE.entity.*;
 import GBFH.GBFH_BE.exception.InvalidHostException;
@@ -125,7 +126,11 @@ public class LostService {
 
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
-        return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS);
+        // 댓글 모두 가져오기
+        List<Comment> comments = commentRepository.findByUpIdx(id);
+        List<GetCommentDTO> commentDTOS = comments.stream().map(GetCommentDTO::mapToDTO).toList();
+
+        return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS, commentDTOS);
     }
 
     public List<GetLostDTO.LIST> getLostsByStatus(String status) {
