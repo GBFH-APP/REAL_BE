@@ -106,12 +106,16 @@ public class LostService {
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
     }
 
+    @Transactional
     public GetLostDTO.DETAIL getDetailLost(Long id, String username) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
         Board lost = boardRepository.findByIdx(id)
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
+
+        // 조회수 증가
+        lost.readBoard();
 
         List<BoardFile> files = boardFileRepository.findAllByIdx(lost.getIdx());
         List<FileResponseDTO.FileDTO> fileDTOS = files.stream().map(FileResponseDTO::toDTO).toList();
