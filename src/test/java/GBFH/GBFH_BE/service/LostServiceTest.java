@@ -99,6 +99,21 @@ class LostServiceTest {
         assertEquals(3, losts.size(), "리스트의 크기는 3이어야 합니다.");
     }
 
+    @Test
+    void 조회수_증가() {
+        // given
+        createUser();
+        CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1", null);
+
+        // when
+        lostService.getDetailLost(res.getId(), "eunseo");
+
+        // then
+        Board board = boardRepository.findByIdx(res.getId()).get();
+        assertEquals(board.getRead(), 1, "조회수 1 증가");
+    }
+
 
     private void createUser() {
         Applicant applicant1 = Applicant.builder()
