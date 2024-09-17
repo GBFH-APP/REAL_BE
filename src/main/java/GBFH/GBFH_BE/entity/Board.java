@@ -179,4 +179,9 @@ public class Board {
         this.read = this.getRead() + 1;
         return this;
     }
+
+    // 삭제 처리
+    public void delete() {
+        this.trashYN = 'Y';
+    }
 }

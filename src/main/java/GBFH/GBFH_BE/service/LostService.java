@@ -111,7 +111,7 @@ public class LostService {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        Board lost = boardRepository.findByIdx(id)
+        Board lost = boardRepository.findByIdxAndTrashYN(id, 'N')
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 조회수 증가
@@ -197,5 +197,30 @@ public class LostService {
                 commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
             }
         }
+    }
+
+    @Transactional
+    public void deleteLost(Long boardId, String username) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
+                .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
+
+        // 자신이 작성한 글인가?
+        if(user.getUserNo().equals(lost.getCreateId())) {
+            // 댓글 조회
+            List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(boardId, "N", 1L);
+            comments.forEach(comment -> {
+                // 대댓글 조회
+                List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
+                // 대댓글 모두 삭제
+                commentReplies.forEach(Comment::delete);
+                // 댓글 삭제
+                comment.delete();
+            });
+        }
+
+        lost.delete();
     }
 }
