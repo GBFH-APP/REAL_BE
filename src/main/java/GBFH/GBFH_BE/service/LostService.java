@@ -113,12 +113,15 @@ public class LostService {
         Board lost = boardRepository.findByIdx(id)
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
+        List<BoardFile> files = boardFileRepository.findAllByIdx(lost.getIdx());
+        List<FileResponseDTO.FileDTO> fileDTOS = files.stream().map(FileResponseDTO::toDTO).toList();
+
         if(!lost.getBoardId().toString().equals("lost"))
             throw new NotLostException("분실물 글이 아닙니다.");
 
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
-        return GetLostDTO.DETAIL.mapToDTO(lost, permission);
+        return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS);
     }
 
     public List<GetLostDTO.LIST> getLostsByStatus(String status) {
