@@ -4,6 +4,7 @@ import GBFH.GBFH_BE.code.ResponseCode;
 import GBFH.GBFH_BE.dto.lost.CreateCommentDTO;
 import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
+import GBFH.GBFH_BE.dto.lost.UpdateLostStatusDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LostService;
 import jakarta.validation.Valid;
@@ -130,6 +131,20 @@ public class LostController {
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_DELETE_LOST.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LOST, null));
+    }
+
+    // 분실물 상태 수정
+    @PutMapping("/{boardId}")
+    public ResponseEntity<ResponseDTO> updateLost(
+            @PathVariable("boardId") Long boardId,
+            @RequestBody UpdateLostStatusDTO updateLostStatusDTO) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UpdateLostStatusDTO.Res res = lostService.updateLost(boardId, username, updateLostStatusDTO);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_DELETE_LOST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LOST, res));
     }
 
     private static String getClientIP(HttpServletRequest request) {

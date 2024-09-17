@@ -1,5 +1,6 @@
 package GBFH.GBFH_BE.entity;
 
+import GBFH.GBFH_BE.dto.lost.UpdateLostStatusDTO;
 import jakarta.persistence.*;
 import jdk.jfr.Unsigned;
 import lombok.AllArgsConstructor;
@@ -183,5 +184,10 @@ public class Board {
     // 삭제 처리
     public void delete() {
         this.trashYN = 'Y';
+    }
+
+    // status 업데이트
+    public void updateStatus(UpdateLostStatusDTO updateLostStatusDTO) {
+        this.status = updateLostStatusDTO.getStatus();
     }
 }
