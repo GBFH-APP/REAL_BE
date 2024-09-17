@@ -1,10 +1,7 @@
 package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ResponseCode;
-import GBFH.GBFH_BE.dto.lost.CreateCommentDTO;
-import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
-import GBFH.GBFH_BE.dto.lost.GetLostDTO;
-import GBFH.GBFH_BE.dto.lost.UpdateLostStatusDTO;
+import GBFH.GBFH_BE.dto.lost.*;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LostService;
 import jakarta.validation.Valid;
@@ -134,7 +131,7 @@ public class LostController {
     }
 
     // 분실물 상태 수정
-    @PutMapping("/{boardId}")
+    @PutMapping("/status/{boardId}")
     public ResponseEntity<ResponseDTO> updateLost(
             @PathVariable("boardId") Long boardId,
             @RequestBody UpdateLostStatusDTO updateLostStatusDTO) {
@@ -143,8 +140,26 @@ public class LostController {
         UpdateLostStatusDTO.Res res = lostService.updateLost(boardId, username, updateLostStatusDTO);
 
         return ResponseEntity
-                .status(ResponseCode.SUCCESS_DELETE_LOST.getStatus().value())
-                .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LOST, res));
+                .status(ResponseCode.SUCCESS_UPDATE_LOST_STATUS.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_UPDATE_LOST_STATUS, res));
+    }
+
+    // 분실물 글, 본문, 이미지 수정
+    @PutMapping(path = "/content/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> updateLostContent(
+            @PathVariable("boardId") Long boardId,
+            @RequestPart("updateLostContentDTO") UpdateLostContentDTO updateLostContentDTO,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestPart(value = "deleteFiles", required = false) List<String> deleteFiles,
+            HttpServletRequest request ) throws IOException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String clientIp = getClientIP(request);
+
+        UpdateLostContentDTO.Res res = lostService.updateLostContent(boardId, username, updateLostContentDTO, files, deleteFiles, clientIp);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_UPDATE_LOST_CONTENT.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_UPDATE_LOST_CONTENT, res));
     }
 
     private static String getClientIP(HttpServletRequest request) {

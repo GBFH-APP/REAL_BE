@@ -66,4 +66,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.COMMENT_NOT_FOUND.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.COMMENT_NOT_FOUND));
     }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleFileNotFoundException(final FileNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.FILE_NOT_FOUND.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.FILE_NOT_FOUND));
+    }
 }
