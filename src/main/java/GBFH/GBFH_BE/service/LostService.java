@@ -181,16 +181,19 @@ public class LostService {
         Comment comment = commentRepository.findByIdxAndDelYN(commentId, "N")
                 .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
 
-        // 삭제 가능한가?
-        if(comment.getCreateId().equals(user.getUserNo())) {
-            comment.delete();
-            // 상위 댓글인가? (대댓글이 아닌가?)
-            if(comment.getLvl() == 1L) {
-                // 대댓글 조회
-                List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
-                commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
-            }
+        // 글 작성자인가?
+        if(!comment.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
         }
+
+        comment.delete();
+        // 상위 댓글인가? (대댓글이 아닌가?)
+        if(comment.getLvl() == 1L) {
+            // 대댓글 조회
+            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
+            commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
+        }
+
     }
 
     @Transactional
@@ -201,19 +204,22 @@ public class LostService {
         Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
-        // 자신이 작성한 글인가?
-        if(user.getUserNo().equals(lost.getCreateId())) {
-            // 댓글 조회
-            List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(boardId, "N", 1L);
-            comments.forEach(comment -> {
-                // 대댓글 조회
-                List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
-                // 대댓글 모두 삭제
-                commentReplies.forEach(Comment::delete);
-                // 댓글 삭제
-                comment.delete();
-            });
+        // 글 작성자인가?
+        if(!lost.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
         }
+
+        // 댓글 조회
+        List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(boardId, "N", 1L);
+        comments.forEach(comment -> {
+            // 대댓글 조회
+            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
+            // 대댓글 모두 삭제
+            commentReplies.forEach(Comment::delete);
+            // 댓글 삭제
+            comment.delete();
+        });
+
 
         lost.delete();
     }
@@ -227,10 +233,12 @@ public class LostService {
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 글 작성자인가?
-        if(lost.getCreateId().equals(user.getUserNo())) {
-            lost.updateStatus(updateLostStatusDTO);
+        if(!lost.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
         }
 
+        // 상태 변경
+        lost.updateStatus(updateLostStatusDTO);
         return UpdateLostStatusDTO.mapToDTO(lost);
     }
 
@@ -243,28 +251,31 @@ public class LostService {
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 글 작성자인가?
-        if(lost.getCreateId().equals(user.getUserNo())) {
-            // 내용 업데이트
-            lost.updateContent(updateLostContentDTO);
-
-            // imageUrls 비어있지 않다면 -> 삭제
-            // 해당 url 이미지 객체를 찾아서 삭제, s3에도 삭제
-            // 아예 삭제해버림!
-
-            if(deleteFiles != null) {
-                System.out.println("in");
-                deleteFiles.forEach(fileId -> {
-                    BoardFile file = boardFileRepository.findByFileId(fileId)
-                            .orElseThrow(() -> new FileNotFoundException("이미지를 찾을 수 없습니다."));
-
-                    // s3에 이미지 삭제
-                    s3Uploader.deleteFile(fileId);
-
-                    // 데이터베이스에서 이미지 데이터 삭제
-                    boardFileRepository.delete(file);
-                });
-            }
+        if(!lost.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
         }
+
+        // 내용 업데이트
+        lost.updateContent(updateLostContentDTO);
+
+        // imageUrls 비어있지 않다면 -> 삭제
+        // 해당 url 이미지 객체를 찾아서 삭제, s3에도 삭제
+        // 아예 삭제해버림!
+
+        if(deleteFiles != null) {
+            System.out.println("in");
+            deleteFiles.forEach(fileId -> {
+                BoardFile file = boardFileRepository.findByFileId(fileId)
+                        .orElseThrow(() -> new FileNotFoundException("이미지를 찾을 수 없습니다."));
+
+                // s3에 이미지 삭제
+                s3Uploader.deleteFile(fileId);
+
+                // 데이터베이스에서 이미지 데이터 삭제
+                boardFileRepository.delete(file);
+            });
+        }
+
 
         // files가 비어있지 않다면 -> 새로 추가
         List<String> urls = new ArrayList<>();
