@@ -61,8 +61,8 @@ public class LostService {
         // BoardFile 저장
         // idx(max)로 파일 id 부여 > seq 자동 1 증가 > file_id에는 파일명 저장
 
-        Long IDX = boardRepository.findMaxIdx();
-        Long grp = boardRepository.findMaxGrp();
+        Long IDX = boardRepository.findMaxIdx() + 1;
+        Long grp = boardRepository.findMaxGrp() + 1;
 
         System.out.println(urls);
 
@@ -92,7 +92,7 @@ public class LostService {
 
         // 첫 번째 file_id board에 있는 filee_id 필드에 저장
         try {
-            Board lost = CreateLostDTO.mapToBoard(createLostDTO, IDX + 1, grp + 1, user.getNameKor(), user.getUserNo(), clientIp, url);
+            Board lost = CreateLostDTO.mapToBoard(createLostDTO, IDX, grp, user.getNameKor(), user.getUserNo(), clientIp, url);
             Board savedLost = boardRepository.save(lost);
             return CreateLostDTO.Res.mapToDTO(savedLost, fileDTOList);
 
@@ -102,8 +102,7 @@ public class LostService {
     }
 
     public List<GetLostDTO.LIST> getAllLosts() {
-        List<Board> losts = boardRepository.findAlByBoardIdOrderByIdxDesc(BoardId.lost);
-
+        List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId.lost, 'N');
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
     }
 
@@ -114,12 +113,15 @@ public class LostService {
         Board lost = boardRepository.findByIdx(id)
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
+        List<BoardFile> files = boardFileRepository.findAllByIdx(lost.getIdx());
+        List<FileResponseDTO.FileDTO> fileDTOS = files.stream().map(FileResponseDTO::toDTO).toList();
+
         if(!lost.getBoardId().toString().equals("lost"))
             throw new NotLostException("분실물 글이 아닙니다.");
 
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
-        return GetLostDTO.DETAIL.mapToDTO(lost, permission);
+        return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS);
     }
 
     public List<GetLostDTO.LIST> getLostsByStatus(String status) {

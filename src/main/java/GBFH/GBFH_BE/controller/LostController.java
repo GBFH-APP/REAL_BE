@@ -5,6 +5,7 @@ import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LostService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ public class LostController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> createLost(
-            @RequestPart("createLostDTO") CreateLostDTO createLostDTO,
+            @Valid @RequestPart("createLostDTO") CreateLostDTO createLostDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             HttpServletRequest request) throws IOException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

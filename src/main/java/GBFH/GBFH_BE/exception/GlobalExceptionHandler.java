@@ -43,4 +43,18 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.NOT_LOST_POST.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.NOT_LOST_POST));
     }
+
+    @ExceptionHandler(PostNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handlePostNotFoundException(final PostNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.POST_NOT_FOUND.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.POST_NOT_FOUND));
+    }
+
+    @ExceptionHandler(WrongPaginationException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleWrongPaginationException(final WrongPaginationException e) {
+        return ResponseEntity
+                .status(ErrorCode.WRONG_PAGINATION.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.WRONG_PAGINATION));
+    }
 }
