@@ -3,6 +3,8 @@ package GBFH.GBFH_BE.dto.lost;
 import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +18,11 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class CreateLostDTO {
+    @NotEmpty(message = "제목은 필수 입력 값입니다.")
     private String title;
+    @NotEmpty(message = "본문은 필수 입력 값입니다.")
     private String contents;
+    @NotNull(message = "상태는 필수 입력 값입니다.")
     private String status;
 
     public static Board mapToBoard(CreateLostDTO createLostDTO, Long IDX, Long grp, String username, String userNo, String clientIp, String url) throws UnknownHostException {

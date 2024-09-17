@@ -14,6 +14,7 @@ public enum ErrorCode {
     NOT_LOST_POST(HttpStatus.BAD_REQUEST, "분실물 글이 아닙니다."),
 
 
+
     /**
      * 401 UNAUTHORIZED: 토큰 만료
      */
@@ -27,6 +28,7 @@ public enum ErrorCode {
      * 404 NOT_FOUND: 리소스를 찾을 수 없음
      */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "글을 찾을 수 없습니다."),
 
     /**
      * 406
