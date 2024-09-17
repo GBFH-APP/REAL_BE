@@ -223,4 +223,20 @@ public class LostService {
 
         lost.delete();
     }
+
+    @Transactional
+    public UpdateLostStatusDTO.Res updateLost(Long boardId, String username, UpdateLostStatusDTO updateLostStatusDTO) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
+                .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
+
+        // 글 작성자인가?
+        if(lost.getCreateId().equals(user.getUserNo())) {
+            lost.updateStatus(updateLostStatusDTO);
+        }
+
+        return UpdateLostStatusDTO.mapToDTO(lost);
+    }
 }
