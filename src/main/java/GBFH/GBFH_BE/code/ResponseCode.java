@@ -38,6 +38,8 @@ public enum ResponseCode {
     SUCCESS_CREATE_LOST_COMMENT_REPLY(HttpStatus.CREATED, "분실물 대댓글을 성공적으로 저장했습니다."),
     SUCCESS_DELETE_LOST_COMMENT(HttpStatus.OK, "분실물 댓글 및 대댓글을 성공적으로 삭제했습니다."),
     SUCCESS_DELETE_LOST(HttpStatus.OK, "분실물 글을 성공적으로 삭제했습니다."),
+    SUCCESS_UPDATE_LOST_STATUS(HttpStatus.OK, "분실물 상태를 성공적으로 수정했습니다."),
+    SUCCESS_UPDATE_LOST_CONTENT(HttpStatus.OK, "분실물 본문을 성공적으로 수정했습니다."),
 
     ;
 

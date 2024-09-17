@@ -25,11 +25,17 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다."),
 
     /**
+     * 403
+     */
+    HAVE_NO_PERMISSION(HttpStatus.UNAUTHORIZED, "작성자가 아닙니다."),
+
+    /**
      * 404 NOT_FOUND: 리소스를 찾을 수 없음
      */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "글을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
 
     /**
      * 406

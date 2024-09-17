@@ -66,4 +66,18 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.COMMENT_NOT_FOUND.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.COMMENT_NOT_FOUND));
     }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleFileNotFoundException(final FileNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.FILE_NOT_FOUND.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.FILE_NOT_FOUND));
+    }
+
+    @ExceptionHandler(NoPermissionException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleNoPermissionException(final NoPermissionException e) {
+        return ResponseEntity
+                .status(ErrorCode.HAVE_NO_PERMISSION.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.HAVE_NO_PERMISSION));
+    }
 }

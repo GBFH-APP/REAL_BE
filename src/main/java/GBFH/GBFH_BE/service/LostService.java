@@ -3,10 +3,7 @@ package GBFH.GBFH_BE.service;
 import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
 import GBFH.GBFH_BE.dto.lost.*;
 import GBFH.GBFH_BE.entity.*;
-import GBFH.GBFH_BE.exception.CommentNotFoundException;
-import GBFH.GBFH_BE.exception.InvalidHostException;
-import GBFH.GBFH_BE.exception.NotLostException;
-import GBFH.GBFH_BE.exception.PostNotFoundException;
+import GBFH.GBFH_BE.exception.*;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.BoardFileRepository;
 import GBFH.GBFH_BE.repository.BoardRepository;
@@ -64,15 +61,12 @@ public class LostService {
         Long IDX = boardRepository.findMaxIdx() + 1;
         Long grp = boardRepository.findMaxGrp() + 1;
 
-        System.out.println(urls);
-
         List<BoardFile> boardFiles = new ArrayList<>();
 
         if(!urls.isEmpty()) {
             Long fileSeq = 1L;
 
             for(String url : urls) {
-                System.out.println("in");
                 BoardFile boardFile = BoardFile.builder()
                         .fileId(url)
                         .idx(IDX)
@@ -187,16 +181,19 @@ public class LostService {
         Comment comment = commentRepository.findByIdxAndDelYN(commentId, "N")
                 .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
 
-        // 삭제 가능한가?
-        if(comment.getCreateId().equals(user.getUserNo())) {
-            comment.delete();
-            // 상위 댓글인가? (대댓글이 아닌가?)
-            if(comment.getLvl() == 1L) {
-                // 대댓글 조회
-                List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
-                commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
-            }
+        // 글 작성자인가?
+        if(!comment.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
         }
+
+        comment.delete();
+        // 상위 댓글인가? (대댓글이 아닌가?)
+        if(comment.getLvl() == 1L) {
+            // 대댓글 조회
+            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
+            commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
+        }
+
     }
 
     @Transactional
@@ -207,19 +204,22 @@ public class LostService {
         Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
-        // 자신이 작성한 글인가?
-        if(user.getUserNo().equals(lost.getCreateId())) {
-            // 댓글 조회
-            List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(boardId, "N", 1L);
-            comments.forEach(comment -> {
-                // 대댓글 조회
-                List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
-                // 대댓글 모두 삭제
-                commentReplies.forEach(Comment::delete);
-                // 댓글 삭제
-                comment.delete();
-            });
+        // 글 작성자인가?
+        if(!lost.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
         }
+
+        // 댓글 조회
+        List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(boardId, "N", 1L);
+        comments.forEach(comment -> {
+            // 대댓글 조회
+            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
+            // 대댓글 모두 삭제
+            commentReplies.forEach(Comment::delete);
+            // 댓글 삭제
+            comment.delete();
+        });
+
 
         lost.delete();
     }
@@ -233,10 +233,103 @@ public class LostService {
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 글 작성자인가?
-        if(lost.getCreateId().equals(user.getUserNo())) {
-            lost.updateStatus(updateLostStatusDTO);
+        if(!lost.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
         }
 
+        // 상태 변경
+        lost.updateStatus(updateLostStatusDTO);
         return UpdateLostStatusDTO.mapToDTO(lost);
+    }
+
+    @Transactional
+    public UpdateLostContentDTO.Res updateLostContent(Long boardId, String username, UpdateLostContentDTO updateLostContentDTO, List<MultipartFile> files, List<String> deleteFiles, String clientIp) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
+                .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
+
+        // 글 작성자인가?
+        if(!lost.getCreateId().equals(user.getUserNo())) {
+            throw new NoPermissionException("작성자가 아닙니다.");
+        }
+
+        // 내용 업데이트
+        lost.updateContent(updateLostContentDTO);
+
+        // imageUrls 비어있지 않다면 -> 삭제
+        // 해당 url 이미지 객체를 찾아서 삭제, s3에도 삭제
+        // 아예 삭제해버림!
+
+        if(deleteFiles != null) {
+            System.out.println("in");
+            deleteFiles.forEach(fileId -> {
+                BoardFile file = boardFileRepository.findByFileId(fileId)
+                        .orElseThrow(() -> new FileNotFoundException("이미지를 찾을 수 없습니다."));
+
+                // s3에 이미지 삭제
+                s3Uploader.deleteFile(fileId);
+
+                // 데이터베이스에서 이미지 데이터 삭제
+                boardFileRepository.delete(file);
+            });
+        }
+
+
+        // files가 비어있지 않다면 -> 새로 추가
+        List<String> urls = new ArrayList<>();
+        if(files != null && !files.isEmpty()) {
+
+            if (files != null) {
+                urls = files.stream().map(multipartFile -> {
+                    try {
+                        String url = s3Uploader.upload(multipartFile, "lost");
+                        log.info("S3 업로드 성공: " + url);
+                        return url;
+                    } catch (IOException e) {
+                        log.error("S3 업로드 실패: " + multipartFile.getOriginalFilename(), e);
+                        throw new RuntimeException("S3 업로드 실패", e);
+                    }
+                }).toList();
+            } else {
+                log.info("업로드할 파일이 제공되지 않았습니다.");
+            }
+        }
+
+        List<BoardFile> boardFiles = new ArrayList<>();
+
+        // 데이터베이스 저장
+        if(!urls.isEmpty()) {
+            // boardId 파일 중 가장 큰 seq 값 + 1
+            Long fileSeq = boardFileRepository.findMaxGrpByIdx(boardId) + 1;
+
+            for(String url : urls) {
+                BoardFile boardFile = BoardFile.builder()
+                        .fileId(url)
+                        .idx(boardId)
+                        .seq(fileSeq++)
+                        .createIp(clientIp)
+                        .build();
+
+                boardFiles.add(boardFile);
+            }
+        }
+
+        boardFileRepository.saveAll(boardFiles);
+
+        // 전체 조회
+        List<BoardFile> savedFiles  = boardFileRepository.findAllByIdx(boardId);
+        System.out.println("savedFiles : " + savedFiles);
+        List<FileResponseDTO.FileDTO> fileDTOList = savedFiles.stream().map(FileResponseDTO::toDTO).toList();
+
+        // 첫 이미지가 변경되었는가?
+        if(!lost.getFileId().equals(savedFiles.get(0).getFileId())) {
+            // 첫 번째 이미지 갱신
+            lost.updateTitleImage(savedFiles.get(0).getFileId());
+        }
+
+        // 변경된 내용 반영하여 응답
+        return  UpdateLostContentDTO.Res.mapToDTO(lost, fileDTOList);
     }
 }

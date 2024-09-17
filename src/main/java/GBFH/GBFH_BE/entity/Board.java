@@ -1,5 +1,6 @@
 package GBFH.GBFH_BE.entity;
 
+import GBFH.GBFH_BE.dto.lost.UpdateLostContentDTO;
 import GBFH.GBFH_BE.dto.lost.UpdateLostStatusDTO;
 import jakarta.persistence.*;
 import jdk.jfr.Unsigned;
@@ -189,5 +190,15 @@ public class Board {
     // status 업데이트
     public void updateStatus(UpdateLostStatusDTO updateLostStatusDTO) {
         this.status = updateLostStatusDTO.getStatus();
+    }
+
+    // title, content 업데이터
+    public void updateContent(UpdateLostContentDTO updateLostContentDTO) {
+        this.title = updateLostContentDTO.getTitle() == null ? this.title : updateLostContentDTO.getTitle();
+        this.contents = updateLostContentDTO.getContents() == null ? this.contents : updateLostContentDTO.getContents();
+    }
+
+    public void updateTitleImage(String fileId) {
+        this.fileId = fileId;
     }
 }
