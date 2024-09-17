@@ -90,7 +90,7 @@ public class LostController {
 
     // 대댓글 작성
     @PostMapping("/{boardId}/reply/{commentId}") // 댓글의 id를 넣음
-    public ResponseEntity<ResponseDTO> createComment(
+    public ResponseEntity<ResponseDTO> createCommentReply(
             @Valid @RequestBody CreateCommentDTO createCommentDTO,
             @PathVariable("boardId") Long boardId,
             @PathVariable("commentId") Long commentId,
@@ -105,6 +105,19 @@ public class LostController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LOST_COMMENT_REPLY, res));
     }
 
+    // 대댓글 및 댓글 삭제
+    @DeleteMapping("/{boardId}/comment/{commentId}")
+    public ResponseEntity<ResponseDTO> deleteCommentReply(
+            @PathVariable("boardId") Long boardId,
+            @PathVariable("commentId") Long commentId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        lostService.deleteCommentReply(boardId, commentId, username);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_DELETE_LOST_COMMENT.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LOST_COMMENT, null));
+    }
 
     private static String getClientIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
