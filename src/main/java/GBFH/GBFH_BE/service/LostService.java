@@ -168,7 +168,7 @@ public class LostService {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        Comment comment = commentRepository.findByIdx(commentId)
+        Comment comment = commentRepository.findByIdxAndDelYN(commentId, "N")
                 .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
 
         Long grp = comment.getGrp(); // 댓글과 동일한 그룹을 가짐
@@ -177,5 +177,25 @@ public class LostService {
         Comment savedComment = commentRepository.save(createdComment);
 
         return CreateCommentDTO.Res.mapToDTO(savedComment);
+    }
+
+    @Transactional
+    public void deleteCommentReply(Long boardId, Long commentId, String username) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Comment comment = commentRepository.findByIdxAndDelYN(commentId, "N")
+                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
+
+        // 삭제 가능한가?
+        if(comment.getCreateId().equals(user.getUserNo())) {
+            comment.delete();
+            // 상위 댓글인가? (대댓글이 아닌가?)
+            if(comment.getLvl() == 1L) {
+                // 대댓글 조회
+                List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
+                commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
+            }
+        }
     }
 }

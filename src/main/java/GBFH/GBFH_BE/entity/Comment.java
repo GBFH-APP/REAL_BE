@@ -60,4 +60,9 @@ public class Comment {
     // 등록자 아이피
     @Column(name = "C_CREATE_IP", length = 40)
     private String createIP;
+
+    // 삭제 처리 (휴지통)
+    public void delete() {
+        this.delYN = "Y";
+    }
 }
