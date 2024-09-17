@@ -1,19 +1,18 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
-import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
-import GBFH.GBFH_BE.dto.lost.GetLostDTO;
-import GBFH.GBFH_BE.entity.Applicant;
-import GBFH.GBFH_BE.entity.Board;
-import GBFH.GBFH_BE.entity.BoardFile;
-import GBFH.GBFH_BE.entity.BoardId;
+import GBFH.GBFH_BE.dto.lost.*;
+import GBFH.GBFH_BE.entity.*;
+import GBFH.GBFH_BE.exception.CommentNotFoundException;
 import GBFH.GBFH_BE.exception.InvalidHostException;
 import GBFH.GBFH_BE.exception.NotLostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.BoardFileRepository;
 import GBFH.GBFH_BE.repository.BoardRepository;
+import GBFH.GBFH_BE.repository.CommentRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,6 +32,7 @@ public class LostService {
     private final BoardRepository boardRepository;
     private final ApplicantRepository applicantRepository;
     private final BoardFileRepository boardFileRepository;
+    private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -106,12 +106,16 @@ public class LostService {
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
     }
 
+    @Transactional
     public GetLostDTO.DETAIL getDetailLost(Long id, String username) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
         Board lost = boardRepository.findByIdx(id)
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
+
+        // 조회수 증가
+        lost.readBoard();
 
         List<BoardFile> files = boardFileRepository.findAllByIdx(lost.getIdx());
         List<FileResponseDTO.FileDTO> fileDTOS = files.stream().map(FileResponseDTO::toDTO).toList();
@@ -121,12 +125,57 @@ public class LostService {
 
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
-        return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS);
+        // 댓글 모두 가져오기 - lvl = 1
+        List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(id, "N", 1L);
+
+        // 댓글 수정 권한 확인 permission 추가 (true이면 내가 작성한 글, false 이면 내가 작성하지 않은 글)
+        List<GetCommentDTO> commentDTOS = comments.stream().map(comment -> {
+            Boolean commentPermission = comment.getCreateId().equals(user.getUserNo());
+
+            // 대댓글 조회
+            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(id, "N", 2L, comment.getGrp());
+            List<GetReplyDTO> commentReplyDTOS = commentReplies.stream().map(reply -> {
+                Boolean replyPermission = comment.getCreateId().equals(user.getUserNo());
+                return GetReplyDTO.mapToReplyDTO(reply, replyPermission);
+            }).toList();
+
+            return GetCommentDTO.mapToCommentDTO(comment, commentPermission, commentReplyDTOS);
+        }).toList();
+
+        return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS, commentDTOS);
     }
 
     public List<GetLostDTO.LIST> getLostsByStatus(String status) {
         List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, status);
 
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CreateCommentDTO.Res createComment(Long id, String username, CreateCommentDTO createCommentDTO, String clientId) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Long grp = commentRepository.findMaxGrp() + 1;
+
+        Comment comment = CreateCommentDTO.mapToComment(createCommentDTO, id, grp, user.getNameKor(), user.getUserNo(), clientId);
+        Comment savedComment = commentRepository.save(comment);
+
+        return CreateCommentDTO.Res.mapToDTO(savedComment);
+    }
+
+    public CreateCommentDTO.Res createReply(Long boardId, Long commentId, String username, @Valid CreateCommentDTO createCommentDTO, String clientIp) {
+        Applicant user = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Comment comment = commentRepository.findByIdx(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
+
+        Long grp = comment.getGrp(); // 댓글과 동일한 그룹을 가짐
+
+        Comment createdComment = CreateCommentDTO.mapToCommentReply(createCommentDTO, boardId, grp, user.getNameKor(), user.getUserNo(), clientIp);
+        Comment savedComment = commentRepository.save(createdComment);
+
+        return CreateCommentDTO.Res.mapToDTO(savedComment);
     }
 }

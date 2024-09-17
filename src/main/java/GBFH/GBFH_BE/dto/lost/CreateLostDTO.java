@@ -88,9 +88,8 @@ public class CreateLostDTO {
         private String contents;
         private String boardId;
         private String status;
-        private String createId;
-        private String createIP;
         private LocalDateTime createDT;
+        private String writer;
         private List<FileResponseDTO.FileDTO> files;
 
         public static Res mapToDTO(Board board, List<FileResponseDTO.FileDTO> files) {
@@ -100,9 +99,8 @@ public class CreateLostDTO {
                     .contents(board.getContents())
                     .boardId(board.getBoardId().name())
                     .status(board.getStatus())
-                    .createId(board.getCreateId())
-                    .createIP(board.getCreateIP())
                     .createDT(board.getCreateDT())
+                    .writer(board.getMaskWriter())
                     .files(files)
                     .build();
         }

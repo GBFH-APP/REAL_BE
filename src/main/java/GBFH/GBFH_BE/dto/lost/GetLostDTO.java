@@ -52,8 +52,10 @@ public class GetLostDTO {
         private Boolean permission;
         // 이미지 추가해야 함
         private List<FileResponseDTO.FileDTO> files;
+        // 댓글
+        private List<GetCommentDTO> comments;
 
-        public static DETAIL mapToDTO(Board board, Boolean permission, List<FileResponseDTO.FileDTO> files) {
+        public static DETAIL mapToDTO(Board board, Boolean permission, List<FileResponseDTO.FileDTO> files, List<GetCommentDTO> comments) {
             return DETAIL.builder()
                     .id(board.getIdx())
                     .title(board.getTitle())
@@ -63,6 +65,7 @@ public class GetLostDTO {
                     .createDT(board.getCreateDT())
                     .permission(permission)
                     .files(files)
+                    .comments(comments)
                     .build();
         }
 
