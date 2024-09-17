@@ -332,4 +332,11 @@ public class LostService {
         // 변경된 내용 반영하여 응답
         return  UpdateLostContentDTO.Res.mapToDTO(lost, fileDTOList);
     }
+
+    public List<GetLostDTO.LIST> getAllBySearch(String q) {
+        // 분실물 검색 일단 title과 content에 문자열을 포함하는 조건으로 진행함
+        List<Board> losts = boardRepository.findByBoardIdAndTitleOrContentsContainingAndOrderByCreateDTDesc(BoardId.lost, q);
+
+        return losts.stream().map(GetLostDTO.LIST::mapToDTO).toList();
+    }
 }

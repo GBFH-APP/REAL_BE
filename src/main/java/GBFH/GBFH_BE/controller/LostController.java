@@ -162,6 +162,15 @@ public class LostController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_UPDATE_LOST_CONTENT, res));
     }
 
+    // 분실물 검색
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDTO> getAllBySearch(@RequestParam("q") String q) {
+        List<GetLostDTO.LIST> res = lostService.getAllBySearch(q);
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
+    }
+
     private static String getClientIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
