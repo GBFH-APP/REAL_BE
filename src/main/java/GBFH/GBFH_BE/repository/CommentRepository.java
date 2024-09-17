@@ -12,6 +12,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT COALESCE(MAX(e.grp), 0) FROM Comment e")
     Long findMaxGrp();
 
-    List<Comment> findByUpIdxAndDelYN(Long upIdx, String DelYN);
+    // 댓글 조회
+    List<Comment> findByUpIdxAndDelYNAndLvl(Long upIdx, String DelYN, Long lvl);
+
+    // 대댓글 조회
+    List<Comment> findByUpIdxAndDelYNAndLvlAndGrp(Long upIdx, String DelYN, Long lvl, Long grp);
+
     Optional<Comment> findByIdx(Long Idx);
 }

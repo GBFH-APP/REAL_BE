@@ -29,7 +29,7 @@ public class Comment {
     @Column(name = "C_LVL")
     private Long lvl;
 
-    // 부모글 관리 번호
+    // 부모글 관리 번호 -> 여기에 BoardIdx 저장해둠
     @Column(name = "C_UP_IDX")
     private Long upIdx;
 

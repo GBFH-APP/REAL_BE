@@ -1,10 +1,7 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
-import GBFH.GBFH_BE.dto.lost.CreateCommentDTO;
-import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
-import GBFH.GBFH_BE.dto.lost.GetCommentDTO;
-import GBFH.GBFH_BE.dto.lost.GetLostDTO;
+import GBFH.GBFH_BE.dto.lost.*;
 import GBFH.GBFH_BE.entity.*;
 import GBFH.GBFH_BE.exception.CommentNotFoundException;
 import GBFH.GBFH_BE.exception.InvalidHostException;
@@ -128,13 +125,21 @@ public class LostService {
 
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
-        // 댓글 모두 가져오기
-        List<Comment> comments = commentRepository.findByUpIdxAndDelYN(id, "N");
+        // 댓글 모두 가져오기 - lvl = 1
+        List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(id, "N", 1L);
 
         // 댓글 수정 권한 확인 permission 추가 (true이면 내가 작성한 글, false 이면 내가 작성하지 않은 글)
         List<GetCommentDTO> commentDTOS = comments.stream().map(comment -> {
             Boolean commentPermission = comment.getCreateId().equals(user.getUserNo());
-            return GetCommentDTO.mapToDTO(comment, commentPermission);
+
+            // 대댓글 조회
+            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(id, "N", 2L, comment.getGrp());
+            List<GetReplyDTO> commentReplyDTOS = commentReplies.stream().map(reply -> {
+                Boolean replyPermission = comment.getCreateId().equals(user.getUserNo());
+                return GetReplyDTO.mapToReplyDTO(reply, replyPermission);
+            }).toList();
+
+            return GetCommentDTO.mapToCommentDTO(comment, commentPermission, commentReplyDTOS);
         }).toList();
 
         return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS, commentDTOS);
@@ -166,7 +171,7 @@ public class LostService {
         Comment comment = commentRepository.findByIdx(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
 
-        Long grp = comment.getGrp();
+        Long grp = comment.getGrp(); // 댓글과 동일한 그룹을 가짐
 
         Comment createdComment = CreateCommentDTO.mapToCommentReply(createCommentDTO, boardId, grp, user.getNameKor(), user.getUserNo(), clientIp);
         Comment savedComment = commentRepository.save(createdComment);
