@@ -37,7 +37,7 @@ class LostServiceTest {
         CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
 
         // when & then
-        assertThrows(UsernameNotFoundException.class, () -> lostService.createLost(createLostDTO1, "non_user", "127.0.0.1"));
+        assertThrows(UsernameNotFoundException.class, () -> lostService.createLost(createLostDTO1, "non_user", "127.0.0.1", null));
     }
 
     @Test
@@ -45,7 +45,7 @@ class LostServiceTest {
         // given
         createUser();
         CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
-        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1", null);
 
         // when
         Optional<Board> board = boardRepository.findByIdx(res.getId());
@@ -59,7 +59,7 @@ class LostServiceTest {
         // given
         createUser();
         CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
-        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1", null);
 
         // when
         GetLostDTO.DETAIL detail = lostService.getDetailLost(res.getId(), "eunseo");
@@ -73,7 +73,7 @@ class LostServiceTest {
         // given
         createUser();
         CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "분실");
-        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1", null);
 
         // when
         GetLostDTO.DETAIL detail = lostService.getDetailLost(res.getId(), "gyumin");
@@ -89,8 +89,8 @@ class LostServiceTest {
         CreateLostDTO createLostDTO1 = new CreateLostDTO("title", "content", "습득");
         CreateLostDTO createLostDTO2 = new CreateLostDTO("title", "content", "분실");
 
-        lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1");
-        lostService.createLost(createLostDTO2, "eunseo", "127.0.0.1");
+        lostService.createLost(createLostDTO1, "eunseo", "127.0.0.1", null);
+        lostService.createLost(createLostDTO2, "eunseo", "127.0.0.1", null);
 
         // when
         List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, "습득");

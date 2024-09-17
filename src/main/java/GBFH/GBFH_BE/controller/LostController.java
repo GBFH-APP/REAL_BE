@@ -7,11 +7,14 @@ import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LostService;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,12 +23,15 @@ import java.util.List;
 public class LostController {
     private final LostService lostService;
 
-    @PostMapping()
-    public ResponseEntity<ResponseDTO> createLost(@RequestBody CreateLostDTO createLostDTO, HttpServletRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> createLost(
+            @RequestPart("createLostDTO") CreateLostDTO createLostDTO,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            HttpServletRequest request) throws IOException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String clientIp = getClientIP(request);
 
-        CreateLostDTO.Res res = lostService.createLost(createLostDTO, username, clientIp);
+        CreateLostDTO.Res res = lostService.createLost(createLostDTO, username, clientIp, files);
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_CREATE_LOST.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LOST, res));
