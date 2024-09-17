@@ -88,6 +88,9 @@ public class LostController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LOST_COMMENT, res));
     }
 
+    // 대댓글 작성
+
+
 
     private static String getClientIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");

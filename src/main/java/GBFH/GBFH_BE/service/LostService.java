@@ -127,7 +127,7 @@ public class LostService {
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
         // 댓글 모두 가져오기
-        List<Comment> comments = commentRepository.findByUpIdx(id);
+        List<Comment> comments = commentRepository.findByUpIdxAndDelYN(id, "N");
 
         // 댓글 수정 권한 확인 permission 추가 (true이면 내가 작성한 글, false 이면 내가 작성하지 않은 글)
         List<GetCommentDTO> commentDTOS = comments.stream().map(comment -> {
