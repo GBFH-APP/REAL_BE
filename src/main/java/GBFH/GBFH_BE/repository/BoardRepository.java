@@ -16,6 +16,8 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Optional<Board> findByIdx(Long idx);
+    // trashYN 고려함
+    Optional<Board> findByIdxAndTrashYN(Long idx, Character trashYN);
     List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBefore(BoardId boardId, Integer noti, String now, String today);
 
     /**
@@ -23,7 +25,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      */
     List<Board> findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId boardId, Character trashYN);
     List<Board> findAllByBoardIdAndStatusOrderByIdxDesc(BoardId boardId, String status);
-
     List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(BoardId boardId, Integer noti, String now, String today);
 
     // idx 필드의 최대값을 조회

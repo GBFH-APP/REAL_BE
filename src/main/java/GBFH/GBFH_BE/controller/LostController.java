@@ -119,6 +119,19 @@ public class LostController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LOST_COMMENT, null));
     }
 
+    // 분실물 글 삭제
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<ResponseDTO> deleteCommentReply(
+            @PathVariable("boardId") Long boardId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        lostService.deleteLost(boardId, username);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_DELETE_LOST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LOST, null));
+    }
+
     private static String getClientIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
