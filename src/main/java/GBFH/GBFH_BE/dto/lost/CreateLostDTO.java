@@ -1,5 +1,6 @@
 package GBFH.GBFH_BE.dto.lost;
 
+import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -18,7 +20,7 @@ public class CreateLostDTO {
     private String contents;
     private String status;
 
-    public static Board mapToBoard(CreateLostDTO createLostDTO, Long IDX, Long grp, String username, String userNo, String clientIp) throws UnknownHostException {
+    public static Board mapToBoard(CreateLostDTO createLostDTO, Long IDX, Long grp, String username, String userNo, String clientIp, String url) throws UnknownHostException {
         return Board.builder()
                 .idx(IDX)
                 .grp(grp)
@@ -26,6 +28,7 @@ public class CreateLostDTO {
                 .lvl(1L)
                 .upIdx(0L)
                 .noti(0)
+                .fileId(url)
                 // noti start, noti end null 값
                 .best((byte) 0)
                 .sortNo(0L)
@@ -83,8 +86,9 @@ public class CreateLostDTO {
         private String createId;
         private String createIP;
         private LocalDateTime createDT;
+        private List<FileResponseDTO.FileDTO> files;
 
-        public static Res mapToDTO(Board board) {
+        public static Res mapToDTO(Board board, List<FileResponseDTO.FileDTO> files) {
             return Res.builder()
                     .id(board.getIdx())
                     .title(board.getTitle())
@@ -94,6 +98,7 @@ public class CreateLostDTO {
                     .createId(board.getCreateId())
                     .createIP(board.getCreateIP())
                     .createDT(board.getCreateDT())
+                    .files(files)
                     .build();
         }
     }
