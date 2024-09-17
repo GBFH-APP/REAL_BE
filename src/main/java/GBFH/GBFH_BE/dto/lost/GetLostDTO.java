@@ -21,6 +21,7 @@ public class GetLostDTO {
         private String status;
         private LocalDateTime createDT;
         // 이미지 추가해야 함
+        private String fildId;
 
         public static LIST mapToDTO(Board board) {
             return LIST.builder()
@@ -29,6 +30,7 @@ public class GetLostDTO {
                     .contents(board.getContents())
                     .status(board.getStatus())
                     .createDT(board.getCreateDT())
+                    .fildId(board.getFileId())
                     .build();
         }
     }
