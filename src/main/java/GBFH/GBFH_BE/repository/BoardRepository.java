@@ -21,7 +21,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     /**
      * lost
      */
-    List<Board> findAlByBoardIdOrderByIdxDesc(BoardId boardId);
+    List<Board> findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId boardId, Character trashYN);
     List<Board> findAllByBoardIdAndStatusOrderByIdxDesc(BoardId boardId, String status);
 
     List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(BoardId boardId, Integer noti, String now, String today);

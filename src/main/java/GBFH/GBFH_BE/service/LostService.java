@@ -102,7 +102,7 @@ public class LostService {
     }
 
     public List<GetLostDTO.LIST> getAllLosts() {
-        List<Board> losts = boardRepository.findAlByBoardIdOrderByIdxDesc(BoardId.lost);
+        List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId.lost, 'N');
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
     }
 
