@@ -160,7 +160,7 @@ public class Board {
     private LocalDateTime createDT; //작성일 - 시간은 안 보여주더라
 
     // 등록자 아이피
-    @Column(name = "CREATE_IP")
+    @Column(name = "CREATE_IP", length = 40)
     private String createIP;
 
     // 수정자
@@ -172,7 +172,7 @@ public class Board {
     private LocalDateTime updateDT; //작성일 - 시간은 안 보여주더라
 
     // 수정자 아이피
-    @Column(name = "UPDATE_IP")
+    @Column(name = "UPDATE_IP", length = 40)
     private String updateIP;
 
     public Board readBoard() {
