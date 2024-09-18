@@ -80,4 +80,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.HAVE_NO_PERMISSION.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.HAVE_NO_PERMISSION));
     }
+
+    @ExceptionHandler(MenuNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleMenuNotFoundException(final MenuNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.MENU_NOT_FOUND.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.MENU_NOT_FOUND));
+    }
 }

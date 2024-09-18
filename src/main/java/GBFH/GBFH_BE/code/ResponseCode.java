@@ -41,6 +41,10 @@ public enum ResponseCode {
     SUCCESS_UPDATE_LOST_STATUS(HttpStatus.OK, "분실물 상태를 성공적으로 수정했습니다."),
     SUCCESS_UPDATE_LOST_CONTENT(HttpStatus.OK, "분실물 본문을 성공적으로 수정했습니다."),
 
+    /**
+     * menu
+     */
+    SUCCESS_RETRIEVE_MENU(HttpStatus.OK, "메뉴를 성공적으로 조회했습니다."),
     ;
 
     private final HttpStatus status;
