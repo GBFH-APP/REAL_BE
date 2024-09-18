@@ -6,6 +6,7 @@ import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.ApplicantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,9 @@ public class ApplicationController {
 
     @GetMapping()
     public ResponseEntity<ResponseDTO<?>> getUserList() {
-        List<ApplicantDTO.Res> response = applicantService.getApplicants();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        ApplicantDTO.DetailRes response = applicantService.getApplicant(username);
 
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_USER.getStatus().value())
