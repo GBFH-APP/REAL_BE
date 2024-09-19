@@ -66,7 +66,7 @@ public class Lecture {
     private String regEndMinute;
 
     @Column(name = "REG_END_YN")
-    private Character regEnd;
+    private Character regIng;
 
     @Column(name = "QUOTA", length = 10)
     private Integer quota; //정원

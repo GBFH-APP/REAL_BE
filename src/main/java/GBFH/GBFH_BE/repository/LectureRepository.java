@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface LectureRepository extends JpaRepository<Lecture, String> {
-    List<Lecture> findAllByOpenOrderByCreateDtDesc(char open);
+    List<Lecture> findAllByOpenAndRegIngOrderByCreateDtDesc(char open, char regIng);
 
     @Override
     Optional<Lecture> findById(String s);

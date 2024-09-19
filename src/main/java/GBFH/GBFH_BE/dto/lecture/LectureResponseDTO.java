@@ -32,7 +32,7 @@ public class LectureResponseDTO {
     private String regStartDT; //시작 연월일
     private String regEndDT;
 
-    private Character regEnd;
+    private Character regIng;
     private Integer quota; //정원
 
     public static LectureResponseDTO toDto(Lecture lecture) {
@@ -48,7 +48,7 @@ public class LectureResponseDTO {
                 .regMethod(lecture.getRegMethod())
                 .regStartDT(lecture.getRegStartDt() + " " + lecture.getRegStartHour() + ":" + lecture.getRegStartMinute())
                 .regEndDT(lecture.getRegEndDt() + " " + lecture.getRegEndHour() + ":" + lecture.getRegEndMinute())
-                .regEnd(lecture.getRegEnd())
+                .regIng(lecture.getRegIng())
                 .quota(lecture.getQuota())
                 .build();
     }

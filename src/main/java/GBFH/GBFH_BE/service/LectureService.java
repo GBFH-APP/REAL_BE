@@ -21,8 +21,8 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final PaginateService paginateService;
 
-    public Page<LectureResponseDTO> getAllLecture(int page, int size) {
-        List<Lecture> lectures = lectureRepository.findAllByOpenOrderByCreateDtDesc('Y');
+    public Page<LectureResponseDTO> getAllLecture(char yorn, int page, int size) {
+        List<Lecture> lectures = lectureRepository.findAllByOpenAndRegIngOrderByCreateDtDesc('Y', yorn);
 
         if (lectures.isEmpty()) {
             throw new EmptyPostException("글이 비었습니다.");
@@ -39,4 +39,9 @@ public class LectureService {
 
         return LectureResponseDTO.toDto(lecture);
     }
+
+    // 달마다? 하나?
+
+
+    ///////////// 특강 신청
 }
