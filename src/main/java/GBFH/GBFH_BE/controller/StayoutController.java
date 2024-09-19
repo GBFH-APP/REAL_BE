@@ -40,8 +40,8 @@ public class StayoutController {
                                                         @RequestParam(defaultValue = "10") int size) {
         Page<StayoutResponseDTO> stayoutResponseDTOS = stayoutService.getAllStayout(customUserDetails.getUsername(), page, size);
         return ResponseEntity
-                .status(ResponseCode.SUCCESS_RETRIEVE_STAYOUT.getStatus().value())
-                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_STAYOUT, stayoutResponseDTOS));
+                .status(ResponseCode.SUCCESS_RETRIEVE_STAYOUT_LIST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_STAYOUT_LIST, stayoutResponseDTOS));
     }
 
     @PostMapping("/")
@@ -62,5 +62,13 @@ public class StayoutController {
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_USERINFO.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_USERINFO, userInfoDto));
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<ResponseDTO<?>> getStayoutDetail(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails ,@PathVariable Integer id) {
+        StayoutResponseDTO stayoutResponseDTO = stayoutService.getStayoutDetail(id, customUserDetails.getUsername());
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEE_STAYOUT_DETAIL.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEE_STAYOUT_DETAIL, stayoutResponseDTO));
     }
 }

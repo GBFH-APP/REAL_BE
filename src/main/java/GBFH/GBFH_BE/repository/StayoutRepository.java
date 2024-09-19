@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StayoutRepository extends JpaRepository<Stayout, StayoutPk> {
@@ -17,4 +18,6 @@ public interface StayoutRepository extends JpaRepository<Stayout, StayoutPk> {
     @Query("SELECT COALESCE(MAX(s.seq), 0) FROM Stayout s WHERE s.regiNo = :regi")
     Integer findMaxSeq(@Param("regi") String regi);
 
+    @Override
+    Optional<Stayout> findById(StayoutPk stayoutPk);
 }

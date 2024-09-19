@@ -5,7 +5,9 @@ import GBFH.GBFH_BE.dto.stayout.StayoutResponseDTO;
 import GBFH.GBFH_BE.entity.Applicant;
 import GBFH.GBFH_BE.entity.DormEnterSubmit;
 import GBFH.GBFH_BE.entity.Stayout;
+import GBFH.GBFH_BE.entity.StayoutPk;
 import GBFH.GBFH_BE.exception.EmptyPostException;
+import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.StayoutRepository;
@@ -66,6 +68,7 @@ public class StayoutService {
         Applicant applicant = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
+        //regi no 찾는 과정
         DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
 
         if (stayoutRepository.existsByRegiNo(dormEnterSubmit.getRegiNo())) {
@@ -75,6 +78,20 @@ public class StayoutService {
         }
         else {
             throw new EmptyPostException("외박 신청 글이 존재하지 않습니다.");
+        }
+    }
+
+    public StayoutResponseDTO getStayoutDetail(Integer id, String username) {
+        Applicant applicant = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+
+        if (stayoutRepository.findMaxSeq(dormEnterSubmit.getRegiNo()) >= id) {
+            Stayout stayout = stayoutRepository.getReferenceById(new StayoutPk(dormEnterSubmit.getRegiNo(), id));
+            return StayoutResponseDTO.toDTO(stayout);
+        } else {
+            throw new PostNotFoundException("아이디가 잘못됨.");
         }
     }
 }
