@@ -12,6 +12,7 @@ public enum ResponseCode {
      */
     SUCCESS_RETRIEVE_USER(HttpStatus.OK, "유저 조회를 성공했습니다."),
     SUCCESS_LOGIN(HttpStatus.OK, "로그인을 성공했습니다."),
+    SUCCESS_RETRIEVE_USERINFO(HttpStatus.OK,"유저 정보를 성공적으로 가져왔습니다."),
 
     /**
      * notice

@@ -6,7 +6,10 @@ import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutResponseDTO;
+import GBFH.GBFH_BE.dto.userInfo.UserInfoDto;
+import GBFH.GBFH_BE.exception.NotInDormException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
+import GBFH.GBFH_BE.service.ApplicantService;
 import GBFH.GBFH_BE.service.PaginateService;
 import GBFH.GBFH_BE.service.StayoutService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +31,7 @@ import static GBFH.GBFH_BE.util.NetworkUtils.getClientIP;
 @RequestMapping("/stayout")
 public class StayoutController {
     private final StayoutService stayoutService;
+    private final ApplicantService applicantService;
 
     @GetMapping("/all")
     //내 거 전체 가져옴
@@ -51,7 +55,12 @@ public class StayoutController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_STAYOUT, stayoutResponseDTO));
     }
 
-//    @GetMapping("/")
-//    public ResponseEntity<ResponseDTO<?>> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-//    }
+    @GetMapping("/")
+    public ResponseEntity<ResponseDTO<?>> getUserInfo(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        UserInfoDto userInfoDto = applicantService.getUserInfo(customUserDetails.getUsername());
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_USERINFO.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_USERINFO, userInfoDto));
+    }
 }

@@ -29,6 +29,7 @@ public enum ErrorCode {
      */
     HAVE_NO_PERMISSION(HttpStatus.UNAUTHORIZED, "작성자가 아닙니다."),
 
+
     /**
      * 404 NOT_FOUND: 리소스를 찾을 수 없음
      */
@@ -37,6 +38,7 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴를 찾을 수 없습니다."),
+    NOT_IN_DORM(HttpStatus.NOT_FOUND, "재사생만 가능합니다."),
 
     /**
      * 406
