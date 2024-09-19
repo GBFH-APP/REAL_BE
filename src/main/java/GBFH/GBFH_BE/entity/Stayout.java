@@ -1,12 +1,16 @@
 package GBFH.GBFH_BE.entity;
 
+import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "t_stayout")
 @Getter
 @IdClass(StayoutPk.class) // 복합키 클래스
@@ -59,5 +63,4 @@ public class Stayout {
     // 수정자 아이피
     @Column(name = "UPDATE_IP", length = 40)
     private String updateIP;
-
 }

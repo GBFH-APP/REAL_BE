@@ -50,7 +50,8 @@ public enum ResponseCode {
     /**
     * stayout
     */
-    SUCCESS_RETRIEVE_STAYOUT(HttpStatus.OK, "모든 외박신청 글을 성공적으로 조회했습니다.")
+    SUCCESS_RETRIEVE_STAYOUT(HttpStatus.OK, "모든 외박신청 글을 성공적으로 조회했습니다."),
+    SUCCESS_CREATE_STAYOUT(HttpStatus.OK, "외박신청을 성공적으로 저장했습니다.")
 
     ;
 

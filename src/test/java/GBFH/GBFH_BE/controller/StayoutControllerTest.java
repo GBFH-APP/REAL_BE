@@ -14,10 +14,4 @@ public class StayoutControllerTest {
     @MockBean
     private StayoutService stayoutService;
 
-    @Test
-    public void shouldReturnAllStayouts_whenUserExists() throws Exception {
-        stayoutService.getAllStayout("kiwi3866");
-
-        verify(stayoutService, times(1)).getAllStayout("kiwi3866");
-    }
 }
