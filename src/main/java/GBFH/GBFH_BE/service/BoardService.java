@@ -46,6 +46,7 @@ public class BoardService {
                 // category 있는지 없는지 확인 후, 예외처리
                 BoardId boardId = boardIdService.getCategory(category);
 
+
                 List<Board> noticeList;
                 if (boardId.name().equals("recruitments")) {
                         noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc("채용", BoardId.notice, 1, LocalDate.now().toString(), LocalDate.now().toString());
@@ -53,6 +54,7 @@ public class BoardService {
                 else {
                         noticeList = boardRepository.findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(boardId, 1, LocalDate.now().toString(), LocalDate.now().toString());
                 }
+
 
                 if (noticeList.isEmpty()) {
                         throw new EmptyPostException("글이 비었습니다.");

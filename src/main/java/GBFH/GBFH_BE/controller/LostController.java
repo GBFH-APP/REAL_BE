@@ -25,7 +25,7 @@ public class LostController {
 
     // 분실물 생성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO> createLost(
+    public ResponseEntity<ResponseDTO<?>> createLost(
             @Valid @RequestPart("createLostDTO") CreateLostDTO createLostDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             HttpServletRequest request) throws IOException {
@@ -40,7 +40,7 @@ public class LostController {
 
     // 분실물 전체 조회
     @GetMapping("/all")
-    public ResponseEntity<ResponseDTO> getAllLosts() {
+    public ResponseEntity<ResponseDTO<?>> getAllLosts() {
         List<GetLostDTO.LIST> res = lostService.getAllLosts();
 
         return ResponseEntity
@@ -50,7 +50,7 @@ public class LostController {
 
     // 분실물 상세 조회
     @GetMapping("/detail/{id}")
-    public ResponseEntity<ResponseDTO> getDetailLosts(@PathVariable("id") Long id) {
+    public ResponseEntity<ResponseDTO<?>> getDetailLosts(@PathVariable("id") Long id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         GetLostDTO.DETAIL res = lostService.getDetailLost(id, username);
@@ -62,7 +62,7 @@ public class LostController {
 
     // 분실물 상태 별로 필터링
     @GetMapping
-    public ResponseEntity<ResponseDTO> getLostsByStatus(@PathParam("status") String status) {
+    public ResponseEntity<ResponseDTO<?>> getLostsByStatus(@PathParam("status") String status) {
         List<GetLostDTO.LIST> res = lostService.getLostsByStatus(status);
 
         return ResponseEntity
@@ -72,7 +72,7 @@ public class LostController {
 
     // 분실물 댓글 작성
     @PostMapping("/{id}")
-    public ResponseEntity<ResponseDTO> createComment(
+    public ResponseEntity<ResponseDTO<?>> createComment(
             @Valid @RequestBody CreateCommentDTO createCommentDTO,
             @PathVariable("id") Long id,
             HttpServletRequest request ) {
@@ -88,7 +88,7 @@ public class LostController {
 
     // 대댓글 작성
     @PostMapping("/{boardId}/reply/{commentId}") // 댓글의 id를 넣음
-    public ResponseEntity<ResponseDTO> createCommentReply(
+    public ResponseEntity<ResponseDTO<?>> createCommentReply(
             @Valid @RequestBody CreateCommentDTO createCommentDTO,
             @PathVariable("boardId") Long boardId,
             @PathVariable("commentId") Long commentId,
@@ -105,7 +105,7 @@ public class LostController {
 
     // 대댓글 및 댓글 삭제
     @DeleteMapping("/{boardId}/comment/{commentId}")
-    public ResponseEntity<ResponseDTO> deleteCommentReply(
+    public ResponseEntity<ResponseDTO<?>> deleteCommentReply(
             @PathVariable("boardId") Long boardId,
             @PathVariable("commentId") Long commentId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -119,7 +119,7 @@ public class LostController {
 
     // 분실물 글 삭제
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<ResponseDTO> deleteCommentReply(
+    public ResponseEntity<ResponseDTO<?>> deleteCommentReply(
             @PathVariable("boardId") Long boardId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -132,7 +132,7 @@ public class LostController {
 
     // 분실물 상태 수정
     @PutMapping("/status/{boardId}")
-    public ResponseEntity<ResponseDTO> updateLost(
+    public ResponseEntity<ResponseDTO<?>> updateLost(
             @PathVariable("boardId") Long boardId,
             @RequestBody UpdateLostStatusDTO updateLostStatusDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -146,7 +146,7 @@ public class LostController {
 
     // 분실물 글, 본문, 이미지 수정
     @PutMapping(path = "/content/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO> updateLostContent(
+    public ResponseEntity<ResponseDTO<?>> updateLostContent(
             @PathVariable("boardId") Long boardId,
             @RequestPart("updateLostContentDTO") UpdateLostContentDTO updateLostContentDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
@@ -164,7 +164,7 @@ public class LostController {
 
     // 분실물 검색
     @GetMapping("/search")
-    public ResponseEntity<ResponseDTO> getAllBySearch(@RequestParam("q") String q) {
+    public ResponseEntity<ResponseDTO<?>> getAllBySearch(@RequestParam("q") String q) {
         List<GetLostDTO.LIST> res = lostService.getAllBySearch(q);
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
