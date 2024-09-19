@@ -1,11 +1,16 @@
 package GBFH.GBFH_BE.entity;
 
+import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "t_stayout")
 @Getter
 @IdClass(StayoutPk.class) // 복합키 클래스
@@ -24,12 +29,12 @@ public class Stayout {
     @Column(name = "END_DT")
     private LocalDateTime endDT;
 
-    @Column(name = "RETURN_DT")
+    @Column(name = "RETURN_DT", nullable = true)
     private LocalDateTime returnDT; //중도 복귀일
     //생성시에는 null 넣으면 됨
 
     @Lob
-    @Column(name = "REASON")
+    @Column(name = "REASON", columnDefinition = "TEXT")
     private String reason;
 
     @Column(name = "APPROVE_TYPE")
@@ -58,5 +63,4 @@ public class Stayout {
     // 수정자 아이피
     @Column(name = "UPDATE_IP", length = 40)
     private String updateIP;
-
 }

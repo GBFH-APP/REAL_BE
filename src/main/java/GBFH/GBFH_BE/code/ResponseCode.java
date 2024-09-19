@@ -12,6 +12,7 @@ public enum ResponseCode {
      */
     SUCCESS_RETRIEVE_USER(HttpStatus.OK, "유저 조회를 성공했습니다."),
     SUCCESS_LOGIN(HttpStatus.OK, "로그인을 성공했습니다."),
+    SUCCESS_RETRIEVE_USERINFO(HttpStatus.OK,"유저 정보를 성공적으로 가져왔습니다."),
 
     /**
      * notice
@@ -45,6 +46,16 @@ public enum ResponseCode {
      * menu
      */
     SUCCESS_RETRIEVE_MENU(HttpStatus.OK, "메뉴를 성공적으로 조회했습니다."),
+
+
+    /**
+    * stayout
+    */
+    SUCCESS_RETRIEVE_STAYOUT_LIST(HttpStatus.OK, "모든 외박신청 글을 성공적으로 조회했습니다."),
+    SUCCESS_CREATE_STAYOUT(HttpStatus.OK, "외박신청을 성공적으로 저장했습니다."),
+    SUCCESS_RETRIEE_STAYOUT_DETAIL(HttpStatus.OK, "외박 신청 상세 정보를 성공적으로 조회했습니다."),
+
+
     ;
 
     private final HttpStatus status;

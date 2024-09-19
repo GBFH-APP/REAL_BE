@@ -2,6 +2,7 @@ package GBFH.GBFH_BE.exception;
 
 import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
+import com.amazonaws.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -92,5 +93,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.NOT_FOUND_CATEGORY.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.POST_NOT_FOUND));
+    }
+
+    @ExceptionHandler(EmptyPostException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleEmptyPostException(final EmptyPostException e) {
+        return ResponseEntity
+                .status(ErrorCode.POST_EMPTY.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.POST_EMPTY));
+    }
+
+    @ExceptionHandler(NotInDormException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleNotInDormException(final NotInDormException e) {
+        return ResponseEntity
+                .status(ErrorCode.NOT_IN_DORM.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.NOT_IN_DORM));
+    }
+
+    @ExceptionHandler(SameStayoutException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleSameStayoutException(final SameStayoutException e) {
+        return ResponseEntity
+                .status(ErrorCode.DUPLICATE_DATE.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.DUPLICATE_DATE));
     }
 }
