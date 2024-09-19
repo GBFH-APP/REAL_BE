@@ -4,7 +4,6 @@ import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -86,5 +85,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.MENU_NOT_FOUND.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.MENU_NOT_FOUND));
+    }
+
+    @ExceptionHandler(category_BoardIdNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleCategory_BoardIdNotFoundException(final category_BoardIdNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.NOT_FOUND_CATEGORY.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.POST_NOT_FOUND));
     }
 }

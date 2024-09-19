@@ -1,7 +1,7 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.entity.BoardId;
-import GBFH.GBFH_BE.exception.BoardIdNotFountException;
+import GBFH.GBFH_BE.exception.category_BoardIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,6 @@ public class BoardIdService {
         return Arrays.stream(BoardId.values())
                 .filter(e -> e.name().equalsIgnoreCase(category))  // 대소문자 구분 없이 비교
                 .findFirst()
-                .orElseThrow(() -> new BoardIdNotFountException("Category not found: " + category));  // Custom Exception 발생
+                .orElseThrow(() -> new category_BoardIdNotFoundException("Category not found: " + category));  // Custom Exception 발생
     }
 }
