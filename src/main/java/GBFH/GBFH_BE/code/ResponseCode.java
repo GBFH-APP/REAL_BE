@@ -60,6 +60,7 @@ public enum ResponseCode {
      * */
     SUCCESS_RETRIEVE_LECTURE_LIST(HttpStatus.OK, "모든 특강 일정을 성공적으로 조회했습니다."),
     SUCCESS_RETRIEVE_LECTURE_DETAIL(HttpStatus.OK, "특강 일정 상세 정보를 성공적으로 조회했습니다."),
+    SUCCESS_CREATE_LECTURE_SUBMIT(HttpStatus.OK, "특강 신청을 성공하였습니다.")
 
 
     ;

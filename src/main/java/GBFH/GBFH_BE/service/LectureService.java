@@ -2,17 +2,25 @@ package GBFH.GBFH_BE.service;
 
 
 import GBFH.GBFH_BE.dto.lecture.LectureResponseDTO;
+import GBFH.GBFH_BE.dto.lecture.LectureSubmitResponseDto;
+import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.DormEnterSubmit;
 import GBFH.GBFH_BE.entity.Lecture;
+import GBFH.GBFH_BE.entity.LectureSubmit;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
+import GBFH.GBFH_BE.repository.ApplicantRepository;
+import GBFH.GBFH_BE.repository.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.LectureRepository;
+import GBFH.GBFH_BE.repository.LectureSubmitRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -20,6 +28,9 @@ import java.util.stream.Collectors;
 public class LectureService {
     private final LectureRepository lectureRepository;
     private final PaginateService paginateService;
+    private final ApplicantRepository applicantRepository;
+    private final DormEnterSubmitRepository dormEnterSubmitRepository;
+    private final LectureSubmitRepository lectureSubmitRepository;
 
     public Page<LectureResponseDTO> getAllLecture(char yorn, int page, int size) {
         List<Lecture> lectures = lectureRepository.findAllByOpenAndRegIngOrderByCreateDtDesc('Y', yorn);
@@ -38,6 +49,31 @@ public class LectureService {
                 .orElseThrow(() -> new PostNotFoundException("해당 글이 존재하지 않습니다."));
 
         return LectureResponseDTO.toDto(lecture);
+    }
+
+    public LectureSubmitResponseDto createLectureSubmit(String username, String id, String clientIp) {
+        Applicant applicant = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Lecture lecture = lectureRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException("해당 글이 존재하지 않습니다."));
+
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+        LectureSubmit lectureSubmit = LectureSubmit.builder()
+                .idx(id)
+                .regiNo(dormEnterSubmit.getRegiNo())
+                .status("등록")
+                .createDT(LocalDateTime.now())
+                .createIP(clientIp)
+                .build();
+
+        lectureSubmitRepository.save(lectureSubmit);
+
+        return LectureSubmitResponseDto.builder()
+                .id(lectureSubmit.getIdx())
+                .nameKor(dormEnterSubmit.getName())
+                .title(lecture.getTitle())
+                .build();
     }
 
     // 달마다? 하나?

@@ -1,16 +1,23 @@
 package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ResponseCode;
+import GBFH.GBFH_BE.dto.applicant.CustomUserDetails;
 import GBFH.GBFH_BE.dto.lecture.LectureResponseDTO;
+import GBFH.GBFH_BE.dto.lecture.LectureSubmitResponseDto;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LectureService;
 import com.amazonaws.Response;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import static GBFH.GBFH_BE.util.NetworkUtils.getClientIP;
 
 @RestController
 @RequestMapping("/lecture")
@@ -38,8 +45,29 @@ public class LectureController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LECTURE_DETAIL, lectureResponseDTO));
     }
 
-//    @PostMapping("/{id}")
-//    public ResponseEntity<ResponseDTO<?>>
+    @PostMapping("/{id}")
+    public ResponseEntity<ResponseDTO<?>> createLectureSubmit(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                              @PathVariable String id,
+                                                              HttpServletRequest request) {
+
+        String clientIp = getClientIP(request);
+        LectureSubmitResponseDto lectureSubmitResponseDto = lectureService.createLectureSubmit(customUserDetails.getUsername(), id, clientIp);
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT, lectureSubmitResponseDto));
+    }
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<ResponseDTO<?>> deleteLectureSubmit(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails,
+//                                                              @PathVariable String id,
+//                                                              HttpServletRequest request) {
+//
+//        String clientIp = getClientIP(request);
+//        LectureSubmitResponseDto lectureSubmitResponseDto = lectureService.createLectureSubmit(customUserDetails.getUsername(), id, clientIp);
+//        return ResponseEntity
+//                .status(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT.getStatus().value())
+//                .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT, lectureSubmitResponseDto));
+//    }
 
 
 }
