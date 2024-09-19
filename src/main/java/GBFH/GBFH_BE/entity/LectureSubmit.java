@@ -21,7 +21,7 @@ public class LectureSubmit {
     private String idx;
 
     @Id
-    @Column(name = "REGI_NO", length = 20)
+    @Column(name = "REG_NO", length = 20)
     private String regiNo;
 
     @Column(name = "STATUS", length = 20)

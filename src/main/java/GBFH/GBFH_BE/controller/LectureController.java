@@ -57,17 +57,14 @@ public class LectureController {
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT, lectureSubmitResponseDto));
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<ResponseDTO<?>> deleteLectureSubmit(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails,
-//                                                              @PathVariable String id,
-//                                                              HttpServletRequest request) {
-//
-//        String clientIp = getClientIP(request);
-//        LectureSubmitResponseDto lectureSubmitResponseDto = lectureService.createLectureSubmit(customUserDetails.getUsername(), id, clientIp);
-//        return ResponseEntity
-//                .status(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT.getStatus().value())
-//                .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT, lectureSubmitResponseDto));
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO<?>> deleteLectureSubmit(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                              @PathVariable String id) {
 
+        LectureSubmitResponseDto lectureSubmitResponseDto = lectureService.deleteLectureSubmit(customUserDetails.getUsername(), id);
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_DELETE_LECTURE_SUBMIT.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LECTURE_SUBMIT, lectureSubmitResponseDto));
+    }
 
 }

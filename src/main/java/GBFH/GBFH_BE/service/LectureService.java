@@ -3,10 +3,7 @@ package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.lecture.LectureResponseDTO;
 import GBFH.GBFH_BE.dto.lecture.LectureSubmitResponseDto;
-import GBFH.GBFH_BE.entity.Applicant;
-import GBFH.GBFH_BE.entity.DormEnterSubmit;
-import GBFH.GBFH_BE.entity.Lecture;
-import GBFH.GBFH_BE.entity.LectureSubmit;
+import GBFH.GBFH_BE.entity.*;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
@@ -71,6 +68,23 @@ public class LectureService {
 
         return LectureSubmitResponseDto.builder()
                 .id(lectureSubmit.getIdx())
+                .nameKor(dormEnterSubmit.getName())
+                .title(lecture.getTitle())
+                .build();
+    }
+
+    public LectureSubmitResponseDto deleteLectureSubmit(String username, String id) {
+        Applicant applicant = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        Lecture lecture = lectureRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException("해당 글이 존재하지 않습니다."));
+
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+
+        lectureSubmitRepository.deleteById(new LectureSubmitPk(lecture.getIdx(), dormEnterSubmit.getRegiNo()));
+        return LectureSubmitResponseDto.builder()
+                .id(lecture.getIdx())
                 .nameKor(dormEnterSubmit.getName())
                 .title(lecture.getTitle())
                 .build();
