@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +22,7 @@ public interface StayoutRepository extends JpaRepository<Stayout, StayoutPk> {
 
     @Override
     Optional<Stayout> findById(StayoutPk stayoutPk);
+
+    @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM Stayout e WHERE FUNCTION('DATE', e.startDT) <= :targetDate AND FUNCTION('DATE', e.endDT) >= :targetDate")
+    boolean existsByDateInRange(@Param("targetDate") LocalDate targetDate);
 }

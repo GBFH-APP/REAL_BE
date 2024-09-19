@@ -48,7 +48,7 @@ public enum ErrorCode {
     UNAVAILABLE_VALUE(HttpStatus.NOT_ACCEPTABLE, "사용할 수 없는 값입니다."),
     NOT_FOUNT_POST(HttpStatus.NOT_ACCEPTABLE, "해당 본문을 찾을 수 없습니다."),
     POST_EMPTY(HttpStatus.NOT_ACCEPTABLE, "글이 비었습니다."),
-    DUPLICATE_DATE(HttpStatus.NOT_ACCEPTABLE, "중복된 날짜로 생성할 수 없습니다."),
+    DUPLICATE_DATE(HttpStatus.NOT_ACCEPTABLE, "중복된 날짜 및 이미 신청된 날짜와 겹치는 날로 생성할 수 없습니다."),
     MULTIPART_ERROR(HttpStatus.NOT_ACCEPTABLE, "multipart/form-data가 존재하지 않습니다."),
     NOT_FOUND_IMAGE(HttpStatus.NOT_ACCEPTABLE, "해당 이미지가 존재하지 않습니다."),
     NOT_FOUND_CATEGORY(HttpStatus.NOT_ACCEPTABLE, "해당 카테고리가 존재하지 않습니다."),

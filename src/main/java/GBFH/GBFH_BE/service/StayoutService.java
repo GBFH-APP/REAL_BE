@@ -8,6 +8,7 @@ import GBFH.GBFH_BE.entity.Stayout;
 import GBFH.GBFH_BE.entity.StayoutPk;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
+import GBFH.GBFH_BE.exception.SameStayoutException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.StayoutRepository;
@@ -37,22 +38,28 @@ public class StayoutService {
 
         DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
 
-        LocalDateTime createDT = LocalDateTime.now();
-        Stayout stayout = Stayout.builder()
-                .regiNo(dormEnterSubmit.getRegiNo())
-                .seq(stayoutRepository.findMaxSeq(dormEnterSubmit.getRegiNo())+1)
-                .createDT(createDT)
-                .createId(applicant.getUserNo())
-                .startDT(checkStartDT(stayoutRequestDTO.getStartDT(), createDT))
-                .endDT(stayoutRequestDTO.getEndDT().atTime(23,0,0,0))
-                .returnDT(null)
-                .reason(stayoutRequestDTO.getReason())
-                .approveType('N')
-                .createIP(clientIp)
-                .build();
+        if ((stayoutRepository.existsByDateInRange(stayoutRequestDTO.getStartDT())) || (stayoutRepository.existsByDateInRange(stayoutRequestDTO.getEndDT()))) {
+            throw new SameStayoutException("동일한");
+        }
+        else{
+            LocalDateTime createDT = LocalDateTime.now();
+            Stayout stayout = Stayout.builder()
+                    .regiNo(dormEnterSubmit.getRegiNo())
+                    .seq(stayoutRepository.findMaxSeq(dormEnterSubmit.getRegiNo())+1)
+                    .createDT(createDT)
+                    .createId(applicant.getUserNo())
+                    .startDT(checkStartDT(stayoutRequestDTO.getStartDT(), createDT))
+                    .endDT(stayoutRequestDTO.getEndDT().atTime(23,0,0,0))
+                    .returnDT(null)
+                    .reason(stayoutRequestDTO.getReason())
+                    .approveType('N')
+                    .createIP(clientIp)
+                    .build();
 
-        stayoutRepository.save(stayout);
-        return StayoutResponseDTO.toDTO(stayout);
+            stayoutRepository.save(stayout);
+            return StayoutResponseDTO.toDTO(stayout);
+        }
+
     }
 
     public LocalDateTime checkStartDT (LocalDate startDT, LocalDateTime createDT) {
