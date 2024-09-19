@@ -94,4 +94,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.NOT_FOUND_CATEGORY.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.POST_NOT_FOUND));
     }
+
+    @ExceptionHandler(EmptyPostException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleEmptyPostException(final EmptyPostException e) {
+        return ResponseEntity
+                .status(ErrorCode.POST_EMPTY.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.POST_EMPTY));
+    }
 }

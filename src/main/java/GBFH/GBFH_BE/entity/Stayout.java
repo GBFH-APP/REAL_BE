@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Builder
 @Table(name = "t_stayout")
 @Getter
 @IdClass(StayoutPk.class) // 복합키 클래스
@@ -24,7 +25,7 @@ public class Stayout {
     @Column(name = "END_DT")
     private LocalDateTime endDT;
 
-    @Column(name = "RETURN_DT")
+    @Column(name = "RETURN_DT", nullable = true)
     private LocalDateTime returnDT; //중도 복귀일
     //생성시에는 null 넣으면 됨
 

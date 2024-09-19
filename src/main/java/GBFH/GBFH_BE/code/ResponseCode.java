@@ -45,6 +45,13 @@ public enum ResponseCode {
      * menu
      */
     SUCCESS_RETRIEVE_MENU(HttpStatus.OK, "메뉴를 성공적으로 조회했습니다."),
+
+
+    /**
+    * stayout
+    */
+    SUCCESS_RETRIEVE_STAYOUT(HttpStatus.OK, "모든 외박신청 글을 성공적으로 조회했습니다.")
+
     ;
 
     private final HttpStatus status;

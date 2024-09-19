@@ -12,7 +12,7 @@ import static org.mockito.Mockito.times;
 public class StayoutControllerTest {
 
     @MockBean
-    public StayoutService stayoutService;
+    private StayoutService stayoutService;
 
     @Test
     public void shouldReturnAllStayouts_whenUserExists() throws Exception {
