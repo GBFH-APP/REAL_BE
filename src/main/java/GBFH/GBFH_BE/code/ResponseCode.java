@@ -53,7 +53,13 @@ public enum ResponseCode {
     */
     SUCCESS_RETRIEVE_STAYOUT_LIST(HttpStatus.OK, "모든 외박신청 글을 성공적으로 조회했습니다."),
     SUCCESS_CREATE_STAYOUT(HttpStatus.OK, "외박신청을 성공적으로 저장했습니다."),
-    SUCCESS_RETRIEE_STAYOUT_DETAIL(HttpStatus.OK, "외박 신청 상세 정보를 성공적으로 조회했습니다."),
+    SUCCESS_RETRIEVE_STAYOUT_DETAIL(HttpStatus.OK, "외박 신청 상세 정보를 성공적으로 조회했습니다."),
+
+    /**
+     * lecture
+     * */
+    SUCCESS_RETRIEVE_LECTURE_LIST(HttpStatus.OK, "모든 특강 일정을 성공적으로 조회했습니다."),
+    SUCCESS_RETRIEVE_LECTURE_DETAIL(HttpStatus.OK, "특강 일정 상세 정보를 성공적으로 조회했습니다."),
 
 
     ;

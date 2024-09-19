@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,10 +30,10 @@ public class Lecture {
     private String contents;
 
     @Column(name = "RUN_START")
-    private LocalDate startDT;
+    private LocalDate startDt;
 
     @Column(name = "RUN_END")
-    private LocalDate endDT;
+    private LocalDate endDt;
 
     @Column(name = "RUN_TIME", length = 100)
     private String time;
@@ -47,7 +48,7 @@ public class Lecture {
     private String regMethod;
 
     @Column(name = "REG_START_YMD", length = 10)
-    private String regStartDT; //시작 연월일
+    private String regStartDt; //시작 연월일
 
     @Column(name = "REG_START_HH", length = 2)
     private String regStartHour;
@@ -56,7 +57,7 @@ public class Lecture {
     private String regStartMinute;
 
     @Column(name = "REG_END_YMD", length = 10)
-    private String regEndDT;
+    private String regEndDt;
 
     @Column(name = "REG_END_HH", length = 2)
     private String regEndHour;
@@ -69,5 +70,8 @@ public class Lecture {
 
     @Column(name = "QUOTA", length = 10)
     private Integer quota; //정원
+
+    @Column(name = "CREATE_DT")
+    private LocalDateTime createDt;
 
 }
