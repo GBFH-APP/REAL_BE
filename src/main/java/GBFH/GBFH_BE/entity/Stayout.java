@@ -29,7 +29,7 @@ public class Stayout {
     //생성시에는 null 넣으면 됨
 
     @Lob
-    @Column(name = "REASON")
+    @Column(name = "REASON", columnDefinition = "TEXT")
     private String reason;
 
     @Column(name = "APPROVE_TYPE")

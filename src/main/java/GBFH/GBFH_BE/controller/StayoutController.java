@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.dto.applicant.CustomUserDetails;
+import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.service.StayoutService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,6 @@ public class StayoutController {
     @GetMapping("/all")
     //내 거 전체 가져옴
     public void getAllStayout(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        System.out.println(customUserDetails.getUsername());
+        stayoutService.getAllStayout(customUserDetails.getUsername());
     }
 }
