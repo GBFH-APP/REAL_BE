@@ -68,7 +68,7 @@ public class StayoutController {
     public ResponseEntity<ResponseDTO<?>> getStayoutDetail(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails ,@PathVariable Integer id) {
         StayoutResponseDTO stayoutResponseDTO = stayoutService.getStayoutDetail(id, customUserDetails.getUsername());
         return ResponseEntity
-                .status(ResponseCode.SUCCESS_RETRIEE_STAYOUT_DETAIL.getStatus().value())
-                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEE_STAYOUT_DETAIL, stayoutResponseDTO));
+                .status(ResponseCode.SUCCESS_RETRIEVE_STAYOUT_DETAIL.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_STAYOUT_DETAIL, stayoutResponseDTO));
     }
 }
