@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 @Getter

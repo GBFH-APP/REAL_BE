@@ -2,27 +2,19 @@ package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ResponseCode;
 import GBFH.GBFH_BE.dto.applicant.CustomUserDetails;
-import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutResponseDTO;
 import GBFH.GBFH_BE.dto.userInfo.UserInfoDto;
-import GBFH.GBFH_BE.exception.NotInDormException;
-import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.service.ApplicantService;
-import GBFH.GBFH_BE.service.PaginateService;
 import GBFH.GBFH_BE.service.StayoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static GBFH.GBFH_BE.util.NetworkUtils.getClientIP;
 

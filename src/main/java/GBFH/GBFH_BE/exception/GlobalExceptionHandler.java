@@ -2,7 +2,6 @@ package GBFH.GBFH_BE.exception;
 
 import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
-import com.amazonaws.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

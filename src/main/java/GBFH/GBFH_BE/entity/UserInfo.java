@@ -4,7 +4,6 @@ package GBFH.GBFH_BE.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.View;
 
 @Entity
 @Getter

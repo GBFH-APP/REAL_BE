@@ -1,6 +1,5 @@
 package GBFH.GBFH_BE.dto.lost;
 
-import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 public class UpdateLostStatusDTO {

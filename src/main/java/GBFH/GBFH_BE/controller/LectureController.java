@@ -6,8 +6,6 @@ import GBFH.GBFH_BE.dto.lecture.LectureResponseDTO;
 import GBFH.GBFH_BE.dto.lecture.LectureSubmitResponseDto;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.LectureService;
-import com.amazonaws.Response;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
