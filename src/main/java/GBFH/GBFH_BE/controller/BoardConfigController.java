@@ -1,7 +1,6 @@
 package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ResponseCode;
-import GBFH.GBFH_BE.dto.applicant.ApplicantDTO;
 import GBFH.GBFH_BE.dto.boardconfig.BoardConfigDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.BoardConfigService;

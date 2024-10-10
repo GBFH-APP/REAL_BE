@@ -2,7 +2,6 @@ package GBFH.GBFH_BE.dto.lost;
 
 import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

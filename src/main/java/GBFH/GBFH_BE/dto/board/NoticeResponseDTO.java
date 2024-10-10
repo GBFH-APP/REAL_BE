@@ -5,7 +5,6 @@ import GBFH.GBFH_BE.entity.Board;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Builder

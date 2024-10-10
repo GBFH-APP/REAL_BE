@@ -1,15 +1,9 @@
 package GBFH.GBFH_BE.controller;
 
-import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.code.ResponseCode;
 import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
-import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
-import GBFH.GBFH_BE.exception.category_BoardIdNotFoundException;
-import GBFH.GBFH_BE.exception.EmptyPostException;
-import GBFH.GBFH_BE.exception.PostNotFoundException;
-import GBFH.GBFH_BE.exception.WrongPaginationException;
 import GBFH.GBFH_BE.repository.BoardRepository;
 import GBFH.GBFH_BE.service.BoardService;
 import jakarta.validation.Valid;

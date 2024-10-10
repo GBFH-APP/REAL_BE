@@ -1,9 +1,6 @@
 package GBFH.GBFH_BE.dto.stayout;
 
 import GBFH.GBFH_BE.entity.Stayout;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

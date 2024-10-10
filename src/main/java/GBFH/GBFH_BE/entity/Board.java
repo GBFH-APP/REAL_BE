@@ -3,15 +3,11 @@ package GBFH.GBFH_BE.entity;
 import GBFH.GBFH_BE.dto.lost.UpdateLostContentDTO;
 import GBFH.GBFH_BE.dto.lost.UpdateLostStatusDTO;
 import jakarta.persistence.*;
-import jdk.jfr.Unsigned;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Type;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity

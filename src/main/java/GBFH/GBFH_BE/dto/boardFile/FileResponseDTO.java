@@ -5,7 +5,6 @@ import GBFH.GBFH_BE.entity.BoardFile;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 

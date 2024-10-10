@@ -1,12 +1,10 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.menu.GetMenuDTO;
-import GBFH.GBFH_BE.entity.Applicant;
 import GBFH.GBFH_BE.entity.Menu;
 import GBFH.GBFH_BE.exception.MenuNotFoundException;
 import GBFH.GBFH_BE.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
