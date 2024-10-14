@@ -1,5 +1,8 @@
 package GBFH.GBFH_BE.service;
 
+import GBFH.GBFH_BE.exception.FileSizeIsNotAllowedException;
+import GBFH.GBFH_BE.exception.NoExtensionException;
+import GBFH.GBFH_BE.exception.NotAllowedExtensionException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -9,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.net.URL;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -21,25 +24,40 @@ import java.util.UUID;
 public class S3Uploader {
 
     private final AmazonS3 amazonS3;
+    private final BoardConfigService boardConfigService;
 
-    @Value("${cloud.aws.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
 
-    public String upload(MultipartFile file, String folderName) throws IOException {
-        try {
-            // 허가된 데이터인지 판단 필요
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-            metadata.setContentType(file.getContentType());
 
+    public String upload(MultipartFile file, String folderName,String boardId) throws IOException {
+        // 1. 파일 확장자 추출 및 허용 여부 검증
+        String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || !originalFileName.contains(".")) {
+            throw new NoExtensionException("파일 확장자가 없습니다.");
+        }
+        // 확장자 추출
+        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
+
+        // 2. MIME 타입 허용 여부 검증
+        String contentType = file.getContentType();
+
+        if (!boardConfigService.isAllowedContentType(fileExtension,boardId, contentType)) {
+            throw new NotAllowedExtensionException("파일 확장자가 올바르지 않습니다.");
+        }
+        if (!boardConfigService.isFileSizeAllowed(String.valueOf(file.getSize()), boardId)) {
+            throw new FileSizeIsNotAllowedException("파일이 너무 큽니다.");
+        }
+
+        try {
             // UUID를 파일명에 추가 (varchar(20)으로 들어갈 수 있도록)
             String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
             String fileName = folderName + "/" + uuid;
 
-            amazonS3.putObject(bucket, fileName, file.getInputStream(), metadata);
+            System.out.println(putS3(file, fileName));
+            return uuid;
 
-            return amazonS3.getUrl(bucket, fileName).toString();  // 업로드한 파일의 S3 URL 반환
         } catch (Exception e) {
             throw new RuntimeException("S3에 파일 업로드 중 오류 발생", e);
         }
@@ -72,6 +90,15 @@ public class S3Uploader {
 
         amazonS3.putObject(new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
+
+        // 업로드된 파일의 URL을 반환
+        URL fileUrl = amazonS3.getUrl(bucket, fileName);
+
+        // URL이 null인지 확인
+        if (fileUrl == null) {
+            throw new RuntimeException("S3에서 URL을 가져올 수 없습니다.");
+        }
+
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 

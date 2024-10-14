@@ -128,4 +128,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.FILE_SIZE_IS_NOT_ALLOWED.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.FILE_SIZE_IS_NOT_ALLOWED));
     }
+
+    @ExceptionHandler(NoExtensionException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleNoExtensionException(final NoExtensionException e) {
+        return ResponseEntity
+                .status(ErrorCode.NO_EXTENSION_FILE.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.NO_EXTENSION_FILE));
+    }
 }

@@ -55,7 +55,7 @@ public enum ErrorCode {
     NOT_FOUND_IMAGE(HttpStatus.NOT_ACCEPTABLE, "해당 이미지가 존재하지 않습니다."),
     NOT_FOUND_CATEGORY(HttpStatus.NOT_ACCEPTABLE, "해당 카테고리가 존재하지 않습니다."),
     WRONG_PAGINATION(HttpStatus.NOT_ACCEPTABLE, "페이지네이션에 문제가 있습니다."),
-
+    NO_EXTENSION_FILE(HttpStatus.NOT_ACCEPTABLE,"파일의 확장자가 존재하지 않습니다."),
     /**
      * 502
      */

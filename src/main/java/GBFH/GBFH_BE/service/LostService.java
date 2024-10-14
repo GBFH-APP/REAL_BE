@@ -43,7 +43,7 @@ public class LostService {
         if (files != null && !files.isEmpty()) {
             urls = files.stream().map(multipartFile -> {
                 try {
-                    String url = s3Uploader.upload(multipartFile, "lost");
+                    String url = s3Uploader.upload(multipartFile, "lost", "lost");
                     log.info("S3 업로드 성공: " + url);
                     return url;
                 } catch (IOException e) {
@@ -284,7 +284,7 @@ public class LostService {
             if (files != null) {
                 urls = files.stream().map(multipartFile -> {
                     try {
-                        String url = s3Uploader.upload(multipartFile, "lost");
+                        String url = s3Uploader.upload(multipartFile, "lost", "lost");
                         log.info("S3 업로드 성공: " + url);
                         return url;
                     } catch (IOException e) {
