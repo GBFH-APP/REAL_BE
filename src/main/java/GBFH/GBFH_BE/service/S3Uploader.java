@@ -22,11 +22,34 @@ public class S3Uploader {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.bucket}")
     private String bucket;
 
 
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+    public String upload(MultipartFile file, String folderName) throws IOException {
+        try {
+            // 허가된 데이터인지 판단 필요
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.getSize());
+            metadata.setContentType(file.getContentType());
+
+            // UUID를 파일명에 추가 (varchar(20)으로 들어갈 수 있도록)
+            String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+            String fileName = folderName + "/" + uuid;
+
+            amazonS3.putObject(bucket, fileName, file.getInputStream(), metadata);
+
+            return amazonS3.getUrl(bucket, fileName).toString();  // 업로드한 파일의 S3 URL 반환
+        } catch (Exception e) {
+            throw new RuntimeException("S3에 파일 업로드 중 오류 발생", e);
+        }
+    }
+
+    // 업로드 시 s3 메타데이터와 파일 크기 검증 절차
+
+
+
+/*    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         // 파일 이름에서 공백을 제거한 새로운 파일 이름 생성
         //String originalFileName = multipartFile.getOriginalFilename();
 
@@ -40,7 +63,7 @@ public class S3Uploader {
         // S3에 파일 업로드
         System.out.println(putS3(multipartFile, fileName));
         return uuid;
-    }
+    }*/
 
     private String putS3(MultipartFile multipartFile, String fileName) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();

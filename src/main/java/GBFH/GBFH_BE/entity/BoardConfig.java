@@ -16,4 +16,10 @@ public class BoardConfig {
     // 게시판 명칭
     @Column(name = "BOARD_NAME")
     private String boardName;
+
+    @Column(name = "FILE_ALLOW_EXT", length = 300)
+    private String fileAllowExtension;
+
+    @Column(name = "FILE_LIMIT_SIZE", length = 20)
+    private String fileLimitSize;
 }

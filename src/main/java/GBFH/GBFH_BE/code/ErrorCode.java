@@ -11,6 +11,8 @@ public enum ErrorCode {
      * 400 BAD_REQUEST: 잘못된 요청
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    NOT_ALLOWED_EXTENSION(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일입니다."),
+    FILE_SIZE_IS_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "파일이 너무 큽니다."),
     NOT_LOST_POST(HttpStatus.BAD_REQUEST, "분실물 글이 아닙니다."),
 
 

@@ -114,4 +114,18 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.DUPLICATE_DATE.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.DUPLICATE_DATE));
     }
+
+    @ExceptionHandler(NotAllowedExtensionException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleNotAllowedExtensionException(final NotAllowedExtensionException e) {
+        return ResponseEntity
+                .status(ErrorCode.NOT_ALLOWED_EXTENSION.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.NOT_ALLOWED_EXTENSION));
+    }
+
+    @ExceptionHandler(FileSizeIsNotAllowedException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleFileSizeIsNotAllowedException(final FileSizeIsNotAllowedException e) {
+        return ResponseEntity
+                .status(ErrorCode.FILE_SIZE_IS_NOT_ALLOWED.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.FILE_SIZE_IS_NOT_ALLOWED));
+    }
 }

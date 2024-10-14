@@ -49,7 +49,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers(
-                        "/login", "/notice/**", "/static/**", "/resources/**"
+                        "/login", "/notice/**", "/static/**", "/resources/**","/menu/**"
                 ).permitAll()
                 .anyRequest().authenticated());
 
