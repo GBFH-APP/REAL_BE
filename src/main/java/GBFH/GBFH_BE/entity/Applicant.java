@@ -1,5 +1,6 @@
 package GBFH.GBFH_BE.entity;
 
+import GBFH.GBFH_BE.dto.applicant.UpdateApplicantDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -25,6 +26,12 @@ public class Applicant {
 
     @Column(name = "LOGIN_PWD")
     private String loginPwd;
+
+    @Column(name = "LOGIN_PWD_SETDT")
+    private String loginPwdSetDT;
+
+    @Column(name = "LOGIN_PWD_FAIL")
+    private Integer loginPwdFail;
 
     @Column(name = "NAME_KOR")
     private String nameKor;
@@ -93,4 +100,17 @@ public class Applicant {
     // 생체정보 수집 동의서
     @Column(name = "AGREE_BIODATA_DT")
     private String agreeBioDataDT;
+
+    public void updateInfo(UpdateApplicantDTO.Req updateApplicantDTO) {
+        this.hpNo = updateApplicantDTO.getHpNo();
+        this.bloodType = updateApplicantDTO.getBloodType();
+        this.religion = updateApplicantDTO.getReligion();
+        this.interest = updateApplicantDTO.getInterest();
+        this.militaryYN = updateApplicantDTO.getMilitaryYN();
+        this.highSchool = updateApplicantDTO.getHighSchool();
+        this.highSchoolYear = updateApplicantDTO.getHighSchoolYear();
+        this.refundBank = updateApplicantDTO.getRefundBank();
+        this.refundAccount = updateApplicantDTO.getRefundAccount();
+        this.refundName = updateApplicantDTO.getRefundName();
+    }
 }

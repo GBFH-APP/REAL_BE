@@ -2,14 +2,13 @@ package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ResponseCode;
 import GBFH.GBFH_BE.dto.applicant.ApplicantDTO;
+import GBFH.GBFH_BE.dto.applicant.UpdateApplicantDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.service.ApplicantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/applicant")
@@ -22,6 +21,17 @@ public class ApplicationController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         ApplicantDTO.DetailRes response = applicantService.getApplicant(username);
+
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_USER.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_USER, response));
+    }
+
+    @PatchMapping()
+    public ResponseEntity<ResponseDTO<?>> updateUser(@RequestBody UpdateApplicantDTO.Req updateApplicantDTO) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UpdateApplicantDTO.Res response = applicantService.updateApplicate(username, updateApplicantDTO);
 
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_USER.getStatus().value())
