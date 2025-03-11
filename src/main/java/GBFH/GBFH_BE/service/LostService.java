@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.service;
 
-import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
+import GBFH.GBFH_BE.dto.boardFile.FileDTO;
 import GBFH.GBFH_BE.dto.lost.*;
 import GBFH.GBFH_BE.entity.*;
 import GBFH.GBFH_BE.exception.*;
@@ -80,7 +80,7 @@ public class LostService {
 
         boardFileRepository.saveAll(boardFiles);
 
-        List<FileResponseDTO.FileDTO> fileDTOList = boardFiles.stream().map(FileResponseDTO::toDTO).toList();
+        List<FileDTO> fileDTOList = boardFiles.stream().map(FileDTO::toDTO).toList();
 
         String url = urls.isEmpty() ? null : urls.get(0);
 
@@ -112,7 +112,7 @@ public class LostService {
         lost.readBoard();
 
         List<BoardFile> files = boardFileRepository.findAllByIdx(lost.getIdx());
-        List<FileResponseDTO.FileDTO> fileDTOS = files.stream().map(FileResponseDTO::toDTO).toList();
+        List<FileDTO> fileDTOS = files.stream().map(FileDTO::toDTO).toList();
 
         if(!lost.getBoardId().toString().equals("lost"))
             throw new NotLostException("분실물 글이 아닙니다.");
@@ -321,7 +321,7 @@ public class LostService {
         // 전체 조회
         List<BoardFile> savedFiles  = boardFileRepository.findAllByIdx(boardId);
         System.out.println("savedFiles : " + savedFiles);
-        List<FileResponseDTO.FileDTO> fileDTOList = savedFiles.stream().map(FileResponseDTO::toDTO).toList();
+        List<FileDTO> fileDTOList = savedFiles.stream().map(FileDTO::toDTO).toList();
 
         // 첫 이미지가 변경되었는가?
         if(!lost.getFileId().equals(savedFiles.get(0).getFileId())) {

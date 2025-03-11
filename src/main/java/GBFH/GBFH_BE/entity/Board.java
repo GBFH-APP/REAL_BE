@@ -197,4 +197,8 @@ public class Board {
     public void updateTitleImage(String fileId) {
         this.fileId = fileId;
     }
+
+    public String getContent() {
+        return this.getContents();
+    }
 }

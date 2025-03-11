@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
+import GBFH.GBFH_BE.dto.board.SimplePostDTO;
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
 import GBFH.GBFH_BE.exception.EmptyPostException;
@@ -8,6 +9,7 @@ import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +31,37 @@ public class BoardService {
                         .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
                 boardRepository.save(notice.readBoard()); // 조회수 올림
-                //파일 추가 필요
-                if (boardFileService.isExistFile(id)) {
-                        return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(id));
+
+
+                //이전글
+                Board previous = boardRepository.findTopByCreateDTLessThanOrderByCreateDTDesc(notice.getCreateDT());
+                SimplePostDTO prev = null;
+                if (previous != null) {
+                        prev = SimplePostDTO.builder()
+                                .idx(previous.getIdx())
+                                .title(previous.getTitle())
+                                .build();
                 }
-                else {
-                        return NoticeResponseDTO.toDTO(notice, null);
+
+                //다음글
+                Board next = boardRepository.findTopByCreateDTGreaterThanOrderByCreateDTDesc(notice.getCreateDT());
+                SimplePostDTO next1 = null;
+                if (next != null) {
+                        next1 = SimplePostDTO.builder()
+                                .idx(next.getIdx())
+                                .title(next.getTitle())
+                                .build();
+                }
+
+
+                // 파일 추가 필요
+                if (boardFileService.isExistFile(id)) {
+                        return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(id),prev, next1);
+                } else {
+                        return NoticeResponseDTO.toDTO(notice, null,prev, next1);
                 }
         }
+
 
         public List<NoticeResponseDTO> getAllNoticeSpeak(String category) {
                 // category 있는지 없는지 확인 후, 예외처리
@@ -59,14 +84,15 @@ public class BoardService {
                 return noticeList.stream().map(notice ->{
                         // 첨부파일 받아오기
                         if (boardFileService.isExistFile(notice.getIdx())) {
-                                return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(notice.getIdx()));
+                                return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(notice.getIdx()), null, null);
                         }
                         else {
-                                return NoticeResponseDTO.toDTO(notice, null);
+                                return NoticeResponseDTO.toDTO(notice, null, null, null);
                         }
                 }).collect(Collectors.toList());
 
         }
+
 
         public Page<NoticeResponseDTO> getAllNotice(String category, int page, int size) {
                 // category 있는지 없는지 확인 후, 예외처리
@@ -77,7 +103,9 @@ public class BoardService {
                         noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
                 }
                 else {
+
                         noticeList = boardRepository.findAllByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+
                 }
 
                 if (noticeList.isEmpty()) {
@@ -87,10 +115,10 @@ public class BoardService {
                 List<NoticeResponseDTO> noticeResponseDTO =  noticeList.stream().map(notice ->{
                         // 첨부파일 받아오기
                         if (boardFileService.isExistFile(notice.getIdx())) {
-                                return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(notice.getIdx()));
+                                return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(notice.getIdx()), null, null);
                         }
                         else {
-                                return NoticeResponseDTO.toDTO(notice, null);
+                                return NoticeResponseDTO.toDTO(notice, null, null, null);
                         }
                 }).toList();
 

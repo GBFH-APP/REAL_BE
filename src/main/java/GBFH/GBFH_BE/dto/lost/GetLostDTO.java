@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.lost;
 
-import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
+import GBFH.GBFH_BE.dto.boardFile.FileDTO;
 import GBFH.GBFH_BE.entity.Board;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,11 +51,11 @@ public class GetLostDTO {
         private LocalDateTime createDT;
         private Boolean permission;
         // 이미지 추가해야 함
-        private List<FileResponseDTO.FileDTO> files;
+        private List<FileDTO> files;
         // 댓글
         private List<GetCommentDTO> comments;
 
-        public static DETAIL mapToDTO(Board board, Boolean permission, List<FileResponseDTO.FileDTO> files, List<GetCommentDTO> comments) {
+        public static DETAIL mapToDTO(Board board, Boolean permission, List<FileDTO> files, List<GetCommentDTO> comments) {
             return DETAIL.builder()
                     .id(board.getIdx())
                     .title(board.getTitle())

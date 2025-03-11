@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.lost;
 
-import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
+import GBFH.GBFH_BE.dto.boardFile.FileDTO;
 import GBFH.GBFH_BE.entity.Board;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +27,9 @@ public class UpdateLostContentDTO {
         private String status;
         private LocalDateTime createDT;
         private String writer;
-        private List<FileResponseDTO.FileDTO> files;
+        private List<FileDTO> files;
 
-        public static Res mapToDTO(Board board, List<FileResponseDTO.FileDTO> files) {
+        public static Res mapToDTO(Board board, List<FileDTO> files) {
             return Res.builder()
                     .id(board.getIdx())
                     .title(board.getTitle())
