@@ -1,32 +1,77 @@
 package GBFH.GBFH_BE.dto.board;
 
-import GBFH.GBFH_BE.dto.boardFile.FileResponseDTO;
+import GBFH.GBFH_BE.dto.boardFile.FileDTO;
 import GBFH.GBFH_BE.entity.Board;
+import com.amazonaws.retry.v2.SimpleRetryPolicy;
 import lombok.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
 public class NoticeResponseDTO {
-    private Long id; //idx
-    private String title;
-    private String content; //contents
-    private String writer;
-    private Long read;
-    private LocalDate createAt; //CREATE_DT
-    private FileResponseDTO fileList; // 첨부파일
-    //파일 추가 필요
+    private final Long id; //idx
+    private final String title;
+    private final String content; //contents
+    private final String imgUrl; // 이미지는 필드로 final 선언
+    private final String writer;
+    private final Long read;
+    private final LocalDate createAt; //CREATE_DT
+    private final List<FileDTO> fileList; // 첨부파일은 List<FileResponseDTO>로 설정
+    // 이전글
+    private SimplePostDTO previous;
+    private SimplePostDTO next;
 
-    public static NoticeResponseDTO toDTO (Board board, FileResponseDTO fileList) {
+    // 다음글
+    
+
+    
+    // 파일 추가 필요
+
+    public static NoticeResponseDTO toDTO(Board notice, List<FileDTO> fileList, SimplePostDTO previous, SimplePostDTO next) {
+        String htmlContent = notice.getContent();  // 기존 HTML 콘텐츠
+        String img = null;
+        StringBuilder contentBuilder = new StringBuilder();
+
+        Document doc = Jsoup.parse(htmlContent);
+
+        // 이미지 src 값 추출 및 https로 변환
+        Elements imgTags = doc.select("img");
+        if (!imgTags.isEmpty()) {
+            Element firstImg = imgTags.get(0);
+            String imgSrc = firstImg.attr("src");
+
+            if (!imgSrc.contains("https")) {
+                imgSrc = imgSrc.replace("http://", "https://");
+                firstImg.attr("src", imgSrc);
+            }
+
+            img = imgSrc; // 리턴할 DTO에 담기 위해 저장
+        }
+
+        // <p> 태그의 텍스트만 추출
+        Elements pTags = doc.select("p");
+        for (Element p : pTags) {
+            contentBuilder.append(p.text()).append("\n");
+        }
+
+        // 빌더 패턴을 사용하여 객체 생성
         return NoticeResponseDTO.builder()
-                .id(board.getIdx())
-                .title(board.getTitle())
-                .content(board.getContents())
-                .createAt(board.getCreateDT().toLocalDate())
-                .read(board.getRead())
-                .writer(board.getMaskWriter())
-                .fileList(fileList)
+                .id(notice.getIdx())
+                .title(notice.getTitle())
+                .writer(notice.getWriter())
+                .read(notice.getRead())
+                .createAt(notice.getCreateDT().toLocalDate())
+                .imgUrl(img)
+                .content(contentBuilder.toString())
+                .fileList(fileList)  // 첨부파일 설정
+                .previous(previous)
+                .next(next)
                 .build();
     }
 }

@@ -53,6 +53,16 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	//유효성 검사
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
+
+	// 요소 분리
+	dependencies {
+		implementation 'org.jsoup:jsoup:1.15.3'  // 최신 버전으로 설정
+	}
+
+	dependencies {
+		implementation 'net.datafaker:datafaker:2.0.2'
+	}
+
 }
 
 tasks.named('test') {

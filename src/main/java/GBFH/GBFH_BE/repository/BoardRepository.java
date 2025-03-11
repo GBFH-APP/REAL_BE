@@ -7,12 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-
+    // 이전글
+    Board findTopByCreateDTLessThanOrderByCreateDTDesc(LocalDateTime createdDt);
+    // 다음글
+    Board findTopByCreateDTGreaterThanOrderByCreateDTDesc(LocalDateTime createdDt);
     Optional<Board> findByIdx(Long idx);
     // trashYN 고려함
     Optional<Board> findByIdxAndTrashYN(Long idx, Character trashYN);
