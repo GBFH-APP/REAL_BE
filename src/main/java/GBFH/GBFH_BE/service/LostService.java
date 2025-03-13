@@ -193,7 +193,6 @@ public class LostService {
             List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
             commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
         }
-
     }
 
     @Transactional
