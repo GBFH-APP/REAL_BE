@@ -2,6 +2,7 @@ package GBFH.GBFH_BE.repository;
 
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
+import GBFH.GBFH_BE.entity.BoardSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,9 +41,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT COALESCE(MAX(e.grp), 0) FROM Board e")
     Long findMaxGrp();
 
-    List<Board> findAllByBoardIdAndNotiOrderByCreateDTDesc(BoardId boardId, Integer noti);
+    List<BoardSummary> findByBoardIdAndNotiOrderByCreateDTDesc(BoardId boardId, Integer noti);
 
-    List<Board> findAllByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc(String title, BoardId boardId, Integer noti);
+    List<BoardSummary> findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc(String title, BoardId boardId, Integer noti);
 
     List<Board> findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(String title, BoardId boardId, Integer noti, String notiEnd, String notiStart);
 }

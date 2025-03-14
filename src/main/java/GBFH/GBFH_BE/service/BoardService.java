@@ -4,6 +4,7 @@ import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.board.SimplePostDTO;
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
+import GBFH.GBFH_BE.entity.BoardSummary;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.BoardRepository;
@@ -98,29 +99,46 @@ public class BoardService {
                 // category 있는지 없는지 확인 후, 예외처리
                 BoardId boardId = boardIdService.getCategory(category);
 
-                List<Board> noticeList;
+                List<BoardSummary> noticeList;
                 if (boardId.name().equals("recruitments")) {
-                        noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
+                        noticeList = boardRepository.findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
                 }
                 else {
+                        long totalTime = 0;
+                        int runs = 10;
 
-                        noticeList = boardRepository.findAllByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+                        for (int i = 0; i < runs; i++) {
+                                long start = System.currentTimeMillis();
 
+                                // 🔍 성능 테스트 대상 쿼리
+                                List<BoardSummary> boards = boardRepository.findByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+
+                                long end = System.currentTimeMillis();
+                                long duration = end - start;
+
+                                System.out.println((i + 1) + "회차 실행 시간: " + duration + "ms");
+                                totalTime += duration;
+                        }
+
+                        System.out.println("✅ 평균 실행 시간: " + (totalTime / runs) + "ms");
+                        noticeList = boardRepository.findByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
                 }
 
                 if (noticeList.isEmpty()) {
                         throw new EmptyPostException("글이 비었습니다.");
                 }
 
-                List<NoticeResponseDTO> noticeResponseDTO =  noticeList.stream().map(notice ->{
-                        // 첨부파일 받아오기
+                List<NoticeResponseDTO> noticeResponseDTO = noticeList.stream().map(NoticeResponseDTO::toSummaryDTO).collect(Collectors.toList());
+
+/*                List<NoticeResponseDTO> noticeResponseDTO =  noticeList.stream().map(notice ->{
+*//*                        // 첨부파일 받아오기
                         if (boardFileService.isExistFile(notice.getIdx())) {
-                                return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(notice.getIdx()), null, null);
+                                return NoticeResponseDTO.toSummaryDTO(notice);
                         }
                         else {
-                                return NoticeResponseDTO.toDTO(notice, null, null, null);
-                        }
-                }).toList();
+                                return NoticeResponseDTO.toSummaryDTO(notice);
+                        }*//*
+                }).toList();*/
 
                 return paginateService.paginateList(noticeResponseDTO, page, size);
 
