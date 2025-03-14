@@ -104,23 +104,6 @@ public class BoardService {
                         noticeList = boardRepository.findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
                 }
                 else {
-                        long totalTime = 0;
-                        int runs = 10;
-
-                        for (int i = 0; i < runs; i++) {
-                                long start = System.currentTimeMillis();
-
-                                // 🔍 성능 테스트 대상 쿼리
-                                List<BoardSummary> boards = boardRepository.findByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
-
-                                long end = System.currentTimeMillis();
-                                long duration = end - start;
-
-                                System.out.println((i + 1) + "회차 실행 시간: " + duration + "ms");
-                                totalTime += duration;
-                        }
-
-                        System.out.println("✅ 평균 실행 시간: " + (totalTime / runs) + "ms");
                         noticeList = boardRepository.findByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
                 }
 
