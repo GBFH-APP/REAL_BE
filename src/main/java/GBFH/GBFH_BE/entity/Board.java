@@ -52,7 +52,7 @@ public class Board {
 
     // 대표(0: 입ㄹ잔, 1: 대표)
     @Column(name = "BEST")
-    private byte best;
+    private Byte best;
 
     // 정렬 번호
     @Column(name = "SORT_NO")

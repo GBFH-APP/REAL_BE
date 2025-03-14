@@ -2,6 +2,7 @@ package GBFH.GBFH_BE.dto.board;
 
 import GBFH.GBFH_BE.dto.boardFile.FileDTO;
 import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.entity.BoardSummary;
 import com.amazonaws.retry.v2.SimpleRetryPolicy;
 import lombok.*;
 import org.jsoup.Jsoup;
@@ -32,6 +33,14 @@ public class NoticeResponseDTO {
 
     
     // 파일 추가 필요
+    public static NoticeResponseDTO toSummaryDTO(BoardSummary board) {
+        return NoticeResponseDTO.builder()
+                .id(board.getIdx())
+                .title(board.getTitle())
+                .writer(board.getWriter())
+                .read(board.getRead())
+                .createAt(board.getCreateDT().toLocalDate()).build();
+    }
 
     public static NoticeResponseDTO toDTO(Board notice, List<FileDTO> fileList, SimplePostDTO previous, SimplePostDTO next) {
         String htmlContent = notice.getContent();  // 기존 HTML 콘텐츠
