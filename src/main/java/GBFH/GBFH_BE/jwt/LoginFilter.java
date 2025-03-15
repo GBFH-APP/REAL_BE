@@ -6,6 +6,7 @@ import GBFH.GBFH_BE.dto.applicant.ApplicantDTO;
 import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.ApplicantSummary;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +39,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = obtainUsername(request);
         String password = obtainPassword(request);
 
-        Applicant applicant = applicantRepository.findByLoginId(username)
+        ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new AuthenticationServiceException("사용자를 찾을 수 없습니다."));
 
         // 비밀번호를 Base64로 인코딩하여 비교
@@ -51,7 +52,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             response.setHeader("accessToken", "Bearer " + accessToken);
             response.setHeader("refreshToken", "Bearer " + refreshToken);
 
-            ApplicantDTO.Res responseApplicant = ApplicantDTO.Res.mapToRes(applicant);
+            ApplicantDTO.Res responseApplicant = ApplicantDTO.Res.mapToResLog(applicant);
 
             ResponseDTO responseDTO = new ResponseDTO<>(ResponseCode.SUCCESS_LOGIN, responseApplicant);
 

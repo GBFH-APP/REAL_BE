@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.dto.applicant;
 
 import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.ApplicantSummary;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class ApplicantDTO {
         private String userNo;
         private String loginId;
 
-        public static Res mapToRes(Applicant applicant) {
+        public static Res mapToResLog(ApplicantSummary applicant) {
             return Res.builder()
                     .userNo(applicant.getUserNo())
                     .loginId(applicant.getLoginId())
@@ -69,6 +70,13 @@ public class ApplicantDTO {
                     .agreePromiseDT(applicant.getAgreePromiseDT())
                     .agreeBioData(applicant.getAgreeBioData())
                     .agreeBioDataDT(applicant.getAgreeBioDataDT())
+                    .build();
+        }
+
+        public static DetailRes mapToRes(ApplicantSummary applicant) {
+            return DetailRes.builder()
+                    .userNo(applicant.getUserNo())
+                    .loginId(applicant.getLoginId())
                     .build();
         }
     }
