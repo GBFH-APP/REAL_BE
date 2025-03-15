@@ -19,7 +19,8 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
+@org.springframework.transaction.annotation.Transactional
+
 
 public class S3Uploader {
 
