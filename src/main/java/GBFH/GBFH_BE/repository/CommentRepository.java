@@ -15,6 +15,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     // 댓글 조회
     List<Comment> findByUpIdxAndDelYNAndLvl(Long upIdx, String DelYN, Long lvl);
 
+    // 댓글 조회 lvl 고려 x
+    List<Comment> findByUpIdxAndDelYN(Long upIdx, String DelYN);
+
     // 대댓글 조회
     List<Comment> findByUpIdxAndDelYNAndLvlAndGrp(Long upIdx, String DelYN, Long lvl, Long grp);
 
