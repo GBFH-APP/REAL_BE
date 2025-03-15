@@ -4,6 +4,7 @@ import GBFH.GBFH_BE.dto.applicant.ApplicantDTO;
 import GBFH.GBFH_BE.dto.applicant.UpdateApplicantDTO;
 import GBFH.GBFH_BE.dto.userInfo.UserInfoDto;
 import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.ApplicantSummary;
 import GBFH.GBFH_BE.entity.UserInfo;
 import GBFH.GBFH_BE.exception.NotInDormException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
@@ -20,13 +21,13 @@ public class ApplicantService {
     private final UserInfoRepository userInfoRepository;
 
     public ApplicantDTO.DetailRes getApplicant(String username) {
-        Applicant user = applicantRepository.findByLoginId(username)
+        ApplicantSummary user = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
-        return ApplicantDTO.DetailRes.mapToDetailRes(user);
+        return ApplicantDTO.DetailRes.mapToRes(user);
     }
 
     public UserInfoDto getUserInfo(String username) {
-        Applicant applicant = applicantRepository.findByLoginId(username)
+        ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
         UserInfo user = userInfoRepository.findByUserNo(applicant.getUserNo())

@@ -2,10 +2,7 @@ package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutResponseDTO;
-import GBFH.GBFH_BE.entity.Applicant;
-import GBFH.GBFH_BE.entity.DormEnterSubmit;
-import GBFH.GBFH_BE.entity.Stayout;
-import GBFH.GBFH_BE.entity.StayoutPk;
+import GBFH.GBFH_BE.entity.*;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.exception.SameStayoutException;
@@ -37,7 +34,7 @@ public class StayoutService {
     private final PaginateService paginateService;
 
     public StayoutResponseDTO createStayOut(String username, StayoutRequestDTO stayoutRequestDTO, String clientIp) {
-        Applicant applicant = applicantRepository.findByLoginId(username)
+        ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
         DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
@@ -76,7 +73,7 @@ public class StayoutService {
     }
 
     public Page<StayoutResponseDTO> getAllStayout(String username, int page, int size) {
-        Applicant applicant = applicantRepository.findByLoginId(username)
+        ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
         //regi no 찾는 과정
@@ -93,7 +90,7 @@ public class StayoutService {
     }
 
     public StayoutResponseDTO getStayoutDetail(Integer id, String username) {
-        Applicant applicant = applicantRepository.findByLoginId(username)
+        ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
         DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
