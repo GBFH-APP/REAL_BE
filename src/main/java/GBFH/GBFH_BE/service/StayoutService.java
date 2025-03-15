@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
+@org.springframework.transaction.annotation.Transactional
+
 
 public class StayoutService {
     private final StayoutRepository stayoutRepository;

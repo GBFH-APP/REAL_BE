@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@org.springframework.transaction.annotation.Transactional
+
 public class LostService {
     private final BoardRepository boardRepository;
     private final ApplicantRepository applicantRepository;
