@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +65,7 @@ public class LostController {
 
     // 분실물 상태 별로 필터링
     @GetMapping
-    public ResponseEntity<ResponseDTO<?>> getLostsByStatus(@PathParam("status") String status) {
+   public ResponseEntity<ResponseDTO<?>> getLostsByStatus(@PathParam("status") String status) {
         List<GetLostDTO.LIST> res = lostService.getLostsByStatus(status);
 
         return ResponseEntity

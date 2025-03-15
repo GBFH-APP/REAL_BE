@@ -8,12 +8,12 @@ import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.BoardFileRepository;
 import GBFH.GBFH_BE.repository.BoardRepository;
 import GBFH.GBFH_BE.repository.CommentRepository;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -97,12 +97,13 @@ public class LostService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<GetLostDTO.LIST> getAllLosts() {
         List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId.lost, 'N');
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GetLostDTO.DETAIL getDetailLost(Long id, String username) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
@@ -141,6 +142,7 @@ public class LostService {
         return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS, commentDTOS);
     }
 
+    @Transactional(readOnly = true)
     public List<GetLostDTO.LIST> getLostsByStatus(String status) {
         List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, status);
 
@@ -160,6 +162,7 @@ public class LostService {
         return CreateCommentDTO.Res.mapToDTO(savedComment);
     }
 
+    @Transactional
     public CreateCommentDTO.Res createReply(Long boardId, Long commentId, String username, @Valid CreateCommentDTO createCommentDTO, String clientIp) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
