@@ -42,13 +42,19 @@ public class S3Uploader {
         return uuid;
     }
 
+
     private String putS3(MultipartFile multipartFile, String fileName) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
-        amazonS3.putObject(new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+        PutObjectRequest request = new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), metadata);
+
+        // 기존 ACL 설정 제거 (withCannedAcl 제거)
+        // request.withCannedAcl(CannedAccessControlList.PublicRead);
+
+        amazonS3.putObject(request);
+
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
