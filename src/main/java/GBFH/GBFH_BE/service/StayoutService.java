@@ -12,6 +12,7 @@ import GBFH.GBFH_BE.exception.SameStayoutException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.StayoutRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
+
 public class StayoutService {
     private final StayoutRepository stayoutRepository;
     private final ApplicantRepository applicantRepository;
