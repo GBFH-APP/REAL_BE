@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,6 +105,7 @@ public class LostService {
         return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
     }
 
+
     @Transactional(readOnly = true)
     public GetLostDTO.DETAIL getDetailLost(Long id, String username) {
         Applicant user = applicantRepository.findByLoginId(username)
@@ -117,30 +120,40 @@ public class LostService {
         List<BoardFile> files = boardFileRepository.findAllByIdx(lost.getIdx());
         List<FileDTO> fileDTOS = files.stream().map(FileDTO::toDTO).toList();
 
-        if(!lost.getBoardId().toString().equals("lost"))
+        if (!lost.getBoardId().toString().equals("lost"))
             throw new NotLostException("분실물 글이 아닙니다.");
 
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
-        // 댓글 모두 가져오기 - lvl = 1
-        List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(id, "N", 1L);
+        // 한 번의 쿼리로 lvl = 1 및 lvl = 2 댓글 가져오기
+        List<Comment> allComments = commentRepository.findByUpIdxAndDelYN(id, "N");
 
-        // 댓글 수정 권한 확인 permission 추가 (true이면 내가 작성한 글, false 이면 내가 작성하지 않은 글)
-        List<GetCommentDTO> commentDTOS = comments.stream().map(comment -> {
-            Boolean commentPermission = comment.getCreateId().equals(user.getUserNo());
+        // lvl = 2 댓글을 grp 기준으로 Map에 저장 (Key: grp, Value: 대댓글 리스트)
+        Map<Long, List<Comment>> replyMap = allComments.stream()
+                .filter(comment -> comment.getLvl() == 2)
+                .collect(Collectors.groupingBy(Comment::getGrp));
 
-            // 대댓글 조회
-            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(id, "N", 2L, comment.getGrp());
-            List<GetReplyDTO> commentReplyDTOS = commentReplies.stream().map(reply -> {
-                Boolean replyPermission = comment.getCreateId().equals(user.getUserNo());
-                return GetReplyDTO.mapToReplyDTO(reply, replyPermission);
-            }).toList();
+        // lvl = 1 댓글만 필터링 후 대댓글 매핑
+        List<GetCommentDTO> commentDTOS = allComments.stream()
+                .filter(comment -> comment.getLvl() == 1)
+                .map(comment -> {
+                    Boolean commentPermission = comment.getCreateId().equals(user.getUserNo());
 
-            return GetCommentDTO.mapToCommentDTO(comment, commentPermission, commentReplyDTOS);
-        }).toList();
+                    // grp 기준으로 대댓글 리스트 가져오기 (없으면 빈 리스트)
+                    List<GetReplyDTO> commentReplyDTOS = replyMap.getOrDefault(comment.getGrp(), Collections.emptyList())
+                            .stream()
+                            .map(reply -> {
+                                Boolean replyPermission = reply.getCreateId().equals(user.getUserNo());
+                                return GetReplyDTO.mapToReplyDTO(reply, replyPermission);
+                            })
+                            .toList();
+
+                    return GetCommentDTO.mapToCommentDTO(comment, commentPermission, commentReplyDTOS);
+                }).toList();
 
         return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS, commentDTOS);
     }
+
 
     @Transactional(readOnly = true)
     public List<GetLostDTO.LIST> getLostsByStatus(String status) {
@@ -214,15 +227,9 @@ public class LostService {
         }
 
         // 댓글 조회
-        List<Comment> comments = commentRepository.findByUpIdxAndDelYNAndLvl(boardId, "N", 1L);
-        comments.forEach(comment -> {
-            // 대댓글 조회
-            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
-            // 대댓글 모두 삭제
-            commentReplies.forEach(Comment::delete);
-            // 댓글 삭제
-            comment.delete();
-        });
+        List<Comment> comments = commentRepository.findByUpIdxAndDelYN(boardId, "N");
+        // 댓글 삭제 처리
+        comments.forEach(Comment::delete);
 
 
         lost.delete();
