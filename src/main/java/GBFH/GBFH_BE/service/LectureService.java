@@ -10,6 +10,7 @@ import GBFH.GBFH_BE.repository.ApplicantRepository;
 import GBFH.GBFH_BE.repository.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.LectureRepository;
 import GBFH.GBFH_BE.repository.LectureSubmitRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,8 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
+
 public class LectureService {
     private final LectureRepository lectureRepository;
     private final PaginateService paginateService;
