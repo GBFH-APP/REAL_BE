@@ -29,7 +29,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorization= request.getHeader("Authorization");
         // /notice/** 경로는 필터를 거치지 않고 그대로 진행
         String path = request.getRequestURI();
-        if (path.startsWith("/notice")) {
+        if (path.startsWith("/notice") || (path.startsWith("/actuator"))) {
             filterChain.doFilter(request, response);
             return;
         }
