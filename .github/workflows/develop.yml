@@ -48,7 +48,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.KEY }}
           envs: GITHUB_SHA
-          script: |
+          script: | 
             sudo docker rm $(docker ps -qa)
             sudo docker stop $(docker ps -a -q)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/gbfh
