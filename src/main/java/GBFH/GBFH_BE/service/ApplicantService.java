@@ -44,6 +44,8 @@ public class ApplicantService {
         applicant.updateInfo(updateApplicantDTO);
         applicantRepository.save(applicant);
 
+        System.out.println(applicant.getRefundBank());
+
         return UpdateApplicantDTO.Res.toDTO(applicant);
     }
 }
