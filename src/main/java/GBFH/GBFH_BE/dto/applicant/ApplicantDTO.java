@@ -65,6 +65,7 @@ public class ApplicantDTO {
                     .highSchool(applicant.getHighSchool())
                     .highSchoolYear(applicant.getHighSchoolYear())
                     .refundAccount(applicant.getRefundAccount())
+                    .refundBank(applicant.getRefundBank())
                     .refundName(applicant.getRefundName())
                     .agreePromise(applicant.getAgreePromise())
                     .agreePromiseDT(applicant.getAgreePromiseDT())

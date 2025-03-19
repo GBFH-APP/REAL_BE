@@ -231,7 +231,6 @@ public class LostService {
         // 댓글 삭제 처리
         comments.forEach(Comment::delete);
 
-
         lost.delete();
     }
 
