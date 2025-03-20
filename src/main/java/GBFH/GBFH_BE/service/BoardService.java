@@ -38,7 +38,7 @@ public class BoardService {
 
 
                 //이전글
-                SimpleNotice previous = boardRepository.findTopByCreateDTLessThanAndBoardIdOrderByCreateDTDesc(notice.getCreateDT(), BoardId.notice);
+                SimpleNotice previous = boardRepository.findFirstByBoardIdAndIdxBeforeOrderByIdxDesc(notice.getBoardId(), notice.getIdx());
                 SimplePostDTO prev = null;
                 if (previous != null) {
                         prev = SimplePostDTO.builder()
@@ -48,7 +48,7 @@ public class BoardService {
                 }
 
                 //다음글
-                SimpleNotice next = boardRepository.findTopByCreateDTGreaterThanAndBoardIdOrderByCreateDTDesc(notice.getCreateDT(), BoardId.notice);
+                SimpleNotice next = boardRepository.findFirstByBoardIdAndIdxAfterOrderByIdxAsc(notice.getBoardId(), notice.getIdx());
                 SimplePostDTO next1 = null;
                 if (next != null) {
                         next1 = SimplePostDTO.builder()
