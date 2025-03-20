@@ -6,6 +6,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class SimplePostDTO {
-    private Long idx;
+    private String idx;
     private String title;
 }
