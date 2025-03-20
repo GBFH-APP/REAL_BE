@@ -102,8 +102,20 @@ public class LostService {
     @Transactional(readOnly = true)
     public List<GetLostDTO.LIST> getAllLosts() {
         List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId.lost, 'N');
-        return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
+
+        // status 별로 그룹화
+        Map<String, List<GetLostDTO.ListItem>> groupedByStatus = losts.stream()
+                .collect(Collectors.groupingBy(
+                        Board::getStatus,
+                        Collectors.mapping(GetLostDTO.ListItem::mapToDTO, Collectors.toList())
+                ));
+
+        // LIST DTO 로 변환하여 반환
+        return groupedByStatus.entrySet().stream()
+                .map(entry -> new GetLostDTO.LIST(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
+
 
 
     @Transactional(readOnly = true)
@@ -156,10 +168,10 @@ public class LostService {
 
 
     @Transactional(readOnly = true)
-    public List<GetLostDTO.LIST> getLostsByStatus(String status) {
+    public List<GetLostDTO.CategoryList> getLostsByStatus(String status) {
         List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, status);
 
-        return losts.stream().map(GetLostDTO.LIST::mapToDTO).collect(Collectors.toList());
+        return losts.stream().map(GetLostDTO.CategoryList::mapToDTO).collect(Collectors.toList());
     }
 
     @Transactional
@@ -343,10 +355,10 @@ public class LostService {
         return  UpdateLostContentDTO.Res.mapToDTO(lost, fileDTOList);
     }
 
-    public List<GetLostDTO.LIST> getAllBySearch(String q) {
+    public List<GetLostDTO.CategoryList> getAllBySearch(String q) {
         // 분실물 검색 일단 title과 content에 문자열을 포함하는 조건으로 진행함
         List<Board> losts = boardRepository.findByBoardIdAndTitleOrContentsContainingAndOrderByCreateDTDesc(BoardId.lost, q);
 
-        return losts.stream().map(GetLostDTO.LIST::mapToDTO).toList();
+        return losts.stream().map(GetLostDTO.CategoryList::mapToDTO).toList();
     }
 }
