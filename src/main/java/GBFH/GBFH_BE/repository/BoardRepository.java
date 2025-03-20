@@ -3,6 +3,7 @@ package GBFH.GBFH_BE.repository;
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
 import GBFH.GBFH_BE.entity.BoardSummary;
+import GBFH.GBFH_BE.entity.SimpleNotice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,9 +16,10 @@ import java.util.Optional;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
     // 이전글
-    Board findTopByCreateDTLessThanOrderByCreateDTDesc(LocalDateTime createdDt);
+    SimpleNotice findTopByCreateDTLessThanAndBoardIdOrderByCreateDTDesc(LocalDateTime createDT, BoardId boardId);
+
     // 다음글
-    Board findTopByCreateDTGreaterThanOrderByCreateDTDesc(LocalDateTime createdDt);
+    SimpleNotice findTopByCreateDTGreaterThanAndBoardIdOrderByCreateDTDesc(LocalDateTime createDT, BoardId boardId);
     Optional<Board> findByIdx(Long idx);
     // trashYN 고려함
     Optional<Board> findByIdxAndTrashYN(Long idx, Character trashYN);
