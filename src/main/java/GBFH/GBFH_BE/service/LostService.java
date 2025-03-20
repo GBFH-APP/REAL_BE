@@ -99,15 +99,19 @@ public class LostService {
         }
     }
 
+    // 캐싱 도입해야 할 것 같음
     @Transactional(readOnly = true)
     public List<GetLostDTO.LIST> getAllLosts() {
         List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId.lost, 'N');
 
-        // status 별로 그룹화
+        // status 별로 그룹화 후, 상위 5개만 선택
         Map<String, List<GetLostDTO.ListItem>> groupedByStatus = losts.stream()
                 .collect(Collectors.groupingBy(
                         Board::getStatus,
-                        Collectors.mapping(GetLostDTO.ListItem::mapToDTO, Collectors.toList())
+                        Collectors.collectingAndThen(
+                                Collectors.mapping(GetLostDTO.ListItem::mapToDTO, Collectors.toList()),
+                                list -> list.stream().limit(5).collect(Collectors.toList()) // 각 그룹에서 5개 제한
+                        )
                 ));
 
         // LIST DTO 로 변환하여 반환
@@ -115,6 +119,7 @@ public class LostService {
                 .map(entry -> new GetLostDTO.LIST(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
+
 
 
 
