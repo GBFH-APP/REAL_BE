@@ -41,7 +41,7 @@ public class BoardService {
                 SimplePostDTO prev = null;
                 if (previous != null) {
                         prev = SimplePostDTO.builder()
-                                .idx(previous.getIdx())
+                                .idx(previous.getIdx().toString())
                                 .title(previous.getTitle())
                                 .build();
                 }
@@ -51,7 +51,7 @@ public class BoardService {
                 SimplePostDTO next1 = null;
                 if (next != null) {
                         next1 = SimplePostDTO.builder()
-                                .idx(next.getIdx())
+                                .idx(next.getIdx().toString())
                                 .title(next.getTitle())
                                 .build();
                 }

@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Builder
 public class NoticeResponseDTO {
-    private final Long id; //idx
+    private final String id; //idx
     private final String title;
     private final String content; //contents
     private final String imgUrl; // 이미지는 필드로 final 선언
@@ -35,7 +35,7 @@ public class NoticeResponseDTO {
     // 파일 추가 필요
     public static NoticeResponseDTO toSummaryDTO(BoardSummary board) {
         return NoticeResponseDTO.builder()
-                .id(board.getIdx())
+                .id(board.getIdx().toString())
                 .title(board.getTitle())
                 .writer(board.getWriter())
                 .read(board.getRead())
@@ -71,7 +71,7 @@ public class NoticeResponseDTO {
 
         // 빌더 패턴을 사용하여 객체 생성
         return NoticeResponseDTO.builder()
-                .id(notice.getIdx())
+                .id(notice.getIdx().toString())
                 .title(notice.getTitle())
                 .writer(notice.getWriter())
                 .read(notice.getRead())
