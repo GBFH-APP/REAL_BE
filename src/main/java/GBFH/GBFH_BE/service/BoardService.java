@@ -5,6 +5,7 @@ import GBFH.GBFH_BE.dto.board.SimplePostDTO;
 import GBFH.GBFH_BE.entity.Board;
 import GBFH.GBFH_BE.entity.BoardId;
 import GBFH.GBFH_BE.entity.BoardSummary;
+import GBFH.GBFH_BE.entity.SimpleNotice;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.BoardRepository;
@@ -37,7 +38,7 @@ public class BoardService {
 
 
                 //이전글
-                Board previous = boardRepository.findTopByCreateDTLessThanOrderByCreateDTDesc(notice.getCreateDT());
+                SimpleNotice previous = boardRepository.findTopByCreateDTLessThanAndBoardIdOrderByCreateDTDesc(notice.getCreateDT(), BoardId.notice);
                 SimplePostDTO prev = null;
                 if (previous != null) {
                         prev = SimplePostDTO.builder()
@@ -47,7 +48,7 @@ public class BoardService {
                 }
 
                 //다음글
-                Board next = boardRepository.findTopByCreateDTGreaterThanOrderByCreateDTDesc(notice.getCreateDT());
+                SimpleNotice next = boardRepository.findTopByCreateDTGreaterThanAndBoardIdOrderByCreateDTDesc(notice.getCreateDT(), BoardId.notice);
                 SimplePostDTO next1 = null;
                 if (next != null) {
                         next1 = SimplePostDTO.builder()
