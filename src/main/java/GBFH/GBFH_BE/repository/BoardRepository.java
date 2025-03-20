@@ -17,7 +17,8 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     // 이전글
     SimpleNotice findTopByCreateDTLessThanAndBoardIdOrderByCreateDTDesc(LocalDateTime createDT, BoardId boardId);
-
+    SimpleNotice findFirstByBoardIdAndIdxAfterOrderByIdxAsc(BoardId boardId, Long idx);
+    SimpleNotice findFirstByBoardIdAndIdxBeforeOrderByIdxDesc(BoardId boardId, Long idx);
     // 다음글
     SimpleNotice findTopByCreateDTGreaterThanAndBoardIdOrderByCreateDTDesc(LocalDateTime createDT, BoardId boardId);
     Optional<Board> findByIdx(Long idx);
