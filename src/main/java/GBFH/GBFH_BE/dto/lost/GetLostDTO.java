@@ -11,12 +11,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class GetLostDTO {
-    // 리스트 조회
+
+    // 리스트 안에 들어갈 내용들
     @Builder
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LIST {
+    public static class ListItem {
         private Long id;
         private String title;
         private String contents;
@@ -25,8 +26,43 @@ public class GetLostDTO {
         // 이미지 추가해야 함
         private String fildId;
 
-        public static LIST mapToDTO(Board board) {
-            return LIST.builder()
+        public static ListItem mapToDTO(Board board) {
+            return ListItem.builder()
+                    .id(board.getIdx())
+                    .title(board.getTitle())
+                    .contents(board.getContents())
+                    .status(board.getStatus())
+                    .createDT(board.getCreateDT())
+                    .fildId(board.getFileId())
+                    .build();
+        }
+    }
+    // 리스트 조회
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LIST {
+        private String status;
+        private List<ListItem> listItems;
+    }
+
+    // category별로 리스트 조회
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CategoryList {
+        private Long id;
+        private String title;
+        private String contents;
+        private String status;
+        private LocalDateTime createDT;
+        // 이미지 추가해야 함
+        private String fildId;
+
+        public static CategoryList mapToDTO(Board board) {
+            return CategoryList.builder()
                     .id(board.getIdx())
                     .title(board.getTitle())
                     .contents(board.getContents())

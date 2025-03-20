@@ -66,7 +66,7 @@ public class LostController {
     // 분실물 상태 별로 필터링
     @GetMapping
    public ResponseEntity<ResponseDTO<?>> getLostsByStatus(@PathParam("status") String status) {
-        List<GetLostDTO.LIST> res = lostService.getLostsByStatus(status);
+        List<GetLostDTO.CategoryList> res = lostService.getLostsByStatus(status);
 
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
@@ -168,7 +168,7 @@ public class LostController {
     // 분실물 검색
     @GetMapping("/search")
     public ResponseEntity<ResponseDTO<?>> getAllBySearch(@RequestParam("q") String q) {
-        List<GetLostDTO.LIST> res = lostService.getAllBySearch(q);
+        List<GetLostDTO.CategoryList> res = lostService.getAllBySearch(q);
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LOST_LIST, res));
