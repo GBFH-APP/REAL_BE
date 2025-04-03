@@ -19,7 +19,7 @@ public class UpdateLostStatusDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Res {
-        private Long id;
+        private String id;
         private String title;
         private String contents;
         private String boardId;
@@ -30,7 +30,7 @@ public class UpdateLostStatusDTO {
 
     public static Res mapToDTO(Board board) {
         return Res.builder()
-                .id(board.getIdx())
+                .id(board.getIdx().toString())
                 .title(board.getTitle())
                 .contents(board.getContents())
                 .boardId(board.getBoardId().name())

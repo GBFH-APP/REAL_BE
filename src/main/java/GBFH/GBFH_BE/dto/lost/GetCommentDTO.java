@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetCommentDTO {
-    private Long commentId;
+    private String commentId;
     private Long grp;
     private String contents;
     private Long boardId;
@@ -25,7 +25,7 @@ public class GetCommentDTO {
 
     public static GetCommentDTO mapToCommentDTO(Comment comment, Boolean permission, List<GetReplyDTO> replies) {
         return GetCommentDTO.builder()
-                .commentId(comment.getIdx())
+                .commentId(comment.getIdx().toString())
                 .grp(comment.getGrp())
                 .contents(comment.getContents())
                 .boardId(comment.getUpIdx())
