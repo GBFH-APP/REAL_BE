@@ -55,7 +55,7 @@ public class CreateCommentDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Res {
-        private Long id;
+        private String id;
         private Long grp;
         private Long lvl;
         private String contents;
@@ -64,7 +64,7 @@ public class CreateCommentDTO {
 
         public static CreateCommentDTO.Res mapToDTO(Comment comment) {
             return Res.builder()
-                    .id(comment.getIdx())
+                    .id(comment.getIdx().toString())
                     .grp(comment.getGrp())
                     .lvl(comment.getLvl())
                     .contents(comment.getContents())

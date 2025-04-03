@@ -18,7 +18,7 @@ public class GetLostDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ListItem {
-        private Long id;
+        private String id;
         private String title;
         private String contents;
         private String status;
@@ -28,7 +28,7 @@ public class GetLostDTO {
 
         public static ListItem mapToDTO(Board board) {
             return ListItem.builder()
-                    .id(board.getIdx())
+                    .id(board.getIdx().toString())
                     .title(board.getTitle())
                     .contents(board.getContents())
                     .status(board.getStatus())
@@ -53,7 +53,7 @@ public class GetLostDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CategoryList {
-        private Long id;
+        private String id;
         private String title;
         private String contents;
         private String status;
@@ -63,7 +63,7 @@ public class GetLostDTO {
 
         public static CategoryList mapToDTO(Board board) {
             return CategoryList.builder()
-                    .id(board.getIdx())
+                    .id(board.getIdx().toString())
                     .title(board.getTitle())
                     .contents(board.getContents())
                     .status(board.getStatus())
@@ -79,7 +79,7 @@ public class GetLostDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DETAIL {
-        private Long id;
+        private String id;
         private String title;
         private String contents;
         private String status;
@@ -93,7 +93,7 @@ public class GetLostDTO {
 
         public static DETAIL mapToDTO(Board board, Boolean permission, List<FileDTO> files, List<GetCommentDTO> comments) {
             return DETAIL.builder()
-                    .id(board.getIdx())
+                    .id(board.getIdx().toString())
                     .title(board.getTitle())
                     .contents(board.getContents())
                     .status(board.getStatus())

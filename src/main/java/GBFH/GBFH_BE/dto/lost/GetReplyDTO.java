@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetReplyDTO {
-    private Long id;
+    private String id;
     private Long grp;
     private String contents;
     private Long boardId;
@@ -23,7 +23,7 @@ public class GetReplyDTO {
 
     public static GetReplyDTO mapToReplyDTO(Comment comment, Boolean permission) {
         return GetReplyDTO.builder()
-                .id(comment.getIdx())
+                .id(comment.getIdx().toString())
                 .grp(comment.getGrp())
                 .contents(comment.getContents())
                 .boardId(comment.getUpIdx())
