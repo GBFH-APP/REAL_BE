@@ -14,6 +14,7 @@ import java.util.List;
 public class UpdateLostContentDTO {
     private String title;
     private String contents;
+    private String status;
 
     @Getter
     @Builder

@@ -49,5 +49,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<BoardSummary> findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc(String title, BoardId boardId, Integer noti);
 
     List<Board> findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(String title, BoardId boardId, Integer noti, String notiEnd, String notiStart);
+
+    List<Board> findAllByBoardIdAndTrashYNAndStatusOrderByIdxDesc(BoardId boardId, Character n, String status);
 }
 
