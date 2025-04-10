@@ -174,7 +174,7 @@ public class LostService {
 
     @Transactional(readOnly = true)
     public List<GetLostDTO.CategoryList> getLostsByStatus(String status) {
-        List<Board> losts = boardRepository.findAllByBoardIdAndStatusOrderByIdxDesc(BoardId.lost, status);
+        List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNAndStatusOrderByIdxDesc(BoardId.lost, 'N', status);
 
         return losts.stream().map(GetLostDTO.CategoryList::mapToDTO).collect(Collectors.toList());
     }

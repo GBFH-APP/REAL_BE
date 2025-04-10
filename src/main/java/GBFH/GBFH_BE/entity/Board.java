@@ -192,6 +192,7 @@ public class Board {
     public void updateContent(UpdateLostContentDTO updateLostContentDTO) {
         this.title = updateLostContentDTO.getTitle() == null ? this.title : updateLostContentDTO.getTitle();
         this.contents = updateLostContentDTO.getContents() == null ? this.contents : updateLostContentDTO.getContents();
+        this.status = updateLostContentDTO.getStatus() == null ? this.status : updateLostContentDTO.getStatus();
     }
 
     public void updateTitleImage(String fileId) {
