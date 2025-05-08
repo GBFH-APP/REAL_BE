@@ -72,7 +72,7 @@ public class BoardService {
                 BoardId boardId = boardIdService.getCategory(category);
 
 
-                List<Board> noticeList;
+                List<BoardSummary> noticeList;
                 if (boardId.name().equals("recruitments")) {
                         noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc("채용", BoardId.notice, 1, LocalDate.now().toString(), LocalDate.now().toString());
                 }
@@ -85,15 +85,7 @@ public class BoardService {
                         throw new EmptyPostException("글이 비었습니다.");
                 }
                 // noti 1이고 오늘 날짜가 noti_start랑 noti_end에 끼어있으면 먼저 내보냄
-                return noticeList.stream().map(notice ->{
-                        // 첨부파일 받아오기
-                        if (boardFileService.isExistFile(notice.getIdx())) {
-                                return NoticeResponseDTO.toDTO(notice, boardFileService.getAllFileDTO(notice.getIdx()), null, null);
-                        }
-                        else {
-                                return NoticeResponseDTO.toDTO(notice, null, null, null);
-                        }
-                }).collect(Collectors.toList());
+                return noticeList.stream().map(NoticeResponseDTO::toSummaryDTO).collect(Collectors.toList());
 
         }
 
