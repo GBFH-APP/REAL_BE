@@ -54,7 +54,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers(
-                        "/login", "/notice/**", "/error"
+                        "/login", "/notice/**", "/error", "/menu/**"
                 ).permitAll()
                 .anyRequest().authenticated());
 
