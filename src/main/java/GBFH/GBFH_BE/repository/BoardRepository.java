@@ -31,7 +31,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      */
     List<Board> findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId boardId, Character trashYN);
     List<Board> findAllByBoardIdAndStatusOrderByIdxDesc(BoardId boardId, String status);
-    List<Board> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(BoardId boardId, Integer noti, String now, String today);
+    List<BoardSummary> findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(BoardId boardId, Integer noti, String now, String today);
 
     @Query("SELECT e FROM Board e WHERE e.boardId = :boardId AND (e.title LIKE %:keyword% OR e.contents LIKE %:keyword%) ORDER BY e.createDT DESC")
     List<Board> findByBoardIdAndTitleOrContentsContainingAndOrderByCreateDTDesc(@Param("boardId") BoardId boardId, @Param("keyword") String keyword);
@@ -48,7 +48,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<BoardSummary> findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc(String title, BoardId boardId, Integer noti);
 
-    List<Board> findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(String title, BoardId boardId, Integer noti, String notiEnd, String notiStart);
+    List<BoardSummary> findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(String title, BoardId boardId, Integer noti, String notiEnd, String notiStart);
 
     List<Board> findAllByBoardIdAndTrashYNAndStatusOrderByIdxDesc(BoardId boardId, Character n, String status);
 }

@@ -49,7 +49,7 @@ public class BoardController {
                     .body(new ResponseDTO<>(ResponseCode.SUCCESS_NOTICE_RETRIEVE, noticeResponseDTOList));
     }
 
-    @GetMapping("all/{category}/normal")
+    @GetMapping("/all/{category}/normal")
     public ResponseEntity<ResponseDTO<?>> getAllNotice(@Valid @PathVariable String category,
                                                @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size) {
