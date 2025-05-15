@@ -56,6 +56,11 @@ public enum ErrorCode {
     WRONG_PAGINATION(HttpStatus.NOT_ACCEPTABLE, "페이지네이션에 문제가 있습니다."),
 
     /**
+     * 500
+     */
+    PAGE_TITLE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "타이틀 이미지 갱신 중 예외 발생"),
+
+    /**
      * 502
      */
 

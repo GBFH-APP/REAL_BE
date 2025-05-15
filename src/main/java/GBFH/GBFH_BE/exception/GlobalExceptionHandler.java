@@ -121,4 +121,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.BEFORE_START_DATE.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.BEFORE_START_DATE));
     }
+
+    @ExceptionHandler(PageTitleException.class)
+    protected ResponseEntity<ErrorResponseDTO> handlePageTitleException(final PageTitleException e) {
+        return ResponseEntity
+                .status(ErrorCode.PAGE_TITLE_ERROR.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.PAGE_TITLE_ERROR));
+    }
 }

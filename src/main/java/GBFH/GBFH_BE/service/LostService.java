@@ -11,6 +11,7 @@ import GBFH.GBFH_BE.repository.CommentRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.ErrorState;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -351,12 +352,21 @@ public class LostService {
         List<FileDTO> fileDTOList = savedFiles.stream().map(FileDTO::toDTO).toList();
 
         // 첫 이미지가 변경되었는가?
-        if (!savedFiles.isEmpty()){
-            if(!lost.getFileId().equals(savedFiles.get(0).getFileId())) {
-                // 첫 번째 이미지 갱신
-                lost.updateTitleImage(savedFiles.get(0).getFileId());
+        try {
+            if (!savedFiles.isEmpty()) {
+                String newFileId = savedFiles.get(0).getFileId();
+                String oldFileId = lost.getFileId();
+
+                if (oldFileId == null || !oldFileId.equals(newFileId)) {
+                    lost.updateTitleImage(newFileId);
+                }
+            } else {
+                lost.updateTitleImage(null); // 기본 이미지가 없다면 null 처리
             }
+        } catch (Exception e) {
+            throw new PageTitleException("페이지 타이틀 갱신 중 에러 발생");
         }
+
 
         // 변경된 내용 반영하여 응답
         return  UpdateLostContentDTO.Res.mapToDTO(lost, fileDTOList);
