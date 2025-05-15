@@ -53,7 +53,7 @@ public class StayoutService {
                     .endDT(stayoutRequestDTO.getEndDT().atTime(23,0,0,0))
                     .returnDT(null)
                     .reason(stayoutRequestDTO.getReason())
-                    .approveType('N')
+                    .approveType('Y')
                     .createIP(clientIp)
                     .build();
 

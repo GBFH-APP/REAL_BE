@@ -45,7 +45,6 @@ public class StayoutResponseDTO {
     }
 
     public static Integer calculateStatus(Character approve, LocalDateTime returnDT, LocalDateTime endDT) {
-        if ((approve == 'Y')) {
             if (returnDT != null) {
                 return 4;
             }
@@ -55,12 +54,5 @@ public class StayoutResponseDTO {
             else {
                 return 3;
             }
-        }
-        else if (approve == 'N') {
-            return 2;
-        }
-        else {
-            return 5; //반려
-        }
     }
 }
