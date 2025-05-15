@@ -114,4 +114,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.DUPLICATE_DATE.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.DUPLICATE_DATE));
     }
+
+    @ExceptionHandler(BeforeEndDateException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleBeforeEndDateException(final BeforeEndDateException e) {
+        return ResponseEntity
+                .status(ErrorCode.BEFORE_START_DATE.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.BEFORE_START_DATE));
+    }
 }
