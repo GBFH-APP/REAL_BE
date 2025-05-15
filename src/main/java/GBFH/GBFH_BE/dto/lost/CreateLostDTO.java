@@ -20,7 +20,6 @@ import java.util.List;
 public class CreateLostDTO {
     @NotEmpty(message = "제목은 필수 입력 값입니다.")
     private String title;
-    @NotEmpty(message = "본문은 필수 입력 값입니다.")
     private String contents;
     @NotNull(message = "상태는 필수 입력 값입니다.")
     private String status;
