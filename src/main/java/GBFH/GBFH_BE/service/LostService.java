@@ -351,9 +351,11 @@ public class LostService {
         List<FileDTO> fileDTOList = savedFiles.stream().map(FileDTO::toDTO).toList();
 
         // 첫 이미지가 변경되었는가?
-        if(!lost.getFileId().equals(savedFiles.get(0).getFileId())) {
-            // 첫 번째 이미지 갱신
-            lost.updateTitleImage(savedFiles.get(0).getFileId());
+        if (!savedFiles.isEmpty()){
+            if(!lost.getFileId().equals(savedFiles.get(0).getFileId())) {
+                // 첫 번째 이미지 갱신
+                lost.updateTitleImage(savedFiles.get(0).getFileId());
+            }
         }
 
         // 변경된 내용 반영하여 응답
