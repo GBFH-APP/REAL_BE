@@ -3,6 +3,7 @@ package GBFH.GBFH_BE.service;
 import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutResponseDTO;
 import GBFH.GBFH_BE.entity.*;
+import GBFH.GBFH_BE.exception.BeforeEndDateException;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.exception.SameStayoutException;
@@ -43,6 +44,9 @@ public class StayoutService {
             throw new SameStayoutException("동일한");
         }
         else{
+            if (stayoutRequestDTO.getStartDT().isEqual(stayoutRequestDTO.getEndDT()) || stayoutRequestDTO.getStartDT().isAfter(stayoutRequestDTO.getEndDT())) {
+                throw new BeforeEndDateException("이전 날짜임");
+            }
             LocalDateTime createDT = LocalDateTime.now();
             Stayout stayout = Stayout.builder()
                     .regiNo(dormEnterSubmit.getRegiNo())
