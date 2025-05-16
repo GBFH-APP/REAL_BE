@@ -35,15 +35,7 @@ public class NoticeResponseDTO {
     
 
     
-    // 파일 추가 필요
-    public static NoticeResponseDTO toSummaryDTO(BoardSummary board) {
-        return NoticeResponseDTO.builder()
-                .id(board.getIdx().toString())
-                .title(board.getTitle())
-                .writer(board.getWriter())
-                .read(board.getRead())
-                .createAt(board.getCreateDT().toLocalDate()).build();
-    }
+
 
     public static NoticeResponseDTO toDTO(Board notice, List<FileDTO> fileList, SimplePostDTO previous, SimplePostDTO next) {
         String htmlContent = notice.getContent();  // 기존 HTML 콘텐츠

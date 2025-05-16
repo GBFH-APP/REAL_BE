@@ -1,5 +1,6 @@
 package GBFH.GBFH_BE.service;
 
+import GBFH.GBFH_BE.dto.board.NoticeListResponseDTO;
 import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.board.SimplePostDTO;
 import GBFH.GBFH_BE.entity.Board;
@@ -90,7 +91,7 @@ public class BoardService {
         }
 
 
-        public List<NoticeResponseDTO> getAllNoticeSpeak(String category) {
+        public List<NoticeListResponseDTO> getAllNoticeSpeak(String category) {
                 // category 있는지 없는지 확인 후, 예외처리
                 BoardId boardId = boardIdService.getCategory(category);
 
@@ -109,12 +110,12 @@ public class BoardService {
                         throw new EmptyPostException("글이 비었습니다.");
                 }
                 // noti 1이고 오늘 날짜가 noti_start랑 noti_end에 끼어있으면 먼저 내보냄
-                return noticeList.stream().map(NoticeResponseDTO::toSummaryDTO).collect(Collectors.toList());
+                return noticeList.stream().map(NoticeListResponseDTO::toSummaryDTO).collect(Collectors.toList());
 
         }
 
 
-        public Page<NoticeResponseDTO> getAllNotice(String category, int page, int size) {
+        public Page<NoticeListResponseDTO> getAllNotice(String category, int page, int size) {
                 // category 있는지 없는지 확인 후, 예외처리
                 BoardId boardId = boardIdService.getCategory(category);
 
@@ -130,7 +131,7 @@ public class BoardService {
                         throw new EmptyPostException("글이 비었습니다.");
                 }
 
-                List<NoticeResponseDTO> noticeResponseDTO = noticeList.stream().map(NoticeResponseDTO::toSummaryDTO).collect(Collectors.toList());
+                List<NoticeListResponseDTO> noticeResponseDTO = noticeList.stream().map(NoticeListResponseDTO::toSummaryDTO).collect(Collectors.toList());
 
 /*                List<NoticeResponseDTO> noticeResponseDTO =  noticeList.stream().map(notice ->{
 *//*                        // 첨부파일 받아오기
