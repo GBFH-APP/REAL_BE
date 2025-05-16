@@ -54,8 +54,8 @@ public class NoticeResponseDTO {
             imgHeight = firstImg.attr("height");
             imgWidth = firstImg.attr("width");
 
-            if (!imgSrc.contains("https")) {
-                imgSrc = imgSrc.replace("http://", "https://");
+            if (!imgSrc.contains("https") || imgSrc.contains(":443")) {
+                imgSrc = imgSrc.replace(":443", "");
                 firstImg.attr("src", imgSrc);
             }
 
@@ -68,6 +68,7 @@ public class NoticeResponseDTO {
             contentBuilder.append(p.text()).append("\n");
         }
 
+
         // 빌더 패턴을 사용하여 객체 생성
         return NoticeResponseDTO.builder()
                 .id(notice.getIdx().toString())
@@ -76,12 +77,20 @@ public class NoticeResponseDTO {
                 .read(notice.getRead())
                 .createAt(notice.getCreateDT().toLocalDate())
                 .imgUrl(img)
-                .width(Integer.parseInt(Objects.requireNonNull(imgWidth)))
-                .height(Integer.parseInt(Objects.requireNonNull(imgHeight)))
+                .width(safeParseInt(imgWidth))
+                .height(safeParseInt(imgHeight))
                 .content(contentBuilder.toString())
                 .fileList(fileList)  // 첨부파일 설정
                 .previous(previous)
                 .next(next)
                 .build();
+    }
+
+    private static Integer safeParseInt(String value) {
+        try {
+            return value != null ? Integer.parseInt(value) : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
