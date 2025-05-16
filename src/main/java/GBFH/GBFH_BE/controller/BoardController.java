@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.controller;
 
 import GBFH.GBFH_BE.code.ResponseCode;
+import GBFH.GBFH_BE.dto.board.NoticeListResponseDTO;
 import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.Board;
@@ -43,7 +44,7 @@ public class BoardController {
     
     @GetMapping("/all/{category}/speak")
     public ResponseEntity<ResponseDTO<?>> getAllNoticeSpeak(@Valid @PathVariable String category) {
-        List<NoticeResponseDTO> noticeResponseDTOList = boardService.getAllNoticeSpeak(category);
+        List<NoticeListResponseDTO> noticeResponseDTOList = boardService.getAllNoticeSpeak(category);
             return ResponseEntity
                     .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())
                     .body(new ResponseDTO<>(ResponseCode.SUCCESS_NOTICE_RETRIEVE, noticeResponseDTOList));
@@ -53,7 +54,7 @@ public class BoardController {
     public ResponseEntity<ResponseDTO<?>> getAllNotice(@Valid @PathVariable String category,
                                                @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size) {
-        Page<NoticeResponseDTO> noticeResponseDTOList = boardService.getAllNotice(category, page, size);
+        Page<NoticeListResponseDTO> noticeResponseDTOList = boardService.getAllNotice(category, page, size);
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_NOTICE_RETRIEVE.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_NOTICE_RETRIEVE, noticeResponseDTOList));
