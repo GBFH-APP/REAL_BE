@@ -20,7 +20,8 @@ public class NoticeResponseDTO {
     private final String id; //idx
     private final String title;
     private final String content; //contents
-    private final String imgUrl; // 이미지는 필드로 final 선언
+    private final String imgUrlIOS; // 이미지는 필드로 final 선언
+    private final String imgUrlAndroid;
     private final Integer height;
     private final Integer width;
     private final String writer;
@@ -32,55 +33,55 @@ public class NoticeResponseDTO {
     private SimplePostDTO next;
 
     // 다음글
-    
 
-    
+
+
 
 
     public static NoticeResponseDTO toDTO(Board notice, List<FileDTO> fileList, SimplePostDTO previous, SimplePostDTO next) {
-        String htmlContent = notice.getContent();  // 기존 HTML 콘텐츠
-        String img = null;
+        String htmlContent = notice.getContent();
+        String imgAndroid = null;
+        String imgIOS = null;
         String imgHeight = null;
         String imgWidth = null;
         StringBuilder contentBuilder = new StringBuilder();
 
         Document doc = Jsoup.parse(htmlContent);
-
-        // 이미지 src 값 추출 및 https로 변환
         Elements imgTags = doc.select("img");
+
         if (!imgTags.isEmpty()) {
             Element firstImg = imgTags.get(0);
-            String imgSrc = firstImg.attr("src");
+            String rawSrc = firstImg.attr("src");
             imgHeight = firstImg.attr("height");
             imgWidth = firstImg.attr("width");
 
-            if (!imgSrc.contains("https") || imgSrc.contains(":443")) {
-                imgSrc = imgSrc.replace(":443", "");
-                firstImg.attr("src", imgSrc);
-            }
+            // iOS용: https로 강제
+            imgIOS = rawSrc.replace("http", "https");
 
-            img = imgSrc; // 리턴할 DTO에 담기 위해 저장
+            // Android용: https 제거, :443 제거 (실제로 http 사용)
+            imgAndroid = rawSrc.replace("https", "http").replace(":443", "");
+
+            // HTML 내에서는 iOS 기준으로 수정
+            firstImg.attr("src", imgIOS);
         }
 
-        // <p> 태그의 텍스트만 추출
         Elements pTags = doc.select("p");
         for (Element p : pTags) {
             contentBuilder.append(p.text()).append("\n");
         }
 
-
-        // 빌더 패턴을 사용하여 객체 생성
         return NoticeResponseDTO.builder()
                 .id(notice.getIdx().toString())
                 .title(notice.getTitle())
                 .writer(notice.getWriter())
                 .read(notice.getRead())
                 .createAt(notice.getCreateDT().toLocalDate())
-                .imgUrl(img)
+                .imgUrlIOS(imgIOS)
+                .imgUrlAndroid(imgAndroid)
                 .width(safeParseInt(imgWidth))
                 .height(safeParseInt(imgHeight))
                 .content(contentBuilder.toString())
-                .fileList(fileList)  // 첨부파일 설정
+                .fileList(fileList)
                 .previous(previous)
                 .next(next)
                 .build();
