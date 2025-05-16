@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static GBFH.GBFH_BE.util.NetworkUtils.getClientIP;
 
 @RestController
@@ -64,5 +66,16 @@ public class LectureController {
                 .status(ResponseCode.SUCCESS_DELETE_LECTURE_SUBMIT.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_DELETE_LECTURE_SUBMIT, lectureSubmitResponseDto));
     }
+
+    @GetMapping("/{month}")
+    public ResponseEntity<ResponseDTO<?>> getThisMonthLectureList(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Integer month) {
+        List<Integer> lectureMontlyList = lectureService.getLectureMontlyList(month);
+
+        return  ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_LECTURE_LIST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_LECTURE_LIST, lectureMontlyList));
+
+    }
+
 
 }
