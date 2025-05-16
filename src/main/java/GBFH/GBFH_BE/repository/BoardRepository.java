@@ -56,11 +56,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<BoardSummary> findByBoardIdAndNotiAndTitleNotContainingOrderByCreateDTDesc(BoardId boardId, int noti, String titleKeyword);
 
-    SimpleNotice findFirstByBoardIdAndIdxBeforeAndTitleContainingOrderByIdxDesc(BoardId boardId, Long idx, String keyword);
-    SimpleNotice findFirstByBoardIdAndIdxAfterAndTitleContainingOrderByIdxAsc(BoardId boardId, Long idx, String keyword);
+    SimpleNotice findFirstByBoardIdAndCreateDTBeforeAndTitleContainingOrderByCreateDTDesc(BoardId boardId, LocalDateTime createDT, String keyword);
+    SimpleNotice findFirstByBoardIdAndCreateDTAfterAndTitleContainingOrderByCreateDTAsc(BoardId boardId, LocalDateTime createDT, String keyword);
+    SimpleNotice findFirstByBoardIdAndCreateDTBeforeAndTitleNotContainingOrderByCreateDTDesc(BoardId boardId, LocalDateTime createDT, String keyword);
+    SimpleNotice findFirstByBoardIdAndCreateDTAfterAndTitleNotContainingOrderByCreateDTAsc(BoardId boardId, LocalDateTime createDT, String keyword);
 
-    SimpleNotice findFirstByBoardIdAndIdxBeforeAndTitleNotContainingOrderByIdxDesc(BoardId boardId, Long idx, String keyword);
-    SimpleNotice findFirstByBoardIdAndIdxAfterAndTitleNotContainingOrderByIdxAsc(BoardId boardId, Long idx, String keyword);
 
 }
 
