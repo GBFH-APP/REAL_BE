@@ -39,8 +39,9 @@ public class BoardService {
                 SimplePostDTO prev = null;
                 SimplePostDTO next1 = null;
                 if (notice.getTitle().contains("채용")) {
-                        SimpleNotice previous = boardRepository.findFirstByBoardIdAndIdxBeforeAndTitleContainingOrderByIdxDesc(
-                                notice.getBoardId(), notice.getIdx(), "채용");
+                        // 이전글 (채용 포함)
+                        SimpleNotice previous = boardRepository.findFirstByBoardIdAndCreateDTBeforeAndTitleContainingOrderByCreateDTDesc(
+                                notice.getBoardId(), notice.getCreateDT(), "채용");
                         if (previous != null) {
                                 prev = SimplePostDTO.builder()
                                         .idx(previous.getIdx().toString())
@@ -48,10 +49,9 @@ public class BoardService {
                                         .build();
                         }
 
-
-                        SimpleNotice next = boardRepository.findFirstByBoardIdAndIdxAfterAndTitleContainingOrderByIdxAsc(
-                                notice.getBoardId(), notice.getIdx(), "채용");
-
+                        // 다음글 (채용 포함)
+                        SimpleNotice next = boardRepository.findFirstByBoardIdAndCreateDTAfterAndTitleContainingOrderByCreateDTAsc(
+                                notice.getBoardId(), notice.getCreateDT(), "채용");
                         if (next != null) {
                                 next1 = SimplePostDTO.builder()
                                         .idx(next.getIdx().toString())
@@ -59,12 +59,10 @@ public class BoardService {
                                         .build();
                         }
 
-
-                }
-                else {
+                } else {
                         // 이전글 (채용 제외)
-                        SimpleNotice previous = boardRepository.findFirstByBoardIdAndIdxBeforeAndTitleNotContainingOrderByIdxDesc(
-                                notice.getBoardId(), notice.getIdx(), "채용");
+                        SimpleNotice previous = boardRepository.findFirstByBoardIdAndCreateDTBeforeAndTitleNotContainingOrderByCreateDTDesc(
+                                notice.getBoardId(), notice.getCreateDT(), "채용");
                         if (previous != null) {
                                 prev = SimplePostDTO.builder()
                                         .idx(previous.getIdx().toString())
@@ -73,18 +71,15 @@ public class BoardService {
                         }
 
                         // 다음글 (채용 제외)
-                        SimpleNotice next = boardRepository.findFirstByBoardIdAndIdxAfterAndTitleNotContainingOrderByIdxAsc(
-                                notice.getBoardId(), notice.getIdx(), "채용");
+                        SimpleNotice next = boardRepository.findFirstByBoardIdAndCreateDTAfterAndTitleNotContainingOrderByCreateDTAsc(
+                                notice.getBoardId(), notice.getCreateDT(), "채용");
                         if (next != null) {
                                 next1 = SimplePostDTO.builder()
                                         .idx(next.getIdx().toString())
                                         .title(next.getTitle())
                                         .build();
                         }
-
                 }
-
-
 
                 // 파일 추가 필요
                 if (boardFileService.isExistFile(id)) {
