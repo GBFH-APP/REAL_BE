@@ -77,7 +77,8 @@ public class BoardService {
                         noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc("채용", BoardId.notice, 1, LocalDate.now().toString(), LocalDate.now().toString());
                 }
                 else {
-                        noticeList = boardRepository.findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(boardId, 1, LocalDate.now().toString(), LocalDate.now().toString());
+                        noticeList = boardRepository.findAllByBoardIdAndNotiAndTitleNotContainingAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(
+                                boardId, 1, "채용", LocalDate.now().toString(), LocalDate.now().toString());
                 }
 
 
@@ -99,7 +100,7 @@ public class BoardService {
                         noticeList = boardRepository.findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
                 }
                 else {
-                        noticeList = boardRepository.findByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+                        noticeList = boardRepository.findByBoardIdAndNotiAndTitleNotContainingOrderByCreateDTDesc(boardId, 0, "채용");
                 }
 
                 if (noticeList.isEmpty()) {
