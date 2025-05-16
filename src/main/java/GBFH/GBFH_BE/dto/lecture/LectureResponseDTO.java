@@ -35,31 +35,40 @@ public class LectureResponseDTO {
     private String regStartDT; //시작 연월일
     private String regEndDT;
 
-    private String imgUrl;
+    private String imgUrlIOS;
+    private String imgUrlAndroid;
+
+    private Integer width;
+    private Integer height;
 
     private Character regIng;
     private Integer quota; //정원
 
     public static LectureResponseDTO toDto(Lecture lecture) {
 
-        String htmlContent = lecture.getContents();  // 기존 HTML 콘텐츠
-        String img = null;
+        String htmlContent = lecture.getContents();
+        String imgAndroid = null;
+        String imgIOS = null;
+        String imgHeight = null;
+        String imgWidth = null;
         StringBuilder contentBuilder = new StringBuilder();
 
         Document doc = Jsoup.parse(htmlContent);
-
-        // 이미지 src 값 추출 및 https로 변환
         Elements imgTags = doc.select("img");
-        if (!imgTags.isEmpty()) {
-            Element firstImg = imgTags.get(0);
-            String imgSrc = firstImg.attr("src");
 
-            if (!imgSrc.contains("https")) {
-                imgSrc = imgSrc.replace("http://", "https://");
-                firstImg.attr("src", imgSrc);
+        for (Element imgTag : imgTags) {
+            String src = imgTag.attr("src");
+
+            if (src != null && src.contains("editorData")) {
+                imgHeight = imgTag.attr("height");
+                imgWidth = imgTag.attr("width");
+
+                imgIOS = src.replace("http://", "https://");
+                imgAndroid = src.replace("https://", "http://").replace(":443", "");
+
+                imgTag.attr("src", imgIOS); // 콘텐츠용 수정
+                break; // 첫 유효한 이미지만 사용
             }
-
-            img = imgSrc; // 리턴할 DTO에 담기 위해 저장
         }
 
         // <p> 태그의 텍스트만 추출
@@ -67,7 +76,6 @@ public class LectureResponseDTO {
         for (Element p : pTags) {
             contentBuilder.append(p.text()).append("\n");
         }
-
 
         return LectureResponseDTO.builder()
                 .idx(lecture.getIdx())
@@ -83,8 +91,19 @@ public class LectureResponseDTO {
                 .regStartDT(lecture.getRegStartDt() + " " + lecture.getRegStartHour() + ":" + lecture.getRegStartMinute())
                 .regEndDT(lecture.getRegEndDt() + " " + lecture.getRegEndHour() + ":" + lecture.getRegEndMinute())
                 .regIng(lecture.getRegIng())
-                .imgUrl(img)
+                .imgUrlIOS(imgIOS)
+                .imgUrlAndroid(imgAndroid)
+                .width(safeParseInt(imgWidth))
+                .height(safeParseInt(imgHeight))
                 .quota(lecture.getQuota())
                 .build();
+    }
+
+    private static Integer safeParseInt(String value) {
+        try {
+            return value != null ? Integer.parseInt(value) : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
