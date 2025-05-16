@@ -116,34 +116,27 @@ public class BoardService {
 
 
         public Page<NoticeListResponseDTO> getAllNotice(String category, int page, int size) {
-                // category 있는지 없는지 확인 후, 예외처리
                 BoardId boardId = boardIdService.getCategory(category);
 
+                LocalDate today = LocalDate.now();
                 List<BoardSummary> noticeList;
+
                 if (boardId.name().equals("recruitments")) {
-                        noticeList = boardRepository.findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
-                }
-                else {
-                        noticeList = boardRepository.findByBoardIdAndNotiAndTitleNotContainingOrderByCreateDTDesc(boardId, 0, "채용");
+                        noticeList = boardRepository.findByBoardIdAndTitleContainingAndNotiCondition(
+                                BoardId.notice, "채용", today.toString());
+                } else {
+                        noticeList = boardRepository.findByBoardIdAndTitleNotContainingAndNotiCondition(
+                                boardId, "채용", today.toString());
                 }
 
                 if (noticeList.isEmpty()) {
                         throw new EmptyPostException("글이 비었습니다.");
                 }
 
-                List<NoticeListResponseDTO> noticeResponseDTO = noticeList.stream().map(NoticeListResponseDTO::toSummaryDTO).collect(Collectors.toList());
-
-/*                List<NoticeResponseDTO> noticeResponseDTO =  noticeList.stream().map(notice ->{
-*//*                        // 첨부파일 받아오기
-                        if (boardFileService.isExistFile(notice.getIdx())) {
-                                return NoticeResponseDTO.toSummaryDTO(notice);
-                        }
-                        else {
-                                return NoticeResponseDTO.toSummaryDTO(notice);
-                        }*//*
-                }).toList();*/
+                List<NoticeListResponseDTO> noticeResponseDTO = noticeList.stream()
+                        .map(NoticeListResponseDTO::toSummaryDTO)
+                        .collect(Collectors.toList());
 
                 return paginateService.paginateList(noticeResponseDTO, page, size);
-
         }
 }
