@@ -17,8 +17,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -90,6 +93,18 @@ public class LectureService {
                 .nameKor(dormEnterSubmit.getName())
                 .title(lecture.getTitle())
                 .build();
+    }
+
+    public List<Integer> getLectureMontlyList(Integer month) {
+        YearMonth yearMonth = YearMonth.of(LocalDate.now().getYear(), month);
+
+        LocalDate startDate = yearMonth.atDay(1); // 그 달의 첫 날
+        LocalDate endDate = yearMonth.atEndOfMonth(); // 그 달의 마지막 날
+
+        List<Lecture> lectures = lectureRepository.findAllByOpenAndRegIngAndStartDtGreaterThanEqualAndEndDtLessThanEqual('Y','Y', startDate, endDate);
+        return lectures.stream().map((lecture -> {
+            return lecture.getStartDt().getDayOfMonth();
+        })).collect(Collectors.toList());
     }
 
     // 달마다? 하나?
