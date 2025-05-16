@@ -100,7 +100,7 @@ public class BoardService {
                         noticeList = boardRepository.findByTitleContainingAndBoardIdAndNotiOrderByCreateDTDesc("채용", BoardId.notice, 0);
                 }
                 else {
-                        noticeList = boardRepository.findByBoardIdAndNotiOrderByCreateDTDesc(boardId, 0);
+                        noticeList = boardRepository.findByBoardIdAndNotiAndTitleNotContainingOrderByCreateDTDesc(boardId, 0, "채용");
                 }
 
                 if (noticeList.isEmpty()) {
