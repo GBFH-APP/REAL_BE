@@ -36,26 +36,54 @@ public class BoardService {
 
                 boardRepository.save(notice.readBoard()); // 조회수 올림
 
-
-                //이전글
-                SimpleNotice previous = boardRepository.findFirstByBoardIdAndIdxBeforeOrderByIdxDesc(notice.getBoardId(), notice.getIdx());
                 SimplePostDTO prev = null;
-                if (previous != null) {
-                        prev = SimplePostDTO.builder()
-                                .idx(previous.getIdx().toString())
-                                .title(previous.getTitle())
-                                .build();
+                SimplePostDTO next1 = null;
+                if (notice.getTitle().contains("채용")) {
+                        SimpleNotice previous = boardRepository.findFirstByBoardIdAndIdxBeforeAndTitleContainingOrderByIdxDesc(
+                                notice.getBoardId(), notice.getIdx(), "채용");
+                        if (previous != null) {
+                                prev = SimplePostDTO.builder()
+                                        .idx(previous.getIdx().toString())
+                                        .title(previous.getTitle())
+                                        .build();
+                        }
+
+
+                        SimpleNotice next = boardRepository.findFirstByBoardIdAndIdxAfterAndTitleContainingOrderByIdxAsc(
+                                notice.getBoardId(), notice.getIdx(), "채용");
+
+                        if (next != null) {
+                                next1 = SimplePostDTO.builder()
+                                        .idx(next.getIdx().toString())
+                                        .title(next.getTitle())
+                                        .build();
+                        }
+
+
+                }
+                else {
+                        // 이전글 (채용 제외)
+                        SimpleNotice previous = boardRepository.findFirstByBoardIdAndIdxBeforeAndTitleNotContainingOrderByIdxDesc(
+                                notice.getBoardId(), notice.getIdx(), "채용");
+                        if (previous != null) {
+                                prev = SimplePostDTO.builder()
+                                        .idx(previous.getIdx().toString())
+                                        .title(previous.getTitle())
+                                        .build();
+                        }
+
+                        // 다음글 (채용 제외)
+                        SimpleNotice next = boardRepository.findFirstByBoardIdAndIdxAfterAndTitleNotContainingOrderByIdxAsc(
+                                notice.getBoardId(), notice.getIdx(), "채용");
+                        if (next != null) {
+                                next1 = SimplePostDTO.builder()
+                                        .idx(next.getIdx().toString())
+                                        .title(next.getTitle())
+                                        .build();
+                        }
+
                 }
 
-                //다음글
-                SimpleNotice next = boardRepository.findFirstByBoardIdAndIdxAfterOrderByIdxAsc(notice.getBoardId(), notice.getIdx());
-                SimplePostDTO next1 = null;
-                if (next != null) {
-                        next1 = SimplePostDTO.builder()
-                                .idx(next.getIdx().toString())
-                                .title(next.getTitle())
-                                .build();
-                }
 
 
                 // 파일 추가 필요
