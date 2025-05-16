@@ -77,7 +77,8 @@ public class BoardService {
                         noticeList = boardRepository.findAllByTitleContainingAndBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc("채용", BoardId.notice, 1, LocalDate.now().toString(), LocalDate.now().toString());
                 }
                 else {
-                        noticeList = boardRepository.findAllByBoardIdAndNotiAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(boardId, 1, LocalDate.now().toString(), LocalDate.now().toString());
+                        noticeList = boardRepository.findAllByBoardIdAndNotiAndTitleNotContainingAndNotiEndAfterAndNotiStartBeforeOrderByCreateDTDesc(
+                                boardId, 1, "채용", LocalDate.now().toString(), LocalDate.now().toString());
                 }
 
 
