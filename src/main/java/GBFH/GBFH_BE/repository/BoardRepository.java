@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,41 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     SimpleNotice findFirstByBoardIdAndCreateDTAfterAndTitleContainingOrderByCreateDTAsc(BoardId boardId, LocalDateTime createDT, String keyword);
     SimpleNotice findFirstByBoardIdAndCreateDTBeforeAndTitleNotContainingOrderByCreateDTDesc(BoardId boardId, LocalDateTime createDT, String keyword);
     SimpleNotice findFirstByBoardIdAndCreateDTAfterAndTitleNotContainingOrderByCreateDTAsc(BoardId boardId, LocalDateTime createDT, String keyword);
+
+
+    // 공통 조건 처리용 메서드
+    @Query("""
+        SELECT n FROM Board n
+        WHERE n.boardId = :boardId
+        AND n.title LIKE %:title%
+        AND (
+            n.noti = 0
+            OR (n.noti = 1 AND n.notiEnd < :today)
+        )
+        ORDER BY n.createDT DESC
+        """)
+    List<BoardSummary> findByBoardIdAndTitleContainingAndNotiCondition(
+            @Param("boardId") BoardId boardId,
+            @Param("title") String title,
+            @Param("today") String today
+    );
+
+    // 채용 제외용
+    @Query("""
+        SELECT n FROM Board n
+        WHERE n.boardId = :boardId
+        AND n.title NOT LIKE %:excludedTitle%
+        AND (
+            n.noti = 0
+            OR (n.noti = 1 AND n.notiEnd < :today)
+        )
+        ORDER BY n.createDT DESC
+        """)
+    List<BoardSummary> findByBoardIdAndTitleNotContainingAndNotiCondition(
+            @Param("boardId") BoardId boardId,
+            @Param("excludedTitle") String excludedTitle,
+            @Param("today") String today
+    );
 
 
 }
