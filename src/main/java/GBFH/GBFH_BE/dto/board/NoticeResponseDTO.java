@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Builder
@@ -20,6 +21,8 @@ public class NoticeResponseDTO {
     private final String title;
     private final String content; //contents
     private final String imgUrl; // 이미지는 필드로 final 선언
+    private final Integer height;
+    private final Integer width;
     private final String writer;
     private final Long read;
     private final LocalDate createAt; //CREATE_DT
@@ -45,6 +48,8 @@ public class NoticeResponseDTO {
     public static NoticeResponseDTO toDTO(Board notice, List<FileDTO> fileList, SimplePostDTO previous, SimplePostDTO next) {
         String htmlContent = notice.getContent();  // 기존 HTML 콘텐츠
         String img = null;
+        String imgHeight = null;
+        String imgWidth = null;
         StringBuilder contentBuilder = new StringBuilder();
 
         Document doc = Jsoup.parse(htmlContent);
@@ -54,6 +59,8 @@ public class NoticeResponseDTO {
         if (!imgTags.isEmpty()) {
             Element firstImg = imgTags.get(0);
             String imgSrc = firstImg.attr("src");
+            imgHeight = firstImg.attr("height");
+            imgWidth = firstImg.attr("width");
 
             if (!imgSrc.contains("https")) {
                 imgSrc = imgSrc.replace("http://", "https://");
@@ -77,6 +84,8 @@ public class NoticeResponseDTO {
                 .read(notice.getRead())
                 .createAt(notice.getCreateDT().toLocalDate())
                 .imgUrl(img)
+                .width(Integer.parseInt(Objects.requireNonNull(imgWidth)))
+                .height(Integer.parseInt(Objects.requireNonNull(imgHeight)))
                 .content(contentBuilder.toString())
                 .fileList(fileList)  // 첨부파일 설정
                 .previous(previous)
