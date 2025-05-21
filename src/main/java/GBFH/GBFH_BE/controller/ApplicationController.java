@@ -80,8 +80,8 @@ public class ApplicationController {
         String role = jwtUtil.getRole(refreshToken);
 
         // 새로운 Access token과 refreshToken 생성
-        String newAccessToken = jwtUtil.createJwt("accessToken", username, 300L);
-        String newRefreshToken = jwtUtil.createJwt("refreshToken", username,  1209600L);
+        String newAccessToken = jwtUtil.createJwt("accessToken", username, 300000L);
+        String newRefreshToken = jwtUtil.createJwt("refreshToken", username,  1_209_600_000L);
 
         response.setHeader("accessToken", "Bearer " + newAccessToken);
         response.setHeader("refreshToken", "Bearer " + newRefreshToken);
