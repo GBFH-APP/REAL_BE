@@ -14,6 +14,7 @@ public enum ResponseCode {
     SUCCESS_LOGIN(HttpStatus.OK, "로그인을 성공했습니다."),
     SUCCESS_RETRIEVE_USERINFO(HttpStatus.OK,"유저 정보를 성공적으로 가져왔습니다."),
     SUCCESS_UPDATE_APPLICANT(HttpStatus.OK, "유저 정보를 성공적으로 수정했습니다."),
+    SUCCESS_REISSUE(HttpStatus.OK, "성공적으로 accessToken을 재발급했습니다. 헤더를 확인하세요."),
 
     /**
      * notice
