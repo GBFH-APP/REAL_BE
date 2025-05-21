@@ -7,7 +7,9 @@ import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.Applicant;
 import GBFH.GBFH_BE.entity.ApplicantSummary;
+import GBFH.GBFH_BE.entity.Refresh;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
+import GBFH.GBFH_BE.repository.RefreshRedisRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.util.StringUtils;
@@ -32,6 +34,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
     private final ApplicantRepository applicantRepository;
+    private final RefreshRedisRepository refreshRedisRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -45,8 +48,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 비밀번호를 Base64로 인코딩하여 비교
         if(isPasswordValid(password, applicant.getLoginPwd())) {
             // 비밀번호가 일치할 경우 JWT 토큰 생성
-            String accessToken = jwtUtil.createJwt("accessToken", username, 1_000L);
-            String refreshToken = jwtUtil.createJwt("refreshToken", username,  1_209_600_000L);
+            String accessToken = jwtUtil.createJwt("accessToken", username, 60000L);
+            String refreshToken = jwtUtil.createJwt("refreshToken", username,  1209600000L);
+
+            Refresh refreshEntity = new Refresh(refreshToken, username);
+            refreshRedisRepository.save(refreshEntity);
 
             // 응답에 토큰을 추가하여 반환
             response.setHeader("accessToken", "Bearer " + accessToken);

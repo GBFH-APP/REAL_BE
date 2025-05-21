@@ -4,6 +4,7 @@ import GBFH.GBFH_BE.jwt.JWTFilter;
 import GBFH.GBFH_BE.jwt.JWTUtil;
 import GBFH.GBFH_BE.jwt.LoginFilter;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
+import GBFH.GBFH_BE.repository.RefreshRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final ApplicantRepository applicantRepository;
+    private final RefreshRedisRepository refreshRedisRepository;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -54,7 +56,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers(
-                        "/login", "/notice/**", "/error", "/menu/**"
+                        "/login", "/notice/**", "/error", "/menu/**", "/applicant/reissue"
                 ).permitAll()
                 .anyRequest().authenticated());
 
@@ -62,7 +64,7 @@ public class SecurityConfig {
                 addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, applicantRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, applicantRepository, refreshRedisRepository), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http
