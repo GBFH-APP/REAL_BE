@@ -18,7 +18,7 @@ public class TokenErrorResponse {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         PrintWriter writer = response.getWriter();
         writer.print(jsonResponse);
