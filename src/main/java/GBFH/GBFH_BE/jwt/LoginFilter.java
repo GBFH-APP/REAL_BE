@@ -45,8 +45,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 비밀번호를 Base64로 인코딩하여 비교
         if(isPasswordValid(password, applicant.getLoginPwd())) {
             // 비밀번호가 일치할 경우 JWT 토큰 생성
-            String accessToken = jwtUtil.createJwt("accessToken", username, 86400000L);
-            String refreshToken = jwtUtil.createJwt("refreshToken", username,  86400000L);
+            String accessToken = jwtUtil.createJwt("accessToken", username, 300L);
+            String refreshToken = jwtUtil.createJwt("refreshToken", username,  1209600L);
 
             // 응답에 토큰을 추가하여 반환
             response.setHeader("accessToken", "Bearer " + accessToken);
