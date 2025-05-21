@@ -5,7 +5,9 @@ import GBFH.GBFH_BE.code.ResponseCode;
 import GBFH.GBFH_BE.dto.applicant.ApplicantDTO;
 import GBFH.GBFH_BE.dto.applicant.UpdateApplicantDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
+import GBFH.GBFH_BE.entity.Refresh;
 import GBFH.GBFH_BE.jwt.JWTUtil;
+import GBFH.GBFH_BE.repository.RefreshRedisRepository;
 import GBFH.GBFH_BE.service.ApplicantService;
 import GBFH.GBFH_BE.util.TokenErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/applicant")
@@ -24,6 +27,7 @@ import java.io.IOException;
 public class ApplicationController {
     private final ApplicantService applicantService;
     private final JWTUtil jwtUtil;
+    private final RefreshRedisRepository refreshRedisRepository;
 
     @GetMapping()
     public ResponseEntity<ResponseDTO<?>> getUserList() {
@@ -49,7 +53,7 @@ public class ApplicationController {
 
     @PostMapping("/reissue")
     public String reissue(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("in");
+
         // 헤더에서 refresh키에 담긴 토큰을 꺼냄
         String refreshToken = request.getHeader("refresh");
         System.out.println(refreshToken);
@@ -61,7 +65,7 @@ public class ApplicationController {
         try {
             jwtUtil.isExpired(refreshToken);
         } catch (ExpiredJwtException e) {
-            TokenErrorResponse.sendErrorResponse(response, ErrorCode.TOKEN_EXPIRED);
+            TokenErrorResponse.sendErrorResponse(response, ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
 
         String type = jwtUtil.getType(refreshToken);
@@ -71,24 +75,24 @@ public class ApplicationController {
             TokenErrorResponse.sendErrorResponse(response, ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-//        Optional<RefreshEntity> isExist = refreshRedisRepository.findById(refreshToken);
-//        if (isExist.isEmpty()) {
-//            TokenErrorResponse.sendErrorResponse(response, "토큰이 만료되었습니다.");
-//        }
+        Optional<Refresh> isExist = refreshRedisRepository.findById(refreshToken);
+        if (isExist.isEmpty()) {
+            TokenErrorResponse.sendErrorResponse(response, ErrorCode.REFRESH_TOKEN_EXPIRED);
+        }
 
         String username = jwtUtil.getUsername(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
         // 새로운 Access token과 refreshToken 생성
-        String newAccessToken = jwtUtil.createJwt("accessToken", username, 1_000L);
+        String newAccessToken = jwtUtil.createJwt("accessToken", username, 60000L);
         String newRefreshToken = jwtUtil.createJwt("refreshToken", username,  1_209_600_000L);
 
         response.setHeader("accessToken", "Bearer " + newAccessToken);
         response.setHeader("refreshToken", "Bearer " + newRefreshToken);
 
-//        refreshRedisRepository.deleteById(refreshToken);
-//        RefreshEntity refreshEntity = new RefreshEntity(newRefreshToken, username);
-//        refreshRedisRepository.save(refreshEntity);
+        refreshRedisRepository.deleteById(refreshToken);
+        Refresh refreshEntity = new Refresh(newRefreshToken, username);
+        refreshRedisRepository.save(refreshEntity);
 
         return "Refresh Token 재발급 완료. 헤더를 확인하세요";
     }
