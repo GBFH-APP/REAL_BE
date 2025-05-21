@@ -56,7 +56,6 @@ public class ApplicationController {
 
         // 헤더에서 refresh키에 담긴 토큰을 꺼냄
         String refreshToken = request.getHeader("refresh");
-        System.out.println(refreshToken);
 
         if (refreshToken == null) {
             TokenErrorResponse.sendErrorResponse(response, ErrorCode.TOKEN_MISSING);
@@ -69,9 +68,7 @@ public class ApplicationController {
         }
 
         String type = jwtUtil.getType(refreshToken);
-        System.out.println(type);
         if (!type.equals("refreshToken")) {
-            System.out.println(type);
             TokenErrorResponse.sendErrorResponse(response, ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
@@ -81,7 +78,6 @@ public class ApplicationController {
         }
 
         String username = jwtUtil.getUsername(refreshToken);
-        String role = jwtUtil.getRole(refreshToken);
 
         // 새로운 Access token과 refreshToken 생성
         String newAccessToken = jwtUtil.createJwt("accessToken", username, 60000L);
