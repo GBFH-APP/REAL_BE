@@ -80,7 +80,7 @@ public class ApplicationController {
         String username = jwtUtil.getUsername(refreshToken);
 
         // 새로운 Access token과 refreshToken 생성
-        String newAccessToken = jwtUtil.createJwt("accessToken", username, 60000L);
+        String newAccessToken = jwtUtil.createJwt("accessToken", username, 300000L);
         String newRefreshToken = jwtUtil.createJwt("refreshToken", username,  1_209_600_000L);
 
         response.setHeader("accessToken", "Bearer " + newAccessToken);
