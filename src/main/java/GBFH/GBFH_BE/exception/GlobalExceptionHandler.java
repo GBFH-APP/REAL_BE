@@ -128,4 +128,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.PAGE_TITLE_ERROR.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.PAGE_TITLE_ERROR));
     }
+
+    @ExceptionHandler(DuplicateLectureSubmitException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleDuplicateLectureSubmitException(final DuplicateLectureSubmitException e) {
+        return ResponseEntity
+                .status(ErrorCode.DUPLICATE_LECTURE_SUBMIT.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.DUPLICATE_LECTURE_SUBMIT));
+    }
 }
