@@ -36,7 +36,15 @@ public class LectureService {
     private final LectureSubmitRepository lectureSubmitRepository;
 
     public Page<LectureResponseDTO> getAllLecture(char yorn, int page, int size) {
-        List<Lecture> lectures = lectureRepository.findAllByOpenAndRegIngOrderByCreateDtDesc('Y', yorn);
+        List<Lecture> lectures = null;
+
+        if (yorn == 'n') {
+
+            lectures = lectureRepository.findLecturesWithRecruitEnded();
+        }
+
+
+        lectures = lectureRepository.findAllByOpenAndRegIngAndYearOrderByCreateDtDesc('Y', yorn, String.valueOf(LocalDate.now().getYear()));
 
         if (lectures.isEmpty()) {
             throw new EmptyPostException("글이 비었습니다.");
