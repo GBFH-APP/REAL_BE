@@ -4,6 +4,7 @@ package GBFH.GBFH_BE.service;
 import GBFH.GBFH_BE.dto.lecture.LectureResponseDTO;
 import GBFH.GBFH_BE.dto.lecture.LectureSubmitResponseDto;
 import GBFH.GBFH_BE.entity.*;
+import GBFH.GBFH_BE.exception.DuplicateLectureSubmitException;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.ApplicantRepository;
@@ -60,10 +61,19 @@ public class LectureService {
         Lecture lecture = lectureRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("해당 글이 존재하지 않습니다."));
 
+        // 입사한 사람
         DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+
+        String regNo = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo()).getRegiNo();
+
+
+        if (lectureSubmitRepository.existsById(new LectureSubmitPk(lecture.getIdx(), regNo))) {
+            throw new DuplicateLectureSubmitException("중복된 신청임");
+        }
+
         LectureSubmit lectureSubmit = LectureSubmit.builder()
                 .idx(id)
-                .regiNo(dormEnterSubmit.getRegiNo())
+                .regiNo(regNo)
                 .status("등록")
                 .createDT(LocalDateTime.now())
                 .createIP(clientIp)
