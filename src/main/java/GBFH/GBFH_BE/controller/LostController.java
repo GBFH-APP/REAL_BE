@@ -3,6 +3,7 @@ package GBFH.GBFH_BE.controller;
 import GBFH.GBFH_BE.code.ResponseCode;
 import GBFH.GBFH_BE.dto.lost.*;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
+import GBFH.GBFH_BE.service.CommentService;
 import GBFH.GBFH_BE.service.LostService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
@@ -25,6 +26,7 @@ import static GBFH.GBFH_BE.util.NetworkUtils.getClientIP;
 @RequiredArgsConstructor
 public class LostController {
     private final LostService lostService;
+    private final CommentService commentService;
 
     // 분실물 생성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,7 +84,7 @@ public class LostController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String clientIp = getClientIP(request);
 
-        CreateCommentDTO.Res res = lostService.createComment(id, username, createCommentDTO, clientIp);
+        CreateCommentDTO.Res res = commentService.createComment(id, username, createCommentDTO, clientIp);
 
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_CREATE_LOST_COMMENT.getStatus().value())
@@ -99,7 +101,7 @@ public class LostController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String clientIp = getClientIP(request);
 
-        CreateCommentDTO.Res res = lostService.createReply(boardId, commentId, username, createCommentDTO, clientIp);
+        CreateCommentDTO.Res res = commentService.createReply(boardId, commentId, username, createCommentDTO, clientIp);
 
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_CREATE_LOST_COMMENT_REPLY.getStatus().value())
@@ -113,7 +115,7 @@ public class LostController {
             @PathVariable("commentId") Long commentId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        lostService.deleteCommentReply(boardId, commentId, username);
+        commentService.deleteCommentReply(boardId, commentId, username);
 
         return ResponseEntity
                 .status(ResponseCode.SUCCESS_DELETE_LOST_COMMENT.getStatus().value())

@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.menu;
 
-import GBFH.GBFH_BE.entity.Menu;
+import GBFH.GBFH_BE.entity.main.Menu;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

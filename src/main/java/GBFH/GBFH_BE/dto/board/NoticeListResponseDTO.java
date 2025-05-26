@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.board;
 
-import GBFH.GBFH_BE.entity.BoardSummary;
+import GBFH.GBFH_BE.entity.main.BoardSummary;
 import lombok.Builder;
 import lombok.Getter;
 

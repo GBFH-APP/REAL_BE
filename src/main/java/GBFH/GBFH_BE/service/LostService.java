@@ -2,16 +2,23 @@ package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.boardFile.FileDTO;
 import GBFH.GBFH_BE.dto.lost.*;
-import GBFH.GBFH_BE.entity.*;
+import GBFH.GBFH_BE.entity.main.Applicant;
+import GBFH.GBFH_BE.entity.main.BoardFile;
+import GBFH.GBFH_BE.entity.sub.Comment;
+import GBFH.GBFH_BE.entity.sub.ImageFile;
+import GBFH.GBFH_BE.entity.sub.LostBoard;
+import GBFH.GBFH_BE.entity.sub.Status;
 import GBFH.GBFH_BE.exception.*;
-import GBFH.GBFH_BE.repository.ApplicantRepository;
-import GBFH.GBFH_BE.repository.BoardFileRepository;
-import GBFH.GBFH_BE.repository.BoardRepository;
-import GBFH.GBFH_BE.repository.CommentRepository;
+import GBFH.GBFH_BE.mapper.FileMapper;
+import GBFH.GBFH_BE.repository.main.ApplicantRepository;
+import GBFH.GBFH_BE.repository.main.BoardFileRepository;
+import GBFH.GBFH_BE.repository.main.BoardRepository;
+import GBFH.GBFH_BE.repository.sub.CommentRepository;
+import GBFH.GBFH_BE.repository.sub.ImageFileRepository;
+import GBFH.GBFH_BE.repository.sub.LostBoardRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.ErrorState;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,19 +35,23 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
+@org.springframework.transaction.annotation.Transactional("subTransactionManager")
 
 public class LostService {
-    private final BoardRepository boardRepository;
+    private final LostBoardRepository lostBoardRepository;
     private final ApplicantRepository applicantRepository;
-    private final BoardFileRepository boardFileRepository;
+    private final ImageFileRepository imageFileRepository;
     private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
+    private final FileMapper fileMapper;
+    private final CommentService commentService;
 
-    @Transactional
+    @Transactional("subTransactionManager")
+
     public CreateLostDTO.Res createLost(CreateLostDTO createLostDTO, String username, String clientIp, List<MultipartFile> files) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
 
         // s3에 업로드 후 url 리스트 반환
         List<String> urls = new ArrayList<>();
@@ -60,21 +71,17 @@ public class LostService {
             log.info("업로드할 파일이 제공되지 않았습니다.");
         }
 
+
         // BoardFile 저장
-        // idx(max)로 파일 id 부여 > seq 자동 1 증가 > file_id에는 파일명 저장
+        List<ImageFile> boardFiles = new ArrayList<>();
 
-        Long IDX = boardRepository.findMaxIdx() + 1;
-        Long grp = boardRepository.findMaxGrp() + 1;
-
-        List<BoardFile> boardFiles = new ArrayList<>();
 
         if(!urls.isEmpty()) {
             Long fileSeq = 1L;
 
             for(String url : urls) {
-                BoardFile boardFile = BoardFile.builder()
+                ImageFile boardFile = ImageFile.builder()
                         .fileId(url)
-                        .idx(IDX)
                         .seq(fileSeq++)
                         .createIp(clientIp)
                         .build();
@@ -83,32 +90,39 @@ public class LostService {
             }
         }
 
-        boardFileRepository.saveAll(boardFiles);
-
-        List<FileDTO> fileDTOList = boardFiles.stream().map(FileDTO::toDTO).toList();
+        imageFileRepository.saveAll(boardFiles);
 
         String url = urls.isEmpty() ? null : urls.get(0);
 
-        // 첫 번째 file_id board에 있는 filee_id 필드에 저장
+
+        // 첫 번째 file_id board에 있는 file_id 필드에 저장
         try {
-            Board lost = CreateLostDTO.mapToBoard(createLostDTO, IDX, grp, user.getNameKor(), user.getUserNo(), clientIp, url);
-            Board savedLost = boardRepository.save(lost);
+            LostBoard lost = CreateLostDTO.mapToBoard(createLostDTO, user.getNameKor(), user.getUserNo(), clientIp, url);
+            LostBoard savedLost = lostBoardRepository.save(lost);
+            if (files != null && !files.isEmpty()) {
+                for(ImageFile file : boardFiles) {
+                    imageFileRepository.save(file.setLostBoard(savedLost));
+                }
+            }
+            List<FileDTO> fileDTOList = boardFiles.stream().map(fileMapper::toDto).toList();
             return CreateLostDTO.Res.mapToDTO(savedLost, fileDTOList);
 
         } catch (UnknownHostException e) {
             throw new InvalidHostException("호스트 연결 실패");
         }
+
+
     }
 
     // 캐싱 도입해야 할 것 같음
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "subTransactionManager")
     public List<GetLostDTO.LIST> getAllLosts() {
-        List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNOrderByIdxDesc(BoardId.lost, 'N');
+        List<LostBoard> lostBoardList = lostBoardRepository.findAllByTrashYNOrderByIdxDesc('N');
 
         // status 별로 그룹화 후, 상위 5개만 선택
-        Map<String, List<GetLostDTO.ListItem>> groupedByStatus = losts.stream()
+        Map<String, List<GetLostDTO.ListItem>> groupedByStatus = lostBoardList.stream()
                 .collect(Collectors.groupingBy(
-                        Board::getStatus,
+                        LostBoard::getStatus,
                         Collectors.collectingAndThen(
                                 Collectors.mapping(GetLostDTO.ListItem::mapToDTO, Collectors.toList()),
                                 list -> list.stream().limit(5).collect(Collectors.toList()) // 각 그룹에서 5개 제한
@@ -124,119 +138,48 @@ public class LostService {
 
 
 
-    @Transactional(readOnly = true)
-    public GetLostDTO.DETAIL getDetailLost(Long id, String username) {
+    @Transactional(readOnly = true, transactionManager = "subTransactionManager")
+    public GetLostDTO.DETAIL getDetailLost(Long boardIdx, String username) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        Board lost = boardRepository.findByIdxAndTrashYN(id, 'N')
+        LostBoard lost = lostBoardRepository.findByIdxAndTrashYN(boardIdx, 'N')
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 조회수 증가
         lost.readBoard();
+        
+        // lost에서 연결된 이미지 가져오기
+        List<ImageFile> files = lost.getImageFiles();
+        List<FileDTO> fileDTOS = files.stream().map(fileMapper::toDto).toList();
 
-        List<BoardFile> files = boardFileRepository.findAllByIdx(lost.getIdx());
-        List<FileDTO> fileDTOS = files.stream().map(FileDTO::toDTO).toList();
-
-        if (!lost.getBoardId().toString().equals("lost"))
-            throw new NotLostException("분실물 글이 아닙니다.");
+//        if (!lost.getBoardId().toString().equals("lost"))
+//            throw new NotLostException("분실물 글이 아닙니다.");
 
         Boolean permission = user.getUserNo().equals(lost.getCreateId());
 
-        // 한 번의 쿼리로 lvl = 1 및 lvl = 2 댓글 가져오기
-        List<Comment> allComments = commentRepository.findByUpIdxAndDelYN(id, "N");
-
-        // lvl = 2 댓글을 grp 기준으로 Map에 저장 (Key: grp, Value: 대댓글 리스트)
-        Map<Long, List<Comment>> replyMap = allComments.stream()
-                .filter(comment -> comment.getLvl() == 2)
-                .collect(Collectors.groupingBy(Comment::getGrp));
-
-        // lvl = 1 댓글만 필터링 후 대댓글 매핑
-        List<GetCommentDTO> commentDTOS = allComments.stream()
-                .filter(comment -> comment.getLvl() == 1)
-                .map(comment -> {
-                    Boolean commentPermission = comment.getCreateId().equals(user.getUserNo());
-
-                    // grp 기준으로 대댓글 리스트 가져오기 (없으면 빈 리스트)
-                    List<GetReplyDTO> commentReplyDTOS = replyMap.getOrDefault(comment.getGrp(), Collections.emptyList())
-                            .stream()
-                            .map(reply -> {
-                                Boolean replyPermission = reply.getCreateId().equals(user.getUserNo());
-                                return GetReplyDTO.mapToReplyDTO(reply, replyPermission);
-                            })
-                            .toList();
-
-                    return GetCommentDTO.mapToCommentDTO(comment, commentPermission, commentReplyDTOS);
-                }).toList();
+        // 댓글 불러오기
+        List<GetCommentDTO> commentDTOS = commentService.getCommentDTOSWithBoardIdx(boardIdx, user);
 
         return GetLostDTO.DETAIL.mapToDTO(lost, permission, fileDTOS, commentDTOS);
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "subTransactionManager")
     public List<GetLostDTO.CategoryList> getLostsByStatus(String status) {
-        List<Board> losts = boardRepository.findAllByBoardIdAndTrashYNAndStatusOrderByIdxDesc(BoardId.lost, 'N', status);
+        List<LostBoard> lostBoardList = lostBoardRepository.findAllByTrashYNAndStatusOrderByIdxDesc('N', Status.valueOf(status));
 
-        return losts.stream().map(GetLostDTO.CategoryList::mapToDTO).collect(Collectors.toList());
+        return lostBoardList.stream().map(GetLostDTO.CategoryList::mapToDTO).collect(Collectors.toList());
     }
 
-    @Transactional
-    public CreateCommentDTO.Res createComment(Long id, String username, CreateCommentDTO createCommentDTO, String clientId) {
-        Applicant user = applicantRepository.findByLoginId(username)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        Long grp = commentRepository.findMaxGrp() + 1;
 
-        Comment comment = CreateCommentDTO.mapToComment(createCommentDTO, id, grp, user.getNameKor(), user.getUserNo(), clientId);
-        Comment savedComment = commentRepository.save(comment);
-
-        return CreateCommentDTO.Res.mapToDTO(savedComment);
-    }
-
-    @Transactional
-    public CreateCommentDTO.Res createReply(Long boardId, Long commentId, String username, @Valid CreateCommentDTO createCommentDTO, String clientIp) {
-        Applicant user = applicantRepository.findByLoginId(username)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
-
-        Comment comment = commentRepository.findByIdxAndDelYN(commentId, "N")
-                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
-
-        Long grp = comment.getGrp(); // 댓글과 동일한 그룹을 가짐
-
-        Comment createdComment = CreateCommentDTO.mapToCommentReply(createCommentDTO, boardId, grp, user.getNameKor(), user.getUserNo(), clientIp);
-        Comment savedComment = commentRepository.save(createdComment);
-
-        return CreateCommentDTO.Res.mapToDTO(savedComment);
-    }
-
-    @Transactional
-    public void deleteCommentReply(Long boardId, Long commentId, String username) {
-        Applicant user = applicantRepository.findByLoginId(username)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
-
-        Comment comment = commentRepository.findByIdxAndDelYN(commentId, "N")
-                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
-
-        // 글 작성자인가?
-        if(!comment.getCreateId().equals(user.getUserNo())) {
-            throw new NoPermissionException("작성자가 아닙니다.");
-        }
-
-        comment.delete();
-        // 상위 댓글인가? (대댓글이 아닌가?)
-        if(comment.getLvl() == 1L) {
-            // 대댓글 조회
-            List<Comment> commentReplies = commentRepository.findByUpIdxAndDelYNAndLvlAndGrp(boardId, "N", 2L, comment.getGrp());
-            commentReplies.forEach(Comment::delete); // 대댓글 모두 휴지통 처리
-        }
-    }
-
-    @Transactional
+    @Transactional("subTransactionManager")
     public void deleteLost(Long boardId, String username) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
+        LostBoard lost = lostBoardRepository.findByIdxAndTrashYN(boardId, 'N')
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 글 작성자인가?
@@ -245,19 +188,19 @@ public class LostService {
         }
 
         // 댓글 조회
-        List<Comment> comments = commentRepository.findByUpIdxAndDelYN(boardId, "N");
+        List<Comment> comments = commentRepository.findByLostBoardIdxAndDelYN(boardId, "N");
         // 댓글 삭제 처리
         comments.forEach(Comment::delete);
 
         lost.delete();
     }
 
-    @Transactional
-    public UpdateLostStatusDTO.Res updateLost(Long boardId, String username, UpdateLostStatusDTO updateLostStatusDTO) {
+    @Transactional("subTransactionManager")
+    public UpdateLostStatusDTO.Res updateLost(Long boardIdx, String username, UpdateLostStatusDTO updateLostStatusDTO) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
+        LostBoard lost = lostBoardRepository.findByIdxAndTrashYN(boardIdx, 'N')
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 글 작성자인가?
@@ -270,12 +213,12 @@ public class LostService {
         return UpdateLostStatusDTO.mapToDTO(lost);
     }
 
-    @Transactional
+    @Transactional("subTransactionManager")
     public UpdateLostContentDTO.Res updateLostContent(Long boardId, String username, UpdateLostContentDTO updateLostContentDTO, List<MultipartFile> files, List<String> deleteFiles, String clientIp) {
         Applicant user = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        Board lost = boardRepository.findByIdxAndTrashYN(boardId, 'N')
+        LostBoard lost = lostBoardRepository.findByIdxAndTrashYN(boardId, 'N')
                 .orElseThrow(() -> new PostNotFoundException("찾는 글이 없습니다."));
 
         // 글 작성자인가?
@@ -293,14 +236,14 @@ public class LostService {
         if(deleteFiles != null) {
             System.out.println("in");
             deleteFiles.forEach(fileId -> {
-                BoardFile file = boardFileRepository.findByFileId(fileId)
+                ImageFile file = imageFileRepository.findByFileId(fileId)
                         .orElseThrow(() -> new FileNotFoundException("이미지를 찾을 수 없습니다."));
 
                 // s3에 이미지 삭제
                 s3Uploader.deleteFile(fileId);
 
                 // 데이터베이스에서 이미지 데이터 삭제
-                boardFileRepository.delete(file);
+                imageFileRepository.delete(file);
             });
         }
 
@@ -325,17 +268,16 @@ public class LostService {
             }
         }
 
-        List<BoardFile> boardFiles = new ArrayList<>();
+        List<ImageFile> boardFiles = new ArrayList<>();
 
         // 데이터베이스 저장
         if(!urls.isEmpty()) {
             // boardId 파일 중 가장 큰 seq 값 + 1
-            Long fileSeq = boardFileRepository.findMaxGrpByIdx(boardId) + 1;
+            Long fileSeq = imageFileRepository.findMaxGrpByIdx(boardId) + 1;
 
             for(String url : urls) {
-                BoardFile boardFile = BoardFile.builder()
+                ImageFile boardFile = ImageFile.builder()
                         .fileId(url)
-                        .idx(boardId)
                         .seq(fileSeq++)
                         .createIp(clientIp)
                         .build();
@@ -344,12 +286,12 @@ public class LostService {
             }
         }
 
-        boardFileRepository.saveAll(boardFiles);
+        imageFileRepository.saveAll(boardFiles);
 
         // 전체 조회
-        List<BoardFile> savedFiles  = boardFileRepository.findAllByIdx(boardId);
+        List<ImageFile> savedFiles  = imageFileRepository.findAllByIdx(boardId);
         System.out.println("savedFiles : " + savedFiles);
-        List<FileDTO> fileDTOList = savedFiles.stream().map(FileDTO::toDTO).toList();
+        List<FileDTO> fileDTOList = savedFiles.stream().map(fileMapper::toDto).toList();
 
         // 첫 이미지가 변경되었는가?
         try {
@@ -374,7 +316,7 @@ public class LostService {
 
     public List<GetLostDTO.CategoryList> getAllBySearch(String q) {
         // 분실물 검색 일단 title과 content에 문자열을 포함하는 조건으로 진행함
-        List<Board> losts = boardRepository.findByBoardIdAndTitleOrContentsContainingAndOrderByCreateDTDesc(BoardId.lost, q);
+        List<LostBoard> losts = lostBoardRepository.findByTitleOrContentsContainingAndOrderByCreateDTDesc(q);
 
         return losts.stream().map(GetLostDTO.CategoryList::mapToDTO).toList();
     }

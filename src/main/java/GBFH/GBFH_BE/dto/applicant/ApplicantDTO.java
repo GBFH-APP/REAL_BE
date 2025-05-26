@@ -1,7 +1,7 @@
 package GBFH.GBFH_BE.dto.applicant;
 
-import GBFH.GBFH_BE.entity.Applicant;
-import GBFH.GBFH_BE.entity.ApplicantSummary;
+import GBFH.GBFH_BE.entity.main.Applicant;
+import GBFH.GBFH_BE.entity.main.ApplicantSummary;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -3,10 +3,10 @@
 //import GBFH.GBFH_BE.dto.lost.CreateLostDTO;
 //import GBFH.GBFH_BE.dto.lost.GetLostDTO;
 //import GBFH.GBFH_BE.entity.Applicant;
-//import GBFH.GBFH_BE.entity.Board;
-//import GBFH.GBFH_BE.entity.BoardId;
-//import GBFH.GBFH_BE.repository.ApplicantRepository;
-//import GBFH.GBFH_BE.repository.BoardRepository;
+//import GBFH.GBFH_BE.entity.main.Board;
+//import GBFH.GBFH_BE.entity.main.BoardId;
+//import GBFH.GBFH_BE.repository.main.ApplicantRepository;
+//import GBFH.GBFH_BE.repository.main.BoardRepository;
 //import jakarta.transaction.Transactional;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.Test;

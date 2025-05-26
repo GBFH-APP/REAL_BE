@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.lost;
 
-import GBFH.GBFH_BE.entity.Comment;
+import GBFH.GBFH_BE.entity.sub.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,6 @@ public class GetCommentDTO {
     private String commentId;
     private Long grp;
     private String contents;
-    private Long boardId;
     private LocalDateTime createDT;
     private String writer;
     private Boolean commentPermission;
@@ -28,7 +27,6 @@ public class GetCommentDTO {
                 .commentId(comment.getIdx().toString())
                 .grp(comment.getGrp())
                 .contents(comment.getContents())
-                .boardId(comment.getUpIdx())
                 .createDT(comment.getCreateDT())
                 .writer(comment.getMaskWriter())
                 .commentPermission(permission)

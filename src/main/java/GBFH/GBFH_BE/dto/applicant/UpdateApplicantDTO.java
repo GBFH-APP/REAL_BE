@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.applicant;
 
-import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.main.Applicant;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

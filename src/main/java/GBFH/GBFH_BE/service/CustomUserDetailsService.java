@@ -1,8 +1,8 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.applicant.CustomUserDetails;
-import GBFH.GBFH_BE.entity.Applicant;
-import GBFH.GBFH_BE.repository.ApplicantRepository;
+import GBFH.GBFH_BE.entity.main.Applicant;
+import GBFH.GBFH_BE.repository.main.ApplicantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

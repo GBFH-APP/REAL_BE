@@ -1,8 +1,8 @@
 package GBFH.GBFH_BE.dto.board;
 
 import GBFH.GBFH_BE.dto.boardFile.FileDTO;
-import GBFH.GBFH_BE.entity.Board;
-import GBFH.GBFH_BE.entity.BoardSummary;
+import GBFH.GBFH_BE.entity.main.Board;
+import GBFH.GBFH_BE.entity.main.BoardSummary;
 import com.amazonaws.retry.v2.SimpleRetryPolicy;
 import lombok.*;
 import org.jsoup.Jsoup;

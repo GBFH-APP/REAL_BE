@@ -1,7 +1,8 @@
 package GBFH.GBFH_BE.dto.lost;
 
 
-import GBFH.GBFH_BE.entity.Comment;
+import GBFH.GBFH_BE.entity.sub.Comment;
+import GBFH.GBFH_BE.entity.sub.LostBoard;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,12 +19,12 @@ public class CreateCommentDTO {
     @NotEmpty(message = "본문은 필수 입력 값입니다.")
     private String contents;
 
-    public static Comment mapToComment(CreateCommentDTO createCommentDTO, Long boardIdx, Long grp, String username, String userNo, String clientIp) {
+    public static Comment mapToComment(CreateCommentDTO createCommentDTO, LostBoard lostBoard, Long grp, String username, String userNo, String clientIp) {
+
         return Comment.builder()
                 .grp(grp)
                 .seq(1L) // 대부분 1로 저장됨
                 .lvl(1L)
-                .upIdx(boardIdx)
                 .contents(createCommentDTO.getContents())
                 .maskWriter(createCommentDTO.makeWriterMask(username))
                 .delYN("N")
@@ -31,15 +32,15 @@ public class CreateCommentDTO {
                 .createId(userNo)
                 .createIP(clientIp)
                 .createDT(LocalDateTime.now())
+                .lostBoard(lostBoard)
                 .build();
     }
 
-    public static Comment mapToCommentReply(CreateCommentDTO createCommentDTO, Long boardIdx, Long grp, String username, String userNo, String clientIp) {
+    public static Comment mapToCommentReply(CreateCommentDTO createCommentDTO, LostBoard lostBoard, Long grp, String username, String userNo, String clientIp) {
         return Comment.builder()
                 .grp(grp)
                 .seq(1L) // 이거 순서대로 가게 해?
                 .lvl(2L) // 2단계로 감
-                .upIdx(boardIdx)
                 .contents(createCommentDTO.getContents())
                 .maskWriter(createCommentDTO.makeWriterMask(username))
                 .delYN("N")
@@ -47,6 +48,7 @@ public class CreateCommentDTO {
                 .createId(userNo)
                 .createIP(clientIp)
                 .createDT(LocalDateTime.now())
+                .lostBoard(lostBoard)
                 .build();
     }
 
@@ -68,7 +70,7 @@ public class CreateCommentDTO {
                     .grp(comment.getGrp())
                     .lvl(comment.getLvl())
                     .contents(comment.getContents())
-                    .boardId(comment.getUpIdx())
+                    .boardId(comment.getLostBoard().getIdx())
                     .createDT(comment.getCreateDT())
                     .build();
         }

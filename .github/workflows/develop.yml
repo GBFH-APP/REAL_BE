@@ -1,6 +1,7 @@
 name: CD with Gradle
 
 on:
+  workflow_dispatch:  # ✅ 수동 실행 버튼 생성
   pull_request:
     types: [ closed ]
 

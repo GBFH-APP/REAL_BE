@@ -2,7 +2,7 @@ package GBFH.GBFH_BE.jwt;
 
 import GBFH.GBFH_BE.code.ErrorCode;
 import GBFH.GBFH_BE.dto.applicant.CustomUserDetails;
-import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.main.Applicant;
 import GBFH.GBFH_BE.util.TokenErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

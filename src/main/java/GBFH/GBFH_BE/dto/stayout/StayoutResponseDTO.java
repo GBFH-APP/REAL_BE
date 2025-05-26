@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.stayout;
 
-import GBFH.GBFH_BE.entity.Stayout;
+import GBFH.GBFH_BE.entity.main.Stayout;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
