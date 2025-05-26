@@ -20,7 +20,7 @@ public interface LectureRepository extends JpaRepository<Lecture, String> {
     List<Lecture> findAllByOpenAndRegIngAndStartDtGreaterThanEqualAndEndDtLessThanEqual(
             Character open, Character regIng, LocalDate startDt, LocalDate endDt);
 
-    List<Lecture> findAllByOpenAndRegIngAndYearGreaterThan(Character open, Character regIng, String year);
+    List<Lecture> findAllByOpenAndRegIngAndYearGreaterThanEqualOrderByCreateDtDesc(Character open, Character regIng, String year);
 
 
 //    @Query(value = """
