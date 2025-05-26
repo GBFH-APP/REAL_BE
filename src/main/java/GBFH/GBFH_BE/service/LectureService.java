@@ -38,8 +38,8 @@ public class LectureService {
     public Page<LectureResponseDTO> getAllLecture(char yorn, int page, int size) {
         List<Lecture> lectures = null;
 
-        if (yorn == 'n') {
-            lectures = lectureRepository.findAllByOpenAndRegIngAndYearGreaterThanEqualOrderByCreateDtDesc('y', yorn, String.valueOf(LocalDate.now().getYear()-1));
+        if (yorn == 'n' || yorn == 'N') {
+            lectures = lectureRepository.findAllByOpenAndRegIngAndYearGreaterThanEqualOrderByCreateDtDesc('Y', yorn, String.valueOf(LocalDate.now().getYear()-1));
         }
         else {
             lectures = lectureRepository.findAllByOpenAndRegIngAndYearOrderByCreateDtDesc('Y', yorn, String.valueOf(LocalDate.now().getYear()));
