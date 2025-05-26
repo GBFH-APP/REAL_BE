@@ -94,6 +94,7 @@ public class LectureService {
                 .id(lectureSubmit.getIdx())
                 .nameKor(dormEnterSubmit.getName())
                 .title(lecture.getTitle())
+                .status(lecture.getRegIng().toString())
                 .build();
     }
 
@@ -113,6 +114,7 @@ public class LectureService {
                     .id(lectureSubmit.getIdx())
                     .nameKor(dormEnterSubmit.getName())
                     .title(lecture.getTitle())
+                    .status(lecture.getRegIng().toString())
                     .build();
         })).collect(Collectors.toList());
     }

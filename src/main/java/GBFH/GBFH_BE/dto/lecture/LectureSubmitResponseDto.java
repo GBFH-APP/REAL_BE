@@ -13,4 +13,5 @@ public class LectureSubmitResponseDto {
     private String id;
     private String title;
     private String nameKor;
+    private String status;
 }
