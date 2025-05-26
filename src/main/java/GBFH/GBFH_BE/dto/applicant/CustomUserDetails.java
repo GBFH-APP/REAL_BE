@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.applicant;
 
-import GBFH.GBFH_BE.entity.Applicant;
+import GBFH.GBFH_BE.entity.main.Applicant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

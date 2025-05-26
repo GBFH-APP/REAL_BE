@@ -2,20 +2,20 @@ package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutResponseDTO;
-import GBFH.GBFH_BE.entity.*;
+import GBFH.GBFH_BE.entity.main.*;
 import GBFH.GBFH_BE.exception.BeforeEndDateException;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.exception.SameStayoutException;
-import GBFH.GBFH_BE.repository.ApplicantRepository;
-import GBFH.GBFH_BE.repository.DormEnterSubmitRepository;
-import GBFH.GBFH_BE.repository.StayoutRepository;
-import jakarta.transaction.Transactional;
+import GBFH.GBFH_BE.repository.main.ApplicantRepository;
+import GBFH.GBFH_BE.repository.main.DormEnterSubmitRepository;
+import GBFH.GBFH_BE.repository.main.StayoutRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,14 +26,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @org.springframework.transaction.annotation.Transactional
-
-
 public class StayoutService {
     private final StayoutRepository stayoutRepository;
     private final ApplicantRepository applicantRepository;
     private final DormEnterSubmitRepository dormEnterSubmitRepository;
     private final PaginateService paginateService;
 
+    @Transactional("mainTransactionManager")
     public StayoutResponseDTO createStayOut(String username, StayoutRequestDTO stayoutRequestDTO, String clientIp) {
         ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));

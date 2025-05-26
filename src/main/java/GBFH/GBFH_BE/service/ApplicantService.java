@@ -3,12 +3,12 @@ package GBFH.GBFH_BE.service;
 import GBFH.GBFH_BE.dto.applicant.ApplicantDTO;
 import GBFH.GBFH_BE.dto.applicant.UpdateApplicantDTO;
 import GBFH.GBFH_BE.dto.userInfo.UserInfoDto;
-import GBFH.GBFH_BE.entity.Applicant;
-import GBFH.GBFH_BE.entity.ApplicantSummary;
-import GBFH.GBFH_BE.entity.UserInfo;
+import GBFH.GBFH_BE.entity.main.Applicant;
+import GBFH.GBFH_BE.entity.main.ApplicantSummary;
+import GBFH.GBFH_BE.entity.main.UserInfo;
 import GBFH.GBFH_BE.exception.NotInDormException;
-import GBFH.GBFH_BE.repository.ApplicantRepository;
-import GBFH.GBFH_BE.repository.UserInfoRepository;
+import GBFH.GBFH_BE.repository.main.ApplicantRepository;
+import GBFH.GBFH_BE.repository.main.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class ApplicantService {
         return UserInfoDto.toDto(user);
     }
 
-    @Transactional
+    @Transactional("mainTransactionManager")
     public UpdateApplicantDTO.Res updateApplicate(String username, UpdateApplicantDTO.Req updateApplicantDTO) {
         Applicant applicant = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));

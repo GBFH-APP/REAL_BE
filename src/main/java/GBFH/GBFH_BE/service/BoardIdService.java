@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.service;
 
-import GBFH.GBFH_BE.entity.BoardId;
+import GBFH.GBFH_BE.entity.main.BoardId;
 import GBFH.GBFH_BE.exception.category_BoardIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

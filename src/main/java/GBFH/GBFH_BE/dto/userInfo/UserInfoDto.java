@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.userInfo;
 
-import GBFH.GBFH_BE.entity.UserInfo;
+import GBFH.GBFH_BE.entity.main.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

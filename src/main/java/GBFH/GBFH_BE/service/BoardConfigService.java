@@ -1,8 +1,8 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.boardconfig.BoardConfigDTO;
-import GBFH.GBFH_BE.entity.BoardConfig;
-import GBFH.GBFH_BE.repository.BoardConfigRepository;
+import GBFH.GBFH_BE.entity.main.BoardConfig;
+import GBFH.GBFH_BE.repository.main.BoardConfigRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

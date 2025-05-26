@@ -1,7 +1,7 @@
 package GBFH.GBFH_BE.dto.lost;
 
 import GBFH.GBFH_BE.dto.boardFile.FileDTO;
-import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.entity.sub.LostBoard;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class GetLostDTO {
         // 이미지 추가해야 함
         private String fildId;
 
-        public static ListItem mapToDTO(Board board) {
+        public static ListItem mapToDTO(LostBoard board) {
             return ListItem.builder()
                     .id(board.getIdx().toString())
                     .title(board.getTitle())
@@ -61,7 +61,7 @@ public class GetLostDTO {
         // 이미지 추가해야 함
         private String fildId;
 
-        public static CategoryList mapToDTO(Board board) {
+        public static CategoryList mapToDTO(LostBoard board) {
             return CategoryList.builder()
                     .id(board.getIdx().toString())
                     .title(board.getTitle())
@@ -91,7 +91,7 @@ public class GetLostDTO {
         // 댓글
         private List<GetCommentDTO> comments;
 
-        public static DETAIL mapToDTO(Board board, Boolean permission, List<FileDTO> files, List<GetCommentDTO> comments) {
+        public static DETAIL mapToDTO(LostBoard board, Boolean permission, List<FileDTO> files, List<GetCommentDTO> comments) {
             return DETAIL.builder()
                     .id(board.getIdx().toString())
                     .title(board.getTitle())

@@ -3,16 +3,15 @@ package GBFH.GBFH_BE.service;
 import GBFH.GBFH_BE.dto.board.NoticeListResponseDTO;
 import GBFH.GBFH_BE.dto.board.NoticeResponseDTO;
 import GBFH.GBFH_BE.dto.board.SimplePostDTO;
-import GBFH.GBFH_BE.entity.Board;
-import GBFH.GBFH_BE.entity.BoardId;
-import GBFH.GBFH_BE.entity.BoardSummary;
-import GBFH.GBFH_BE.entity.SimpleNotice;
+import GBFH.GBFH_BE.entity.main.Board;
+import GBFH.GBFH_BE.entity.main.BoardId;
+import GBFH.GBFH_BE.entity.main.BoardSummary;
+import GBFH.GBFH_BE.entity.main.SimpleNotice;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
-import GBFH.GBFH_BE.repository.BoardRepository;
+import GBFH.GBFH_BE.repository.main.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional("mainTransactionManager")
 public class BoardService {
         private final BoardRepository boardRepository;
         private final BoardFileService boardFileService;

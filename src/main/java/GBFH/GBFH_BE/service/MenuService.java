@@ -1,9 +1,9 @@
 package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.menu.GetMenuDTO;
-import GBFH.GBFH_BE.entity.Menu;
+import GBFH.GBFH_BE.entity.main.Menu;
 import GBFH.GBFH_BE.exception.MenuNotFoundException;
-import GBFH.GBFH_BE.repository.MenuRepository;
+import GBFH.GBFH_BE.repository.main.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

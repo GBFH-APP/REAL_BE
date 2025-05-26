@@ -3,14 +3,14 @@ package GBFH.GBFH_BE.service;
 
 import GBFH.GBFH_BE.dto.lecture.LectureResponseDTO;
 import GBFH.GBFH_BE.dto.lecture.LectureSubmitResponseDto;
-import GBFH.GBFH_BE.entity.*;
+import GBFH.GBFH_BE.entity.main.*;
 import GBFH.GBFH_BE.exception.DuplicateLectureSubmitException;
 import GBFH.GBFH_BE.exception.EmptyPostException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
-import GBFH.GBFH_BE.repository.ApplicantRepository;
-import GBFH.GBFH_BE.repository.DormEnterSubmitRepository;
-import GBFH.GBFH_BE.repository.LectureRepository;
-import GBFH.GBFH_BE.repository.LectureSubmitRepository;
+import GBFH.GBFH_BE.repository.main.ApplicantRepository;
+import GBFH.GBFH_BE.repository.main.DormEnterSubmitRepository;
+import GBFH.GBFH_BE.repository.main.LectureRepository;
+import GBFH.GBFH_BE.repository.main.LectureSubmitRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional("mainTransactionManager")
 public class LectureService {
     private final LectureRepository lectureRepository;
     private final PaginateService paginateService;
@@ -62,6 +62,7 @@ public class LectureService {
         return LectureResponseDTO.toDto(lecture);
     }
 
+    @Transactional("mainTransactionManager")
     public LectureSubmitResponseDto createLectureSubmit(String username, String id, String clientIp) {
         Applicant applicant = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
@@ -95,7 +96,7 @@ public class LectureService {
                 .title(lecture.getTitle())
                 .build();
     }
-
+    @Transactional("mainTransactionManager")
     public LectureSubmitResponseDto deleteLectureSubmit(String username, String id) {
         Applicant applicant = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));

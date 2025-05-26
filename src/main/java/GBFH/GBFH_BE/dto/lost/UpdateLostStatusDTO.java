@@ -1,6 +1,7 @@
 package GBFH.GBFH_BE.dto.lost;
 
-import GBFH.GBFH_BE.entity.Board;
+import GBFH.GBFH_BE.entity.main.Board;
+import GBFH.GBFH_BE.entity.sub.LostBoard;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,18 +23,16 @@ public class UpdateLostStatusDTO {
         private String id;
         private String title;
         private String contents;
-        private String boardId;
         private String status;
         private LocalDateTime createDT;
         private String writer;
     }
 
-    public static Res mapToDTO(Board board) {
+    public static Res mapToDTO(LostBoard board) {
         return Res.builder()
                 .id(board.getIdx().toString())
                 .title(board.getTitle())
                 .contents(board.getContents())
-                .boardId(board.getBoardId().name())
                 .status(board.getStatus())
                 .createDT(board.getCreateDT())
                 .writer(board.getMaskWriter())

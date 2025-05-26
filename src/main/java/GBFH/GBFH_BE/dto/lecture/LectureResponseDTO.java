@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.lecture;
 
-import GBFH.GBFH_BE.entity.Lecture;
+import GBFH.GBFH_BE.entity.main.Lecture;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

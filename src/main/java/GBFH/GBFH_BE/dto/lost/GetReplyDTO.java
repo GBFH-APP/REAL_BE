@@ -1,6 +1,6 @@
 package GBFH.GBFH_BE.dto.lost;
 
-import GBFH.GBFH_BE.entity.Comment;
+import GBFH.GBFH_BE.entity.sub.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class GetReplyDTO {
                 .id(comment.getIdx().toString())
                 .grp(comment.getGrp())
                 .contents(comment.getContents())
-                .boardId(comment.getUpIdx())
+                .boardId(comment.getLostBoard().getIdx())
                 .createDT(comment.getCreateDT())
                 .writer(comment.getMaskWriter())
                 .commentPermission(permission)
