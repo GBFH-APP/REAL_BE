@@ -20,11 +20,14 @@ public interface LectureRepository extends JpaRepository<Lecture, String> {
     List<Lecture> findAllByOpenAndRegIngAndStartDtGreaterThanEqualAndEndDtLessThanEqual(
             Character open, Character regIng, LocalDate startDt, LocalDate endDt);
 
-    @Query(value = """
-    SELECT *
-    FROM t_lecture
-    WHERE STR_TO_DATE(CONCAT(REPLACE(reg_end_ymd, '-', ''), LPAD(reg_end_hh, 2, '0'), LPAD(reg_end_mm, 2, '0')), '%Y%m%d%H%i')
-          < DATE_FORMAT(NOW(), '%Y%m%d%H%i')
-    """, nativeQuery = true)
-    List<Lecture> findLecturesWithRecruitEnded();
+    List<Lecture> findAllByOpenAndRegIngAndYearGreaterThan(Character open, Character regIng, String year);
+
+
+//    @Query(value = """
+//    SELECT *
+//    FROM t_lecture
+//    WHERE STR_TO_DATE(CONCAT(REPLACE(reg_end_ymd, '-', ''), LPAD(reg_end_hh, 2, '0'), LPAD(reg_end_mm, 2, '0')), '%Y%m%d%H%i')
+//          < DATE_FORMAT(NOW(), '%Y%m%d%H%i')
+//    """, nativeQuery = true)
+//    List<Lecture> findLecturesWithRecruitEnded();
 }
