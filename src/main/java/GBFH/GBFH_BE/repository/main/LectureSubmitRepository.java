@@ -9,5 +9,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface LectureSubmitRepository extends JpaRepository<LectureSubmit, LectureSubmitPk> {
-    List<LectureSubmit> findAllByRegiNoAndCreateDTBetween(String regiNo, LocalDateTime start, LocalDateTime end);
+    List<LectureSubmit> findAllByRegiNoAndCreateDTBetweenOrderByCreateDTDesc(String regiNo, LocalDateTime start, LocalDateTime end);
 }
