@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,6 +57,17 @@ public class LectureController {
                 .status(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT.getStatus().value())
                 .body(new ResponseDTO<>(ResponseCode.SUCCESS_CREATE_LECTURE_SUBMIT, lectureSubmitResponseDto));
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<ResponseDTO<List<LectureSubmitResponseDto>>> getMyLectureSubmit() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        List<LectureSubmitResponseDto> result = lectureService.getMyLectureSubmit(username);
+        return ResponseEntity
+                .status(ResponseCode.SUCCESS_RETRIEVE_MY_LECTURE_SUBMIT_LIST.getStatus().value())
+                .body(new ResponseDTO<>(ResponseCode.SUCCESS_RETRIEVE_MY_LECTURE_SUBMIT_LIST, result));
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<?>> deleteLectureSubmit(@Valid @AuthenticationPrincipal CustomUserDetails customUserDetails,
