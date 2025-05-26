@@ -39,7 +39,7 @@ public class LectureService {
         List<Lecture> lectures = null;
 
         if (yorn == 'n') {
-            lectures = lectureRepository.findAllByOpenAndRegIngAndYearGreaterThan('y', yorn, String.valueOf(LocalDate.now().getYear()-1));
+            lectures = lectureRepository.findAllByOpenAndRegIngAndYearGreaterThanEqualOrderByCreateDtDesc('y', yorn, String.valueOf(LocalDate.now().getYear()-1));
         }
         else {
             lectures = lectureRepository.findAllByOpenAndRegIngAndYearOrderByCreateDtDesc('Y', yorn, String.valueOf(LocalDate.now().getYear()));
