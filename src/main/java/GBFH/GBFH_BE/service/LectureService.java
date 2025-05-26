@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -104,7 +105,14 @@ public class LectureService {
 
         DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
 
-        List<LectureSubmit> lectures = lectureSubmitRepository.findAllByRegiNo(dormEnterSubmit.getRegiNo());
+        LocalDateTime start = LocalDateTime.of(LocalDate.now().minusYears(1).withDayOfYear(1), LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(LocalDate.now().withMonth(12).withDayOfMonth(31), LocalTime.MAX);
+
+        List<LectureSubmit> lectures = lectureSubmitRepository.findAllByRegiNoAndCreateDTBetween(
+                dormEnterSubmit.getRegiNo(),
+                start,
+                end
+        );
 
         return lectures.stream().map(( lectureSubmit -> {
             Lecture lecture = lectureRepository.findById(lectureSubmit.getIdx())
