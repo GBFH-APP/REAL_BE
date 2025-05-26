@@ -108,7 +108,7 @@ public class LectureService {
         LocalDateTime start = LocalDateTime.of(LocalDate.now().minusYears(1).withDayOfYear(1), LocalTime.MIN);
         LocalDateTime end = LocalDateTime.of(LocalDate.now().withMonth(12).withDayOfMonth(31), LocalTime.MAX);
 
-        List<LectureSubmit> lectures = lectureSubmitRepository.findAllByRegiNoAndCreateDTBetween(
+        List<LectureSubmit> lectures = lectureSubmitRepository.findAllByRegiNoAndCreateDTBetweenOrderByCreateDTDesc(
                 dormEnterSubmit.getRegiNo(),
                 start,
                 end
