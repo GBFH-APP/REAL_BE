@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @IdClass(LectureSubmitPk.class) // 복합키 클래스
 public class LectureSubmit {
     @Id
-    @Column(name = "IDX", length = 20)
+    @Column(name = "IDX", length = 20) // 특강 키
     private String idx;
 
     @Id

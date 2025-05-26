@@ -96,6 +96,30 @@ public class LectureService {
                 .title(lecture.getTitle())
                 .build();
     }
+
+    public List<LectureSubmitResponseDto> getMyLectureSubmit(String username) {
+        Applicant applicant = applicantRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+
+        List<LectureSubmit> lectures = lectureSubmitRepository.findAllByRegiNo(dormEnterSubmit.getRegiNo());
+
+        return lectures.stream().map(( lectureSubmit -> {
+            Lecture lecture = lectureRepository.findById(lectureSubmit.getIdx())
+                    .orElseThrow(() -> new PostNotFoundException("해당 글이 존재하지 않습니다."));
+
+            return LectureSubmitResponseDto.builder()
+                    .id(lectureSubmit.getIdx())
+                    .nameKor(dormEnterSubmit.getName())
+                    .title(lecture.getTitle())
+                    .build();
+        })).collect(Collectors.toList());
+    }
+
+
+
+
     @Transactional("mainTransactionManager")
     public LectureSubmitResponseDto deleteLectureSubmit(String username, String id) {
         Applicant applicant = applicantRepository.findByLoginId(username)
