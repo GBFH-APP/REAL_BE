@@ -24,11 +24,8 @@ jobs:
 
       - name: Make application.yml
         run: |
-          cd ./src/main
-          mkdir resources
-          cd resources
-          touch ./application.yml
-          echo "${{ secrets.YML }}" > ./application.yml
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.YML }}" > ./src/main/resources/application.yml
         shell: bash
 
       - name: Build with Gradle

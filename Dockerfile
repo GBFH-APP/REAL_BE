@@ -4,9 +4,9 @@ FROM openjdk:20-jdk
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-CMD ["./gradlew", "clean", "build"]
-VOLUME /tmp
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
+# 앱 복사
+COPY build/libs/*.jar app.jar
+COPY src/main/resources/application.yml src/main/resources/application.yml
+
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
