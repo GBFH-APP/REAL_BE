@@ -16,8 +16,8 @@ public class BoardIdService {
     // Category 찾는 메소드
     public BoardId getCategory(String category) {
         return Arrays.stream(BoardId.values())
-                .filter(e -> e.name().equalsIgnoreCase(category))  // 대소문자 구분 없이 비교
+                .filter(e -> e.name().equalsIgnoreCase(category))
                 .findFirst()
-                .orElseThrow(() -> new category_BoardIdNotFoundException("Category not found: " + category));  // Custom Exception 발생
+                .orElseThrow(() -> new category_BoardIdNotFoundException("Category not found: " + category));
     }
 }
