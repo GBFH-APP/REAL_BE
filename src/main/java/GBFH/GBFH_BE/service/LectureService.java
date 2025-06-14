@@ -6,6 +6,7 @@ import GBFH.GBFH_BE.dto.lecture.LectureSubmitResponseDto;
 import GBFH.GBFH_BE.entity.main.*;
 import GBFH.GBFH_BE.exception.DuplicateLectureSubmitException;
 import GBFH.GBFH_BE.exception.EmptyPostException;
+import GBFH.GBFH_BE.exception.NotInDormException;
 import GBFH.GBFH_BE.exception.PostNotFoundException;
 import GBFH.GBFH_BE.repository.main.ApplicantRepository;
 import GBFH.GBFH_BE.repository.main.DormEnterSubmitRepository;
@@ -72,9 +73,11 @@ public class LectureService {
                 .orElseThrow(() -> new PostNotFoundException("해당 글이 존재하지 않습니다."));
 
         // 입사한 사람
-        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo()).orElseThrow(
+                () -> new NotInDormException("재사생이 아님.")
+        );
 
-        String regNo = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo()).getRegiNo();
+        String regNo = dormEnterSubmit.getRegiNo();
 
 
         if (lectureSubmitRepository.existsById(new LectureSubmitPk(lecture.getIdx(), regNo))) {
@@ -103,7 +106,8 @@ public class LectureService {
         Applicant applicant = applicantRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo())
+                .orElseThrow(() -> new NotInDormException("재사생이 아님."));
 
         LocalDateTime start = LocalDateTime.of(LocalDate.now().minusYears(1).withDayOfYear(1), LocalTime.MIN);
         LocalDateTime end = LocalDateTime.of(LocalDate.now().withMonth(12).withDayOfMonth(31), LocalTime.MAX);
@@ -138,7 +142,8 @@ public class LectureService {
         Lecture lecture = lectureRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("해당 글이 존재하지 않습니다."));
 
-        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo())
+                .orElseThrow(() -> new NotInDormException("재사생이 아님."));
 
         lectureSubmitRepository.deleteById(new LectureSubmitPk(lecture.getIdx(), dormEnterSubmit.getRegiNo()));
         return LectureSubmitResponseDto.builder()
