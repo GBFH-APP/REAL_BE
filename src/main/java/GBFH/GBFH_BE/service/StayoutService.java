@@ -3,10 +3,7 @@ package GBFH.GBFH_BE.service;
 import GBFH.GBFH_BE.dto.stayout.StayoutRequestDTO;
 import GBFH.GBFH_BE.dto.stayout.StayoutResponseDTO;
 import GBFH.GBFH_BE.entity.main.*;
-import GBFH.GBFH_BE.exception.BeforeEndDateException;
-import GBFH.GBFH_BE.exception.EmptyPostException;
-import GBFH.GBFH_BE.exception.PostNotFoundException;
-import GBFH.GBFH_BE.exception.SameStayoutException;
+import GBFH.GBFH_BE.exception.*;
 import GBFH.GBFH_BE.repository.main.ApplicantRepository;
 import GBFH.GBFH_BE.repository.main.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.main.StayoutRepository;
@@ -37,7 +34,9 @@ public class StayoutService {
         ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo()).orElseThrow(() ->
+                new NotInDormException("입사생이 아님."));
+
 
         if ((stayoutRepository.existsByDateInRange(stayoutRequestDTO.getStartDT())) || (stayoutRepository.existsByDateInRange(stayoutRequestDTO.getEndDT()))) {
             throw new SameStayoutException("동일한");
@@ -80,7 +79,7 @@ public class StayoutService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
         //regi no 찾는 과정
-        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo()).orElseThrow(() -> new NotInDormException("재사생이 아님."));
 
         if (stayoutRepository.existsByRegiNo(dormEnterSubmit.getRegiNo())) {
             List<Stayout> stayouts = stayoutRepository.findAllByRegiNoOrderBySeqDesc(dormEnterSubmit.getRegiNo());
@@ -96,7 +95,9 @@ public class StayoutService {
         ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
 
-        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo());
+        DormEnterSubmit dormEnterSubmit = dormEnterSubmitRepository.findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo()).orElseThrow(
+                () -> new NotInDormException("재사생이 아님.")
+        );
 
         if (stayoutRepository.findMaxSeq(dormEnterSubmit.getRegiNo()) >= id) {
             Stayout stayout = stayoutRepository.getReferenceById(new StayoutPk(dormEnterSubmit.getRegiNo(), id));
