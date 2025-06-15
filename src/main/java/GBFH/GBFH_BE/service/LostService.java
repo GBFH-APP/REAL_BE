@@ -280,6 +280,7 @@ public class LostService {
                         .fileId(url)
                         .seq(fileSeq++)
                         .createIp(clientIp)
+                        .lostBoard(lost)
                         .build();
 
                 boardFiles.add(boardFile);
