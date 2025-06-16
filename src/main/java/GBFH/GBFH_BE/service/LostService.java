@@ -258,7 +258,7 @@ public class LostService {
         // 데이터베이스 저장
         if(!urls.isEmpty()) {
             // boardId 파일 중 가장 큰 seq 값 + 1
-            Long fileSeq = imageFileRepository.findMaxGrpByIdx(boardId) + 1;
+            Long fileSeq = imageFileRepository.findMaxGrpByIdx(lost.getIdx()) + 1;
 
             for(String url : urls) {
                 ImageFile boardFile = ImageFile.builder()
@@ -275,7 +275,7 @@ public class LostService {
         imageFileRepository.saveAll(boardFiles);
 
         // 전체 조회
-        List<ImageFile> savedFiles  = imageFileRepository.findAllByIdx(boardId);
+        List<ImageFile> savedFiles  = imageFileRepository.findAllByLostBoard(lost);
         System.out.println("savedFiles : " + savedFiles);
         List<FileDTO> fileDTOList = savedFiles.stream().map(FileDTO::toDTO).toList();
 
