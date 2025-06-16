@@ -43,7 +43,6 @@ public class LostService {
     private final ImageFileRepository imageFileRepository;
     private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
-    private final FileMapper fileMapper;
     private final CommentService commentService;
 
     @Transactional("subTransactionManager")
@@ -94,7 +93,7 @@ public class LostService {
 
         // DTO 변환 후 응답 반환
         List<FileDTO> fileDTOList = boardFiles.stream()
-                .map(fileMapper::toDto)
+                .map(FileDTO::toDTO)
                 .collect(Collectors.toList());
 
         return CreateLostDTO.Res.mapToDTO(savedLost, fileDTOList);
@@ -137,7 +136,7 @@ public class LostService {
         
         // lost에서 연결된 이미지 가져오기
         List<ImageFile> files = lost.getImageFiles();
-        List<FileDTO> fileDTOS = files.stream().map(fileMapper::toDto).toList();
+        List<FileDTO> fileDTOS = files.stream().map(FileDTO::toDTO).toList();
 
 //        if (!lost.getBoardId().toString().equals("lost"))
 //            throw new NotLostException("분실물 글이 아닙니다.");
@@ -278,7 +277,7 @@ public class LostService {
         // 전체 조회
         List<ImageFile> savedFiles  = imageFileRepository.findAllByIdx(boardId);
         System.out.println("savedFiles : " + savedFiles);
-        List<FileDTO> fileDTOList = savedFiles.stream().map(fileMapper::toDto).toList();
+        List<FileDTO> fileDTOList = savedFiles.stream().map(FileDTO::toDTO).toList();
 
         // 첫 이미지가 변경되었는가?
         try {
