@@ -47,71 +47,57 @@ public class LostService {
     private final CommentService commentService;
 
     @Transactional("subTransactionManager")
-
-    public CreateLostDTO.Res createLost(CreateLostDTO createLostDTO, String username, String clientIp, List<MultipartFile> files) {
+    public CreateLostDTO.Res createLost(CreateLostDTO createLostDTO, String username, String clientIp, List<MultipartFile> files) throws UnknownHostException {
+        // 사용자 정보 조회
         Applicant user = applicantRepository.findByLoginId(username)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
 
-
-        // s3에 업로드 후 url 리스트 반환
+        // S3에 업로드 및 URL 리스트 반환
         List<String> urls = new ArrayList<>();
-
         if (files != null && !files.isEmpty()) {
             urls = files.stream().map(multipartFile -> {
                 try {
                     String url = s3Uploader.upload(multipartFile, "lost");
-                    log.info("S3 업로드 성공: " + url);
+                    log.info("S3 업로드 성공: {}", url);
                     return url;
                 } catch (IOException e) {
-                    log.error("S3 업로드 실패: " + multipartFile.getOriginalFilename(), e);
-                    throw new RuntimeException("S3 업로드 실패", e);
+                    log.error("S3 업로드 실패: {}", multipartFile.getOriginalFilename(), e);
+                    throw new RuntimeException("S3 업로드 중 오류 발생", e);
                 }
             }).toList();
         } else {
             log.info("업로드할 파일이 제공되지 않았습니다.");
         }
 
+        // 첫 번째 URL을 대표 이미지로 사용
+        String firstUrl = urls.isEmpty() ? null : urls.get(0);
 
-        // BoardFile 저장
+        // LostBoard 생성 및 저장
+        LostBoard lost = CreateLostDTO.mapToBoard(createLostDTO, user.getNameKor(), user.getUserNo(), clientIp, firstUrl);
+        LostBoard savedLost = lostBoardRepository.save(lost);
+
+        // ImageFile 엔티티 생성 및 LostBoard 연관 설정
         List<ImageFile> boardFiles = new ArrayList<>();
-
-
-        if(!urls.isEmpty()) {
-            Long fileSeq = 1L;
-
-            for(String url : urls) {
-                ImageFile boardFile = ImageFile.builder()
-                        .fileId(url)
-                        .seq(fileSeq++)
-                        .createIp(clientIp)
-                        .build();
-
-                boardFiles.add(boardFile);
-            }
+        long seq = 1;
+        for (String url : urls) {
+            ImageFile file = ImageFile.builder()
+                    .fileId(url)
+                    .seq(seq++)
+                    .createIp(clientIp)
+                    .lostBoard(savedLost)  // 연관 설정
+                    .build();
+            boardFiles.add(file);
         }
 
+        // 파일 정보 저장
         imageFileRepository.saveAll(boardFiles);
 
-        String url = urls.isEmpty() ? null : urls.get(0);
+        // DTO 변환 후 응답 반환
+        List<FileDTO> fileDTOList = boardFiles.stream()
+                .map(fileMapper::toDto)
+                .collect(Collectors.toList());
 
-
-        // 첫 번째 file_id board에 있는 file_id 필드에 저장
-        try {
-            LostBoard lost = CreateLostDTO.mapToBoard(createLostDTO, user.getNameKor(), user.getUserNo(), clientIp, url);
-            LostBoard savedLost = lostBoardRepository.save(lost);
-            if (files != null && !files.isEmpty()) {
-                for(ImageFile file : boardFiles) {
-                    imageFileRepository.save(file.setLostBoard(savedLost));
-                }
-            }
-            List<FileDTO> fileDTOList = boardFiles.stream().map(fileMapper::toDto).toList();
-            return CreateLostDTO.Res.mapToDTO(savedLost, fileDTOList);
-
-        } catch (UnknownHostException e) {
-            throw new InvalidHostException("호스트 연결 실패");
-        }
-
-
+        return CreateLostDTO.Res.mapToDTO(savedLost, fileDTOList);
     }
 
     // 캐싱 도입해야 할 것 같음
