@@ -16,11 +16,13 @@ public class ApplicantDTO {
     public static class Res {
         private String userNo;
         private String loginId;
+        private Boolean dorm;
 
-        public static Res mapToResLog(ApplicantSummary applicant) {
+        public static Res mapToResLog(ApplicantSummary applicant, Boolean dorm) {
             return Res.builder()
                     .userNo(applicant.getUserNo())
                     .loginId(applicant.getLoginId())
+                    .dorm(dorm)
                     .build();
         }
     }
