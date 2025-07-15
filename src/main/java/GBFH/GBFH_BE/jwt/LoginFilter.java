@@ -47,7 +47,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new AuthenticationServiceException("사용자를 찾을 수 없습니다."));
 
-        // ✅ dorm 여부 조회
+        // dorm 여부 조회
         boolean dorm = dormEnterSubmitRepository
                 .findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo())
                 .isPresent();
