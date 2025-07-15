@@ -7,6 +7,7 @@ import GBFH.GBFH_BE.dto.response.ErrorResponseDTO;
 import GBFH.GBFH_BE.dto.response.ResponseDTO;
 import GBFH.GBFH_BE.entity.main.ApplicantSummary;
 import GBFH.GBFH_BE.entity.main.Refresh;
+import GBFH.GBFH_BE.exception.IdOrPasswordUnmatchException;
 import GBFH.GBFH_BE.repository.main.ApplicantRepository;
 import GBFH.GBFH_BE.repository.main.RefreshRedisRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -76,6 +77,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            // 비밀번호 불일치 예외
+            response.setStatus(401);
+
+            ErrorResponseDTO responseDTO = new ErrorResponseDTO(ErrorCode.ID_OR_PASSWARD_UNMATCH);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            String jsonResponse = null;
+            try {
+                jsonResponse = objectMapper.writeValueAsString(responseDTO);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                response.getWriter().write(jsonResponse);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return null;
@@ -88,12 +109,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
     // 로그인 실패 시 처리
+    // 아이디가 없을 경우
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
 
         response.setStatus(401);
 
-        ErrorResponseDTO responseDTO = new ErrorResponseDTO(ErrorCode.USER_NOT_FOUND);
+        ErrorResponseDTO responseDTO = new ErrorResponseDTO(ErrorCode.ID_OR_PASSWARD_UNMATCH);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         ObjectMapper objectMapper = new ObjectMapper();
