@@ -9,6 +9,7 @@ import GBFH.GBFH_BE.entity.main.ApplicantSummary;
 import GBFH.GBFH_BE.entity.main.Refresh;
 import GBFH.GBFH_BE.exception.IdOrPasswordUnmatchException;
 import GBFH.GBFH_BE.repository.main.ApplicantRepository;
+import GBFH.GBFH_BE.repository.main.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.main.RefreshRedisRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JWTUtil jwtUtil;
     private final ApplicantRepository applicantRepository;
     private final RefreshRedisRepository refreshRedisRepository;
+    private final DormEnterSubmitRepository dormEnterSubmitRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -44,6 +46,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         ApplicantSummary applicant = applicantRepository.findSummaryByLoginId(username)
                 .orElseThrow(() -> new AuthenticationServiceException("사용자를 찾을 수 없습니다."));
+
+        // ✅ dorm 여부 조회
+        boolean dorm = dormEnterSubmitRepository
+                .findTopByCreateIdOrderByTrackNoDesc(applicant.getUserNo())
+                .isPresent();
 
         // 비밀번호를 Base64로 인코딩하여 비교
         if(isPasswordValid(password, applicant.getLoginPwd())) {
@@ -58,7 +65,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             response.setHeader("accessToken", "Bearer " + accessToken);
             response.setHeader("refreshToken", "Bearer " + refreshToken);
 
-            ApplicantDTO.Res responseApplicant = ApplicantDTO.Res.mapToResLog(applicant);
+            ApplicantDTO.Res responseApplicant = ApplicantDTO.Res.mapToResLog(applicant, dorm);
 
             ResponseDTO responseDTO = new ResponseDTO<>(ResponseCode.SUCCESS_LOGIN, responseApplicant);
 

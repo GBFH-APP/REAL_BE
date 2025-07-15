@@ -4,6 +4,7 @@ import GBFH.GBFH_BE.jwt.JWTFilter;
 import GBFH.GBFH_BE.jwt.JWTUtil;
 import GBFH.GBFH_BE.jwt.LoginFilter;
 import GBFH.GBFH_BE.repository.main.ApplicantRepository;
+import GBFH.GBFH_BE.repository.main.DormEnterSubmitRepository;
 import GBFH.GBFH_BE.repository.main.RefreshRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final ApplicantRepository applicantRepository;
     private final RefreshRedisRepository refreshRedisRepository;
+    private final DormEnterSubmitRepository dormEnterSubmitRepository;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -57,7 +59,7 @@ public class SecurityConfig {
                 addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, applicantRepository, refreshRedisRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, applicantRepository, refreshRedisRepository, dormEnterSubmitRepository), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http
