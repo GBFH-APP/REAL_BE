@@ -135,4 +135,11 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.DUPLICATE_LECTURE_SUBMIT.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.DUPLICATE_LECTURE_SUBMIT));
     }
+
+    @ExceptionHandler(IdOrPasswordUnmatchException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleIdOrPasswordUnmatch(final IdOrPasswordUnmatchException e) {
+        return ResponseEntity
+                .status(ErrorCode.ID_OR_PASSWARD_UNMATCH.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.ID_OR_PASSWARD_UNMATCH));
+    }
 }
